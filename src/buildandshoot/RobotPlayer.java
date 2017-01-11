@@ -33,6 +33,9 @@ public strictfp class RobotPlayer {
             case LUMBERJACK:
                 runLumberjack();
                 break;
+            case SCOUT:
+            	runScout();
+            	break;
         }
 	}
 
@@ -99,10 +102,14 @@ public strictfp class RobotPlayer {
                 // Randomly attempt to build a soldier or lumberjack in this direction
                 if (rc.canPlantTree(dir) && Math.random() < .01) {
                 	rc.plantTree(dir);
-            	} else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && Math.random() < .01 && false) {
+            	} else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && Math.random() < .01) {
                     rc.buildRobot(RobotType.SOLDIER, dir);
                 } else if (rc.canBuildRobot(RobotType.TANK, dir) && Math.random() < .1) {
                     rc.buildRobot(RobotType.TANK, dir);
+                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && Math.random() < .01) {
+                	rc.buildRobot(RobotType.LUMBERJACK, dir);
+                } else if (rc.canBuildRobot(RobotType.SCOUT, dir) && Math.random() < .01) {
+                	rc.buildRobot(RobotType.SCOUT, dir);
                 }
 
                 // Move randomly
@@ -153,7 +160,43 @@ public strictfp class RobotPlayer {
             }
         }
     }
-        
+     
+    static void runScout() throws GameActionException {
+        System.out.println("I'm an scout!");
+        Team enemy = rc.getTeam().opponent();
+
+        // The code you want your robot to perform every round should be in this loop
+        while (true) {
+
+            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
+            try {
+                MapLocation myLocation = rc.getLocation();
+
+                // See if there are any nearby enemy robots
+                RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
+
+                // If there are some...
+                if (robots.length > 0) {
+                    // And we have enough bullets, and haven't attacked yet this turn...
+                    if (rc.canFireSingleShot()) {
+                        // ...Then fire a bullet in the direction of the enemy.
+                        rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
+                    }
+                }
+
+                // Move randomly
+                tryMove(randomDirection());
+
+                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
+                Clock.yield();
+
+            } catch (Exception e) {
+                System.out.println("Scout Exception");
+                e.printStackTrace();
+            }
+        }
+    }
+    
     static void runTank() throws GameActionException {
         System.out.println("I'm an tank!");
         Team enemy = rc.getTeam().opponent();
