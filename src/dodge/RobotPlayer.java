@@ -3,6 +3,7 @@ import battlecode.common.*;
 
 public strictfp class RobotPlayer {
     static RobotController rc;
+    static int age = 0;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -72,7 +73,8 @@ public strictfp class RobotPlayer {
                 rc.broadcast(1,(int)myLocation.y);
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+                // endTurn() implements Clock.yield() with extra information such as age
+                endTurn();
 
             } catch (Exception e) {
                 System.out.println("Archon Exception");
@@ -130,7 +132,8 @@ public strictfp class RobotPlayer {
                 tryMove(randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+                // endTurn() implements Clock.yield() with extra information such as age
+                endTurn();
 
             } catch (Exception e) {
                 System.out.println("Gardener Exception");
@@ -173,7 +176,8 @@ public strictfp class RobotPlayer {
                 tryMove(randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+                // endTurn() implements Clock.yield() with extra information such as age
+                endTurn();
 
             } catch (Exception e) {
                 System.out.println("Soldier Exception");
@@ -216,7 +220,8 @@ public strictfp class RobotPlayer {
                 tryMove(randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+                // endTurn() implements Clock.yield() with extra information such as age
+                endTurn();
 
             } catch (Exception e) {
                 System.out.println("Scout Exception");
@@ -259,7 +264,8 @@ public strictfp class RobotPlayer {
                 tryMove(randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+                // endTurn() implements Clock.yield() with extra information such as age
+                endTurn();
 
             } catch (Exception e) {
                 System.out.println("Tank Exception");
@@ -308,7 +314,8 @@ public strictfp class RobotPlayer {
                 }
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+                // endTurn() implements Clock.yield() with extra information such as age
+                endTurn();
 
             } catch (Exception e) {
                 System.out.println("Lumberjack Exception");
@@ -374,7 +381,8 @@ public strictfp class RobotPlayer {
         // A move never happened, so return false.
         return false;
     }
-
+    
+    // TODO: Combine willCollideWithMe with dodge to reduce bytecode usage!
     /**
      * A slightly more complicated example function, this returns true if the given bullet is on a collision
      * course with the current robot. Doesn't take into account objects between the bullet and this robot.
@@ -434,5 +442,15 @@ public strictfp class RobotPlayer {
         Direction towardBullet = new Direction(myLocation, intersection);
         
         return towardBullet.opposite();
+    }
+    
+    /**
+     * End turn immediately.
+     * 
+     * Increments age by 1 and calls Clock.yield().
+     */
+    static void endTurn() {
+    	age++;
+    	Clock.yield();
     }
 }
