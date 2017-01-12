@@ -46,7 +46,7 @@ public strictfp class RobotPlayer {
                 Direction dir = randomDirection();
 
                 // Randomly attempt to build a gardener in this direction
-                if (rc.canHireGardener(dir) && Math.random() < .01) {
+                if (rc.canHireGardener(dir) && Math.random() < .1) {
                     rc.hireGardener(dir);
                 }
 
@@ -108,6 +108,9 @@ public strictfp class RobotPlayer {
         while (true) {
 
             try {
+            	
+            	robotCheckIn();
+
             	
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
@@ -310,13 +313,13 @@ public strictfp class RobotPlayer {
     		case ARCHON: {
     			indexCount = 1;
     			indexIdMin = 10;
-    			indexIdMax = 19;
+    			indexIdMax = 12;
     			break;
     		}	
     		case GARDENER: {
     			indexCount = 2;
-    			indexIdMin = 20;
-    			indexIdMax = 39;
+    			indexIdMin = 13;
+    			indexIdMax = 15;
     			break;
     		}	
     		case LUMBERJACK: {
@@ -339,13 +342,13 @@ public strictfp class RobotPlayer {
     		}	
     		case SCOUT: {
     			indexCount = 6;
-    			indexIdMin = 90;
+    			indexIdMin = 10;
     			indexIdMax = 99;
     			break;  
     		}	
     		default:
     			indexCount = 0;
-    			indexIdMin = 10;
+    			indexIdMin = 16;
     			indexIdMax = 99;
     			break;
     	}
@@ -392,7 +395,10 @@ public strictfp class RobotPlayer {
     		
    		
     	}
-
+    	
+    	
+    	int x = rc.readBroadcast(6);
+    	System.out.println(x);
     	
     	return myIndex;
 	
