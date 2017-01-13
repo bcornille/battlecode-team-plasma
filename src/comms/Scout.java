@@ -1,5 +1,7 @@
 package comms;
 
+import static comms.Constants.*;
+
 import battlecode.common.*;
 
 public class Scout {
@@ -11,8 +13,17 @@ public class Scout {
         while (true) {
 
         	try {
-        		
-        		// Check if alive
+        		// On robots first round, count Scout and setup their comms
+            	if (RobotPlayer.age==0) {
+            		// Count Scout
+            		Initialize.cntRobot(CHANNEL_COUNT_SCOUT);
+                	// Setup comms channel
+                	Initialize.setupMyComms(CHANNEL_MIN_SCOUT, CHANNEL_MAX_SCOUT);
+            	}
+            	
+        		// Check in
+            	rc.broadcast(RobotPlayer.channel, rc.getRoundNum());
+            	
             	
            	
                 // See if there are any nearby enemy robots
@@ -60,10 +71,10 @@ public class Scout {
                 }
            
 
-                System.out.println(RobotPlayer.channel);
+                //System.out.println(RobotPlayer.channel);
                 
                 // End turn
-                Clock.yield();
+                RobotPlayer.endTurn();
 
             } catch (Exception e) {
                 System.out.println("Scout Exception");

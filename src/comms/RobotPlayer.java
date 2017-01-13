@@ -1,5 +1,7 @@
 package comms;
+
 import battlecode.common.*;
+
 import comms.Archon;
 import comms.Gardener;
 import comms.Lumberjack;
@@ -10,6 +12,7 @@ import comms.Tank;
 public strictfp class RobotPlayer {
     static RobotController rc;
     
+    // Robot specific variables
     static int age = 0;
     static int channel = 0;
     static int id = 0;

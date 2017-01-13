@@ -1,5 +1,11 @@
 package comms;
 
+import static comms.Constants.CHANNEL_COUNT_SCOUT;
+import static comms.Constants.CHANNEL_MAX_SCOUT;
+import static comms.Constants.CHANNEL_MIN_SCOUT;
+
+import static comms.Constants.*;
+
 import battlecode.common.*;
 
 public class Lumberjack {
@@ -7,11 +13,16 @@ public class Lumberjack {
         System.out.println("I'm a lumberjack!");
         Team enemy = rc.getTeam().opponent();
 
-        // The code you want your robot to perform every round should be in this loop
         while (true) {
 
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
+        		// On robots first round, count Scout and setup their comms
+            	if (RobotPlayer.age==0) {
+            		// Count Scout
+            		Initialize.cntRobot(CHANNEL_COUNT_LUMBERJACK);
+                	// Setup comms channel
+                	Initialize.setupMyComms(CHANNEL_MIN_LUMBERJACK, CHANNEL_MAX_LUMBERJACK);
+            	}
 
                 // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
                 RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);

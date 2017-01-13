@@ -5,98 +5,90 @@ import battlecode.common.*;
 import static comms.Constants.*;
 
 public class Build {
-	
 
 	static RobotController rc = RobotPlayer.rc;
-	
+
+	/** 
+	 * If possible, builds a Gardener
+	 * 
+	 * @throws GameActionException
+	 */
 	static void Gardener() throws GameActionException {
 		
 		Direction dir = Movement.randomDirection();
 		 
         if ( rc.canHireGardener(dir) ) {
-            
+            // Hire Gardener
         	rc.hireGardener(dir);
-            
-        	Communications.cntRobot(CHANNEL_COUNT_GARDENER);
-        	        	
-        	Communications.setupComms(dir, RobotType.GARDENER, CHANNEL_MIN_GARDENER, CHANNEL_MAX_GARDENER);
-        	
         }
-		
 	}
-	
+
+	/** 
+	 * If possible, builds a Lumberjack
+	 * Records that an Lumberjack has been built
+	 * Sets up comm channels for the Lumberjack
+	 * 
+	 * @throws GameActionException
+	 */
 	static void Lumberjack() throws GameActionException {
 		
 		Direction dir = Movement.randomDirection();
 		
         if ( rc.canBuildRobot(RobotType.LUMBERJACK, dir) ) {
-        	
+        	// Build Lumberjack
         	rc.buildRobot(RobotType.LUMBERJACK, dir);
-        
-        	Communications.cntRobot(CHANNEL_COUNT_LUMBERJACK);
-
-        	Communications.setupComms(dir, RobotType.LUMBERJACK, CHANNEL_MIN_LUMBERJACK, CHANNEL_MAX_LUMBERJACK);
-
-        	
         }
-		
 	}
-		
+
+	/** 
+	 * If possible, builds a Soldier
+	 * Records that an Soldier has been built
+	 * Sets up comm channels for the Soldier
+	 * 
+	 * @throws GameActionException
+	 */
 	static void Soldier() throws GameActionException {
 		
 		Direction dir = Movement.randomDirection();
 		
-        if ( rc.canBuildRobot(RobotType.SOLDIER, dir) ) {
-        	
+        if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
+        	// Build Soldier
         	rc.buildRobot(RobotType.SOLDIER, dir);
-        
-        	Communications.cntRobot(CHANNEL_COUNT_SOLDIER);
-        	
-        	Communications.setupComms(dir, RobotType.SOLDIER, CHANNEL_MIN_SOLDIER, CHANNEL_MAX_SOLDIER);
-
-		
         }
-        
-	}	
+}	
 	
+	/** 
+	 * If possible, builds a Tank
+	 * Records that an Tank has been built
+	 * Sets up comm channels for the Tank
+	 * 
+	 * @throws GameActionException
+	 */
 	static void Tank() throws GameActionException {
 		
 		Direction dir = Movement.randomDirection();
 		
         if ( rc.canBuildRobot(RobotType.TANK, dir) ) {
-        	
+        	// Build Tank
         	rc.buildRobot(RobotType.TANK, dir);
-        
-        	Communications.cntRobot(CHANNEL_COUNT_TANK);
-        	
-        	Communications.setupComms(dir, RobotType.TANK, CHANNEL_MIN_TANK, CHANNEL_MAX_TANK);
-		
         }
-        
 	}	
 	
+	/** 
+	 * If possible, builds a Scout
+	 * Records that an Scout has been built
+	 * Sets up comm channels for the Scout
+	 * 
+	 * @throws GameActionException
+	 */
 	static void Scout() throws GameActionException {
 		
 		Direction dir = Movement.randomDirection();
 		
         if ( rc.canBuildRobot(RobotType.SCOUT, dir) ) {
-        	
+        	// Build Scout
         	rc.buildRobot(RobotType.SCOUT, dir);
-        
-        	Communications.cntRobot(CHANNEL_COUNT_SCOUT);
-		
-        	Communications.setupComms(dir, RobotType.SCOUT, CHANNEL_MIN_SCOUT, CHANNEL_MAX_SCOUT);
-        
         }
-        
 	}	
-	
 
-
-	
-
-	
-	
-	
-	
 }

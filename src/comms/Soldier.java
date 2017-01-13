@@ -1,5 +1,7 @@
 package comms;
 
+import static comms.Constants.*;
+
 import battlecode.common.*;
 
 public class Soldier {
@@ -7,11 +9,17 @@ public class Soldier {
         System.out.println("I'm an soldier!");
         Team enemy = rc.getTeam().opponent();
 
-        // The code you want your robot to perform every round should be in this loop
         while (true) {
 
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
+        		// On robots first round, count Soldier and setup their comms
+            	if (RobotPlayer.age==0) {
+            		// Count Scout
+            		Initialize.cntRobot(CHANNEL_COUNT_SOLDIER);
+                	// Setup comms channel
+                	Initialize.setupMyComms(CHANNEL_MIN_SOLDIER, CHANNEL_MAX_SOLDIER);
+            	}
+            	
                 MapLocation myLocation = rc.getLocation();
 
                 // See if there are any nearby enemy robots
