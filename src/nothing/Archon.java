@@ -12,7 +12,8 @@ public class Archon {
         while (true) {
 
             try {
-            	
+            	if (rc.getRoundNum() > 100)
+            		rc.resign();
             	Clock.yield();
 
             } catch (Exception e) {
