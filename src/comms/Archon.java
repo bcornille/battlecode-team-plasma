@@ -11,14 +11,7 @@ public class Archon {
 
             try {
             	
-            	Communications.robotCheckIn();
-
-                Direction dir = Movement.randomDirection();
-
-                // Randomly attempt to build a gardener in this direction
-                if (rc.canHireGardener(dir) && Math.random() < .1) {
-                    rc.hireGardener(dir);
-                }
+            	Build.Gardener();
 
                 // Move randomly
                 Movement.tryMove(Movement.randomDirection());

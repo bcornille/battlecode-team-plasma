@@ -10,11 +10,11 @@ public class Scout {
         // The code you want your robot to perform every round should be in this loop
         while (true) {
 
-try {
+        	try {
+        		
+        		// Check if alive
             	
-            	Communications.robotCheckIn();
-
-            	
+           	
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
 
@@ -60,7 +60,7 @@ try {
                 }
            
 
-                
+                System.out.println(RobotPlayer.channel);
                 
                 // End turn
                 Clock.yield();

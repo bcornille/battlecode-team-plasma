@@ -9,7 +9,10 @@ import comms.Tank;
 
 public strictfp class RobotPlayer {
     static RobotController rc;
-
+    
+    static int age = 0;
+    static int channel = 0;
+    static int id = 0;
     
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -43,7 +46,20 @@ public strictfp class RobotPlayer {
                 
         }
 	}
-
+    
+    
+    /**
+     * End turn immediately.
+     * 
+     * Increments age by 1 and calls Clock.yield().
+     */
+    static void endTurn() {
+    	age++;
+    	Clock.yield();
+    }
+    
+    
+    
 }
 
 

@@ -14,9 +14,11 @@ public class Gardener {
                 // Generate a random direction
                 Direction dir = Movement.randomDirection();
 
-                // Randomly attempt to build a scout in this direction
-                if (rc.canBuildRobot(RobotType.SCOUT, dir) && Math.random() < .1) {
-                    rc.buildRobot(RobotType.SCOUT, dir);
+                int numScout = rc.readBroadcast(6);
+                if (numScout < 5) {
+                
+                	Build.Scout();
+            
                 }
 
                 // Move randomly
