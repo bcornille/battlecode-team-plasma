@@ -25,15 +25,16 @@ public class Gardener {
                 		rc.water(tree.ID);
                 }
                 
-                // Try to dodge
-            	BulletInfo[] bullets = rc.senseNearbyBullets();
-            	for (BulletInfo bullet : bullets) {
-            		if (Movement.willCollideWithMe(bullet))
-            			Movement.tryMove(Movement.dodge(bullet));
+                // Try to dodge and if not continue moving.
+            	if (!Movement.dodgeBullets()) {
+            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
+            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
+            			Movement.tryMove(RobotPlayer.myDirection);
+            		}
             	}
 
                 // Generate a random direction
-                Direction dir = Movement.randomDirection();
+                Direction dir = RobotPlayer.myDirection.opposite();
 
                 // Randomly attempt to build a soldier or lumberjack in this direction
                 if (rc.canPlantTree(dir) && Math.random() < .01) {

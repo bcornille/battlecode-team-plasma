@@ -26,11 +26,12 @@ public class Scout {
                     }
                 }
                 
-                // Try to dodge
-            	BulletInfo[] bullets = rc.senseNearbyBullets();
-            	for (BulletInfo bullet : bullets) {
-            		if (Movement.willCollideWithMe(bullet))
-            			Movement.tryMove(Movement.dodge(bullet));
+                // Try to dodge and if not continue moving.
+            	if (!Movement.dodgeBullets()) {
+            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
+            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
+            			Movement.tryMove(RobotPlayer.myDirection);
+            		}
             	}
 
                 // Move randomly

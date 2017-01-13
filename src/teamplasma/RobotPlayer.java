@@ -4,7 +4,17 @@ import battlecode.common.*;
 
 public strictfp class RobotPlayer {
     static RobotController rc;
+    
+    // Common variables for all RobotType
     static int age = 0;
+    static int myChannel = 0;
+    static boolean canCommunicate = false;
+    static int myID = 0;
+    static RobotType myType;
+    static int mySpawnNumber = 0;
+    static Direction myDirection;
+    static Team myTeam;
+    static Team enemyTeam;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -16,6 +26,11 @@ public strictfp class RobotPlayer {
         // This is the RobotController object. You use it to perform actions from this robot,
         // and to get information on its current status.
         RobotPlayer.rc = rc;
+        myTeam = rc.getTeam();
+        enemyTeam = myTeam.opponent();
+        
+        // Setup common to all RobotType
+        boot();
 
         // Here, we've separated the controls into a different method for each RobotType.
         // You can add the missing ones or rewrite this into your own control structure.
@@ -38,6 +53,8 @@ public strictfp class RobotPlayer {
             case SCOUT:
             	Scout.run(rc);
             	break;
+            default:
+            	System.out.println("An unkown RobotType has appeared!");
         }
 	}
     
@@ -46,8 +63,35 @@ public strictfp class RobotPlayer {
      * 
      * Increments age by 1 and calls Clock.yield().
      */
-    static void endTurn() {
+   static void endTurn() {
     	age++;
     	Clock.yield();
     }
+    
+    /**
+     * Robot boot-up sequence...
+     */
+   static void boot() throws GameActionException {
+	   myID = rc.getID();
+	   System.out.println(myID);
+	   myType = rc.getType();
+	   System.out.println(myType.toString());
+	   
+	   int numSpawned = rc.readBroadcast(Constants.CHANNEL_COUNT_SPAWNED);
+	   mySpawnNumber = ++numSpawned;
+	   System.out.println(mySpawnNumber);
+	   rc.broadcast(Constants.CHANNEL_COUNT_SPAWNED, numSpawned);
+	   
+	   myChannel = Communication.getOpenChannel(myType);
+	   System.out.println("My channel" + myChannel);
+	   if (myChannel != -1)
+		   canCommunicate = true;
+	   
+	   myDirection = Movement.randomDirection();
+	   System.out.println("My direction" + myDirection.toString());
+   }
+   
+   static void checkIn() throws GameActionException {
+	   rc.broadcast(myChannel, rc.getRoundNum());
+   }
 }
