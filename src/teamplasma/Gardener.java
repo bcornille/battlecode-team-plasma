@@ -16,7 +16,7 @@ public class Gardener {
                 // Listen for home archon's location
                 int xPos = rc.readBroadcast(0);
                 int yPos = rc.readBroadcast(1);
-                MapLocation archonLoc = new MapLocation(xPos,yPos);
+		//MapLocation archonLoc = new MapLocation(xPos,yPos); // doesn't seem to be working?
                 
                 // Sense trees for watering
                 TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
@@ -24,13 +24,38 @@ public class Gardener {
                 	if (rc.canWater(tree.ID))
                 		rc.water(tree.ID);
                 }
-                
+
+		// 		//if too close to an archon, move away a bit
+		// if(!Movement.dodgeBullets()){
+		//     for(MapLocation archonLoc : archonLocs) {
+		// 	if( Constants.GARDENER_RAD_SQR > myLoc.distanceSquaredTo(archonLoc) ) {
+		// 	    Direction awayDir =  new Direction( archonLoc, myLoc );
+		// 	    RobotPlayer.myDirection = awayDir;
+		// 	    Movement.tryMove(RobotPlayer.myDirection);
+		// 	}
+		//     }
+		// }
+
+		MapLocation[] archonLocs = rc.getInitialArchonLocations(myTeam);
+		MapLocation myLoc = rc.getLocation();
+		
                 // Try to dodge and if not continue moving.
             	if (!Movement.dodgeBullets()) {
-            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
-            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
-            			Movement.tryMove(RobotPlayer.myDirection);
-            		}
+		    boolean headed_home = false;
+		    for(MapLocation archonLoc : archonLocs) {
+			if( Constants.GARDENER_RAD_SQR < myLoc.distanceSquaredTo(archonLoc) ) {
+			    Direction awayDir =  new Direction( myLoc, archonLoc );
+			    RobotPlayer.myDirection = awayDir;
+			    Movement.tryMove(RobotPlayer.myDirection);
+			    headed_home = true;
+			}
+		    }
+
+		    if (!headed_home && !Movement.tryMove(RobotPlayer.myDirection)) {
+			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
+			Movement.tryMove(RobotPlayer.myDirection);
+			Movement.tryMove(Movement.randomDirection());
+		    }
             	}
 
                 // Generate a random direction
@@ -49,8 +74,6 @@ public class Gardener {
                 	rc.buildRobot(RobotType.SCOUT, dir);
                 }
 
-                // Move randomly
-                Movement.tryMove(Movement.randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 // endTurn() implements Clock.yield() with extra information such as age
