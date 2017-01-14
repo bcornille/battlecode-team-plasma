@@ -20,11 +20,11 @@ public class Archon {
 		
 		MapLocation myLoc = rc.getLocation();
 		//check to make sure the Archon has enough room
-		if(!rc.onTheMap(myLoc,Constants.GARDENER_RAD)) {
+		if(!rc.onTheMap(myLoc,Constants.ARCHON_BORDER_RAD)) {
 		    //if not, figure out which way we need to move
 		    Direction[] nsew = {Direction.getNorth(),Direction.getSouth(),Direction.getEast(),Direction.getWest()};
 		    for(Direction dir : nsew) {
-			MapLocation testPnt = myLoc.add(dir,Constants.GARDENER_RAD);
+			MapLocation testPnt = myLoc.add(dir,Constants.ARCHON_BORDER_RAD);
 			if(!rc.onTheMap(testPnt)){
 			    Movement.tryMove(dir.opposite());
 			}

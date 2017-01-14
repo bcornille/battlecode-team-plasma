@@ -58,14 +58,14 @@ public interface Constants {
 	int CHANNEL_MAX = CHANNEL_MAX_SCOUT;
 	
         /**
-         * ARCHON-GARDENER INTERACTION VALUES
+         * ARCHON-GARDENER Movement Limitation Values
 	 *
 	 *
 	 **/
-        int GARDENER_RAD = 7;
-        int GARDENER_RAD_SQR = GARDENER_RAD*GARDENER_RAD;
-        int ARCHON_BORDER_RAD = 7;
-        int ARCHON_BORDER_RAD_SQR = ARCHON_BORDER_RAD*ARCHON_BORDER_RAD;
+        float GARDENER_RAD = 40.0f;
+        float GARDENER_RAD_SQR = GARDENER_RAD*GARDENER_RAD;
+        float ARCHON_BORDER_RAD = 9.5f;
+        float ARCHON_BORDER_RAD_SQR = ARCHON_BORDER_RAD*ARCHON_BORDER_RAD;
 	
 	
 }
