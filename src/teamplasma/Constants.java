@@ -15,14 +15,14 @@ public interface Constants {
 	int MAX_COUNT_SOLDIER = 5;
 	int MAX_COUNT_TANK = 5;
 	int MAX_COUNT_SCOUT = 10;
-	int MAX_COUNT_TREES = (int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_LUMBERJACK;
+	int MAX_COUNT_TREE = (int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
 	
 	/**
 	 * CHANNEL_COUNT_XXX 
 	 * 
 	 * Sets the channels for counting the number of each robot currently in play
 	**/
-	int CHANNEL_COUNT_SPAWNED = 8;
+	int CHANNEL_COUNT_SPAWNED = 0;
 	int CHANNEL_COUNT_ARCHON = 1;
 	int CHANNEL_COUNT_GARDENER = 2;
 	int CHANNEL_COUNT_LUMBERJACK = 3;

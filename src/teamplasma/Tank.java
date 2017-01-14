@@ -14,6 +14,9 @@ public class Tank {
 			// Try/catch blocks stop unhandled exceptions, which cause your
 			// robot to explode
 			try {
+				
+				RobotPlayer.checkIn();
+				
 				MapLocation myLocation = rc.getLocation();
 
 				// See if there are any nearby enemy robots

@@ -3,9 +3,13 @@ package teamplasma;
 import battlecode.common.*;
 
 public class Archon {
+	static RobotController rc;
+	static boolean amLeader = false;
 	
     static void run(RobotController rc) throws GameActionException {
         System.out.println("I'm an archon!");
+        
+        Archon.rc = rc;
 
         // The code you want your robot to perform every round should be in this loop
         while (true) {
@@ -14,6 +18,12 @@ public class Archon {
             try {
             	
             	RobotPlayer.checkIn();
+            	
+            	amLeader = electLeader();
+            	
+            	if (amLeader) {
+            		bringOutYourDead();
+            	}
             	
             	// Try to dodge and if not continue moving.
             	if (!Movement.dodgeBullets()) {
@@ -37,5 +47,28 @@ public class Archon {
                 e.printStackTrace();
             }
         }
+    }
+    
+     /**
+      * 
+      * @return true if leader, false otherwise
+      * @throws GameActionException
+      */
+    static boolean electLeader() throws GameActionException {
+    	int currentRound = rc.getRoundNum();
+    	for (int channel = Constants.CHANNEL_MIN_ARCHON; channel >= RobotPlayer.myChannel; channel++) {
+    		int message = rc.readBroadcast(channel);
+    		if ( currentRound - message > 1 && currentRound != 0 ) {
+    			rc.broadcast(channel, 0);
+    			// TODO: zero out communication channels
+    		} else {
+    			return channel == RobotPlayer.myChannel;
+    		}
+    	}
+    	return false;
+    }
+    
+    static void bringOutYourDead() throws GameActionException {
+    	// TODO: Find and prune dead robots.
     }
 }

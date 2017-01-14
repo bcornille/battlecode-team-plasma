@@ -73,27 +73,28 @@ public strictfp class RobotPlayer {
      */
    static void boot() throws GameActionException {
 	   myID = rc.getID();
-	   System.out.println(myID);
+//	   System.out.println(myID);
 	   myType = rc.getType();
-	   System.out.println(myType.toString());
+//	   System.out.println(myType.toString());
 	   
 	   Communication.countMe(myType);
 	   
 	   int numSpawned = rc.readBroadcast(Constants.CHANNEL_COUNT_SPAWNED);
 	   mySpawnNumber = ++numSpawned;
-	   System.out.println(mySpawnNumber);
+//	   System.out.println(mySpawnNumber);
 	   rc.broadcast(Constants.CHANNEL_COUNT_SPAWNED, numSpawned);
 	   
 	   myChannel = Communication.getOpenChannel(myType);
-	   System.out.println("My channel" + myChannel);
+//	   System.out.println("My channel" + myChannel);
 	   if (myChannel != -1)
 		   canCommunicate = true;
 	   
 	   myDirection = Movement.randomDirection();
-	   System.out.println("My direction" + myDirection.toString());
+//	   System.out.println("My direction" + myDirection.toString());
    }
    
    static void checkIn() throws GameActionException {
-	   rc.broadcast(myChannel, rc.getRoundNum());
+	   if (canCommunicate)
+		   rc.broadcast(myChannel, rc.getRoundNum());
    }
 }

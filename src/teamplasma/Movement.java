@@ -151,7 +151,7 @@ public class Movement {
             float perpendicularDist = (float)Math.abs(distToRobot * Math.sin(theta)); // soh cah toa :)
             
             if (perpendicularDist <= rc.getType().bodyRadius) {
-            	MapLocation intersection = bulletLocation.add(propagationDirection, perpendicularDist);
+            	MapLocation intersection = bulletLocation.add(propagationDirection, (float)(distToRobot * Math.cos(theta)));
             	Direction towardBullet = new Direction(myLocation, intersection);
     			if (Movement.tryMove(towardBullet.opposite())) {
     				return true;

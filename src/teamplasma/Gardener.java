@@ -13,6 +13,8 @@ public class Gardener {
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
                 
+            	RobotPlayer.checkIn();
+            	
                 // Sense trees for watering
                 TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
                 for(TreeInfo tree : trees) {
