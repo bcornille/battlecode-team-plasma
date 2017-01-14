@@ -42,4 +42,35 @@ public class Communication {
         	return -1;
 		}
 	}
+	
+	static void countMe(int channel) throws GameActionException {
+		int count = rc.readBroadcast(channel);
+		rc.broadcast(channel, ++count);
+	}
+	
+	static void countMe(RobotType type) throws GameActionException {
+		
+		switch (type) {
+		case ARCHON:
+            countMe(Constants.CHANNEL_COUNT_ARCHON);
+            break;
+        case GARDENER:
+        	countMe(Constants.CHANNEL_COUNT_GARDENER);
+            break;
+        case SOLDIER:
+        	countMe(Constants.CHANNEL_COUNT_SOLDIER);
+            break;
+        case TANK:
+        	countMe(Constants.CHANNEL_COUNT_TANK);
+        	break;
+        case LUMBERJACK:
+        	countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
+            break;
+        case SCOUT:
+        	countMe(Constants.CHANNEL_COUNT_SCOUT);
+        	break;
+        default:
+        	System.out.println("An unkown RobotType has appeared!");
+		}
+	}
 }

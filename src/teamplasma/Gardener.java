@@ -12,11 +12,6 @@ public class Gardener {
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
-
-                // Listen for home archon's location
-                int xPos = rc.readBroadcast(0);
-                int yPos = rc.readBroadcast(1);
-                MapLocation archonLoc = new MapLocation(xPos,yPos);
                 
                 // Sense trees for watering
                 TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
@@ -43,7 +38,7 @@ public class Gardener {
                     rc.buildRobot(RobotType.SOLDIER, dir);
                 } else if (rc.canBuildRobot(RobotType.TANK, dir) && Math.random() < .1) {
                     rc.buildRobot(RobotType.TANK, dir);
-                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && Math.random() < .01) {
+                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && Math.random() < .1) {
                 	rc.buildRobot(RobotType.LUMBERJACK, dir);
                 } else if (rc.canBuildRobot(RobotType.SCOUT, dir) && Math.random() < .01) {
                 	rc.buildRobot(RobotType.SCOUT, dir);

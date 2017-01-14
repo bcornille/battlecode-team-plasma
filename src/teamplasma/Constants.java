@@ -58,5 +58,16 @@ public interface Constants {
 	int CHANNEL_MAX = CHANNEL_MAX_SCOUT;
 	
 	
-	
+	/**
+	 * STRIDE_RADIUS_XXX
+	 * 
+	 * Stride radius for each robot. (Not available in GameConstants)
+	 *   
+	 */
+	float STRIDE_RADIUS_ARCHON = 1.0f;
+	float STRIDE_RADIUS_GARDENER = 1.0f;
+	float STRIDE_RADIUS_LUMBERJACK = 1.5f;
+	float STRIDE_RADIUS_SOLDIER = 2.0f;
+	float STRIDE_RADIUS_TANK = 1.0f;
+	float STRIDE_RADIUS_SCOUT = 2.5f;
 }
