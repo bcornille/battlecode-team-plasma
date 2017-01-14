@@ -58,24 +58,30 @@ public interface Constants {
 	int CHANNEL_MAX = CHANNEL_MAX_SCOUT;
 	
         /**
-         * ARCHON-GARDENER Movement Limitation Values
+         * ARCHON-RELATED CONSTANTS
+	 *
+	 *
+	 **/
+        float ARCHON_BORDER_RAD = 9.5f;
+        float ARCHON_BORDER_RAD_SQR = ARCHON_BORDER_RAD*ARCHON_BORDER_RAD;
+        // donate if enough to build a tank and have enough to
+        // get at least one victory point
+        float DONATE_LIMIT = 310.0f;
+
+        /**
+         * GARDENER-RELATED CONSTANTS
 	 *
 	 *
 	 **/
         float GARDENER_RAD = 40.0f;
         float GARDENER_RAD_SQR = GARDENER_RAD*GARDENER_RAD;
-        float ARCHON_BORDER_RAD = 9.5f;
-        float ARCHON_BORDER_RAD_SQR = ARCHON_BORDER_RAD*ARCHON_BORDER_RAD;
-
-        /**
-         * Unit Build Probabilities
-	 *
-	 *
-	 **/
         float SOLDIER_BUILD_PROB = 0.01f;
         float TANK_BUILD_PROB = 0.1f;
         float LUMBERJACK_BUILD_PROB = 0.01f;
         float SCOUT_BUILD_PROB = 0.01f;
+
+
+
     
 	
 }

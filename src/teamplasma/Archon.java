@@ -15,7 +15,12 @@ public class Archon {
             	
             	RobotPlayer.checkIn();            	
             	// Try to dodge and if not continue moving.
-		
+	        float teamBullets = rc.getTeamBullets();
+		if(rc.getTeamBullets() > Constants.DONATE_LIMIT) {
+		    float numToDonate = 10.0f*((teamBullets - Constants.DONATE_LIMIT) % 10);
+		    rc.donate(numToDonate);
+		}
+
 		Movement.dodgeBullets();
 
 		MapLocation myLoc = rc.getLocation();
