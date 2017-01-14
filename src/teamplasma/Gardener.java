@@ -19,10 +19,13 @@ public class Gardener {
 		//MapLocation archonLoc = new MapLocation(xPos,yPos); // doesn't seem to be working?
                 
                 // Sense trees for watering
-                TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
+                TreeInfo[] trees = rc.senseNearbyTrees(-1);
+		float lumberjackWeight = 1;
                 for(TreeInfo tree : trees) {
-                	if (rc.canWater(tree.ID))
+                	if (tree.team == myTeam && rc.canWater(tree.ID))
                 		rc.water(tree.ID);
+			if (tree.team == Team.NEUTRAL)
+			    lumberjackWeight += 0.5; //more likely to build lumberjacks w/ neutral trees nearby
                 }
 
 		// 		//if too close to an archon, move away a bit
@@ -60,17 +63,17 @@ public class Gardener {
 
                 // Generate a random direction
                 Direction dir = RobotPlayer.myDirection.opposite();
-
+		
                 // Randomly attempt to build a soldier or lumberjack in this direction
                 if (rc.canPlantTree(dir) && Math.random() < .01) {
                 	rc.plantTree(dir);
-            	} else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && Math.random() < .01) {
+            	} else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && Math.random() < Constants.SOLDIER_BUILD_PROB) {
                     rc.buildRobot(RobotType.SOLDIER, dir);
-                } else if (rc.canBuildRobot(RobotType.TANK, dir) && Math.random() < .1) {
+                } else if (rc.canBuildRobot(RobotType.TANK, dir) && Math.random() < Constants.TANK_BUILD_PROB) {
                     rc.buildRobot(RobotType.TANK, dir);
-                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && Math.random() < .01) {
+                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && Math.random() < lumberjackWeight*Constants.LUMBERJACK_BUILD_PROB) {
                 	rc.buildRobot(RobotType.LUMBERJACK, dir);
-                } else if (rc.canBuildRobot(RobotType.SCOUT, dir) && Math.random() < .01) {
+                } else if (rc.canBuildRobot(RobotType.SCOUT, dir) && Math.random() < Constants.SCOUT_BUILD_PROB) {
                 	rc.buildRobot(RobotType.SCOUT, dir);
                 }
 

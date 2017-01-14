@@ -17,7 +17,7 @@ public class Archon {
             	// Try to dodge and if not continue moving.
 		
 		Movement.dodgeBullets();
-		
+
 		MapLocation myLoc = rc.getLocation();
 		//check to make sure the Archon has enough room
 		if(!rc.onTheMap(myLoc,Constants.ARCHON_BORDER_RAD)) {

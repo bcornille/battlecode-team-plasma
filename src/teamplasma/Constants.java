@@ -66,6 +66,16 @@ public interface Constants {
         float GARDENER_RAD_SQR = GARDENER_RAD*GARDENER_RAD;
         float ARCHON_BORDER_RAD = 9.5f;
         float ARCHON_BORDER_RAD_SQR = ARCHON_BORDER_RAD*ARCHON_BORDER_RAD;
-	
+
+        /**
+         * Unit Build Probabilities
+	 *
+	 *
+	 **/
+        float SOLDIER_BUILD_PROB = 0.01f;
+        float TANK_BUILD_PROB = 0.1f;
+        float LUMBERJACK_BUILD_PROB = 0.01f;
+        float SCOUT_BUILD_PROB = 0.01f;
+    
 	
 }
