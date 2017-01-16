@@ -1,5 +1,5 @@
 package comms;
-
+ 
 import battlecode.common.*;
 
 import static comms.Constants.*;
@@ -20,6 +20,7 @@ public class Build {
         if ( rc.canHireGardener(dir) ) {
             // Hire Gardener
         	rc.hireGardener(dir);
+        	Communications.cntRobot(CHANNEL_COUNT_GARDENER);
         }
 	}
 
@@ -37,6 +38,7 @@ public class Build {
         if ( rc.canBuildRobot(RobotType.LUMBERJACK, dir) ) {
         	// Build Lumberjack
         	rc.buildRobot(RobotType.LUMBERJACK, dir);
+        	Communications.cntRobot(CHANNEL_COUNT_LUMBERJACK);
         }
 	}
 
@@ -54,6 +56,7 @@ public class Build {
         if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
         	// Build Soldier
         	rc.buildRobot(RobotType.SOLDIER, dir);
+        	Communications.cntRobot(CHANNEL_COUNT_SOLDIER);
         }
 }	
 	
@@ -71,6 +74,7 @@ public class Build {
         if ( rc.canBuildRobot(RobotType.TANK, dir) ) {
         	// Build Tank
         	rc.buildRobot(RobotType.TANK, dir);
+        	Communications.cntRobot(CHANNEL_COUNT_TANK);
         }
 	}	
 	
@@ -88,7 +92,9 @@ public class Build {
         if ( rc.canBuildRobot(RobotType.SCOUT, dir) ) {
         	// Build Scout
         	rc.buildRobot(RobotType.SCOUT, dir);
+        	Communications.cntRobot(CHANNEL_COUNT_SCOUT);
         }
 	}	
+
 
 }

@@ -11,7 +11,7 @@ public class Movement {
      */
     static Direction randomDirection() {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
-    }
+    } 
 
     static Direction dirLeftRobot(RobotInfo robot) {
     	

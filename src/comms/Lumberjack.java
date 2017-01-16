@@ -12,17 +12,13 @@ public class Lumberjack {
     static void run(RobotController rc) throws GameActionException {
         System.out.println("I'm a lumberjack!");
         Team enemy = rc.getTeam().opponent();
+        
+		Communications.setupMyComms(CHANNEL_MIN_LUMBERJACK, CHANNEL_MAX_LUMBERJACK);
+
 
         while (true) {
-
+ 
             try {
-        		// On robots first round, count Scout and setup their comms
-            	if (RobotPlayer.age==0) {
-            		// Count Scout
-            		Initialize.cntRobot(CHANNEL_COUNT_LUMBERJACK);
-                	// Setup comms channel
-                	Initialize.setupMyComms(CHANNEL_MIN_LUMBERJACK, CHANNEL_MAX_LUMBERJACK);
-            	}
 
                 // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
                 RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);

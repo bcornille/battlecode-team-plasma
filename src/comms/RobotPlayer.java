@@ -24,7 +24,7 @@ public strictfp class RobotPlayer {
     @SuppressWarnings("unused")
     public static void run(RobotController rc) throws GameActionException {
 
-        RobotPlayer.rc = rc;
+        RobotPlayer.rc = rc; 
 
         // Control methods for each RobotType.
         switch (rc.getType()) {

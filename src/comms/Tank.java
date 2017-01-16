@@ -9,19 +9,13 @@ public class Tank {
 		System.out.println("I'm an tank!");
 		Team enemy = rc.getTeam().opponent();
 
+    	// Setup comms channel
+		Communications.setupMyComms(CHANNEL_MIN_TANK, CHANNEL_MAX_TANK);
 
 		while (true) {
-
-			try {
-        		// On robots first round, count Scout and setup their comms
-            	if (RobotPlayer.age==0) {
-            		// Count Scout
-            		Initialize.cntRobot(CHANNEL_COUNT_TANK);
-                	// Setup comms channel
-                	Initialize.setupMyComms(CHANNEL_MIN_TANK, CHANNEL_MAX_TANK);
-            	}
 				
-				
+			try {	
+			
 				MapLocation myLocation = rc.getLocation();
 
 				// See if there are any nearby enemy robots
@@ -29,7 +23,7 @@ public class Tank {
 
 				// If there are some...
 				if (robots.length > 0) {
-					// And we have enough bullets, and haven't attacked yet this
+		 			// And we have enough bullets, and haven't attacked yet this
 					// turn...
 					if (rc.canFireSingleShot()) {
 						// ...Then fire a bullet in the direction of the enemy.

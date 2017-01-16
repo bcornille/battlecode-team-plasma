@@ -9,22 +9,18 @@ public class Soldier {
         System.out.println("I'm an soldier!");
         Team enemy = rc.getTeam().opponent();
 
+    	// Setup comms channel
+		Communications.setupMyComms(CHANNEL_MIN_SOLDIER, CHANNEL_MAX_SOLDIER);
+		
         while (true) {
 
             try {
-        		// On robots first round, count Soldier and setup their comms
-            	if (RobotPlayer.age==0) {
-            		// Count Scout
-            		Initialize.cntRobot(CHANNEL_COUNT_SOLDIER);
-                	// Setup comms channel
-                	Initialize.setupMyComms(CHANNEL_MIN_SOLDIER, CHANNEL_MAX_SOLDIER);
-            	}
             	
                 MapLocation myLocation = rc.getLocation();
 
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
-
+ 
                 // If there are some...
                 if (robots.length > 0) {
                     // And we have enough bullets, and haven't attacked yet this turn...

@@ -3,16 +3,26 @@ package comms;
 public interface Constants {
 
 	/**
+	 * CHANNEL_MAP_XXX 
+	 * 
+	 * Sets the channels for keeping track of the map limits
+	**/
+	int CHANNEL_MAP_YMAX = 994;
+	int CHANNEL_MAP_YMIN = 993;
+	int CHANNEL_MAP_XMAX = 992;
+	int CHANNEL_MAP_XMIN = 991;
+	
+	/**
 	 * MAX_COUNT_XXX 
 	 * 
 	 * Sets the maximum number of each robot currently in play at any one time
 	**/
 	int MAX_COUNT_ARCHON = 3;
-	int MAX_COUNT_GARDENER = 5;
-	int MAX_COUNT_LUMBERJACK = 5;
-	int MAX_COUNT_SOLDIER = 5;
-	int MAX_COUNT_TANK = 5;
-	int MAX_COUNT_SCOUT = 10;
+	int MAX_COUNT_GARDENER = 4;
+	int MAX_COUNT_LUMBERJACK = 0;
+	int MAX_COUNT_SOLDIER = 0;
+	int MAX_COUNT_TANK = 0;
+	int MAX_COUNT_SCOUT = 1;
 	
 	/**
 	 * CHANNEL_COUNT_XXX 
