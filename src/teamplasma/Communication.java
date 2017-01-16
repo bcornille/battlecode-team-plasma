@@ -1,5 +1,18 @@
 package teamplasma;
 
+import static comms.Constants.CHANNEL_MAX_ARCHON;
+import static comms.Constants.CHANNEL_MAX_GARDENER;
+import static comms.Constants.CHANNEL_MAX_LUMBERJACK;
+import static comms.Constants.CHANNEL_MAX_SCOUT;
+import static comms.Constants.CHANNEL_MAX_SOLDIER;
+import static comms.Constants.CHANNEL_MAX_TANK;
+import static comms.Constants.CHANNEL_MIN_ARCHON;
+import static comms.Constants.CHANNEL_MIN_GARDENER;
+import static comms.Constants.CHANNEL_MIN_LUMBERJACK;
+import static comms.Constants.CHANNEL_MIN_SCOUT;
+import static comms.Constants.CHANNEL_MIN_SOLDIER;
+import static comms.Constants.CHANNEL_MIN_TANK;
+
 import battlecode.common.*;
 
 public class Communication {
@@ -72,5 +85,38 @@ public class Communication {
         default:
         	System.out.println("An unkown RobotType has appeared!");
 		}
+	}
+	
+	static void zeroComms(int id) throws GameActionException {
+		int start = Constants.CHANNEL_MAX + Constants.NUM_MESSAGE_CHANNELS*(id - Constants.CHANNEL_MIN) + 1;
+		int end = start + Constants.NUM_MESSAGE_CHANNELS - 1;
+		for (int channel = start; channel <= end; channel++) {
+			rc.broadcast(channel, 0);
+		}
+	}
+	
+	// Get the channel for the type of robot for the counter
+	static int getCountChannel(int i) {
+
+		int channel = 0;
+
+		if (i >= CHANNEL_MIN_ARCHON && i <= CHANNEL_MAX_ARCHON) {
+			channel = Constants.CHANNEL_COUNT_ARCHON;
+		} else if (i >= CHANNEL_MIN_GARDENER && i <= CHANNEL_MAX_GARDENER) {
+			channel = Constants.CHANNEL_COUNT_GARDENER;
+		} else if (i >= CHANNEL_MIN_LUMBERJACK && i <= CHANNEL_MAX_LUMBERJACK) {
+			channel = Constants.CHANNEL_COUNT_LUMBERJACK;
+		} else if (i >= CHANNEL_MIN_SOLDIER && i <= CHANNEL_MAX_SOLDIER) {
+			channel = Constants.CHANNEL_COUNT_SOLDIER;
+		} else if (i >= CHANNEL_MIN_TANK && i <= CHANNEL_MAX_TANK) {
+			channel = Constants.CHANNEL_COUNT_TANK;
+		} else if (i >= CHANNEL_MIN_SCOUT && i <= CHANNEL_MAX_SCOUT) {
+			channel = Constants.CHANNEL_COUNT_SCOUT;
+		} else {
+			System.out.println("Invalid check-in channel option");
+		}
+
+		return channel;
+
 	}
 }

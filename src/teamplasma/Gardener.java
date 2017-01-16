@@ -34,20 +34,17 @@ public class Gardener {
                 Direction dir = RobotPlayer.myDirection.opposite();
 
                 // Randomly attempt to build a soldier or lumberjack in this direction
-                if (rc.canPlantTree(dir) && Math.random() < .01) {
+                if (rc.canPlantTree(dir) && Math.random() < .1) {
                 	rc.plantTree(dir);
-            	} else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && Math.random() < .01) {
-                    rc.buildRobot(RobotType.SOLDIER, dir);
-                } else if (rc.canBuildRobot(RobotType.TANK, dir) && Math.random() < .1) {
-                    rc.buildRobot(RobotType.TANK, dir);
-                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && Math.random() < .1) {
-                	rc.buildRobot(RobotType.LUMBERJACK, dir);
-                } else if (rc.canBuildRobot(RobotType.SCOUT, dir) && Math.random() < .01) {
+            	} else if (rc.canBuildRobot(RobotType.SCOUT, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
                 	rc.buildRobot(RobotType.SCOUT, dir);
+                } else if (rc.canBuildRobot(RobotType.TANK, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_TANK) < Constants.MAX_COUNT_TANK) {
+                    rc.buildRobot(RobotType.TANK, dir);
+                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
+                	rc.buildRobot(RobotType.LUMBERJACK, dir);
+                } else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+                    rc.buildRobot(RobotType.SOLDIER, dir);
                 }
-
-                // Move randomly
-                Movement.tryMove(Movement.randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 // endTurn() implements Clock.yield() with extra information such as age

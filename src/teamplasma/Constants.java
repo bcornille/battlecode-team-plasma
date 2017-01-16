@@ -57,6 +57,11 @@ public interface Constants {
 	int CHANNEL_MIN = CHANNEL_MIN_ARCHON;
 	int CHANNEL_MAX = CHANNEL_MAX_SCOUT;
 	
+	/**
+	 * Constants related to message related channels.
+	 */
+	int NUM_MESSAGE_CHANNELS = 10;
+	
 	
 	/**
 	 * STRIDE_RADIUS_XXX

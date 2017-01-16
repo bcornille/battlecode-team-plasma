@@ -40,9 +40,6 @@ public class Tank {
             		}
             	}
 
-				// Move randomly
-				Movement.tryMove(Movement.randomDirection());
-
 				// Clock.yield() makes the robot wait until the next turn, then
 				// it will perform this loop again
 				// endTurn() implements Clock.yield() with extra information

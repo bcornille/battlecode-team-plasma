@@ -56,11 +56,13 @@ public class Archon {
       */
     static boolean electLeader() throws GameActionException {
     	int currentRound = rc.getRoundNum();
-    	for (int channel = Constants.CHANNEL_MIN_ARCHON; channel >= RobotPlayer.myChannel; channel++) {
-    		int message = rc.readBroadcast(channel);
-    		if ( currentRound - message > 1 && currentRound != 0 ) {
+    	for (int channel = Constants.CHANNEL_MIN_ARCHON; channel <= RobotPlayer.myChannel; channel++) {
+    		int lastCheckIn = rc.readBroadcast(channel);
+    		if ( currentRound - lastCheckIn > 0 && lastCheckIn != 0 ) {
     			rc.broadcast(channel, 0);
-    			// TODO: zero out communication channels
+    			Communication.zeroComms(channel);
+    			int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
+    			rc.broadcast(Constants.CHANNEL_COUNT_ARCHON, --numArchons);
     		} else {
     			return channel == RobotPlayer.myChannel;
     		}
@@ -69,6 +71,16 @@ public class Archon {
     }
     
     static void bringOutYourDead() throws GameActionException {
-    	// TODO: Find and prune dead robots.
+    	int currentRound = rc.getRoundNum();
+    	for (int channel = Constants.CHANNEL_MIN_GARDENER; channel <= Constants.CHANNEL_MAX; channel++) {
+    		int lastCheckIn = rc.readBroadcast(channel);
+    		if (currentRound - lastCheckIn > 1 && lastCheckIn != 0) {
+    			rc.broadcast(channel, 0);
+    			Communication.zeroComms(channel);
+    			int countChannel = Communication.getCountChannel(channel);
+    			int numRobotsOfType = rc.readBroadcast(countChannel);
+    			rc.broadcast(countChannel, --numRobotsOfType);
+    		}
+    	}
     }
 }
