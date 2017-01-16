@@ -85,7 +85,7 @@ public strictfp class RobotPlayer {
 	   rc.broadcast(Constants.CHANNEL_COUNT_SPAWNED, numSpawned);
 	   
 	   myChannel = Communication.getOpenChannel(myType);
-//	   System.out.println("My channel" + myChannel);
+	   System.out.println("My channel" + myChannel);
 	   if (myChannel != -1)
 		   canCommunicate = true;
 	   

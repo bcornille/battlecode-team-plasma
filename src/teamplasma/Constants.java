@@ -14,7 +14,7 @@ public interface Constants {
 	int MAX_COUNT_LUMBERJACK = 5;
 	int MAX_COUNT_SOLDIER = 5;
 	int MAX_COUNT_TANK = 5;
-	int MAX_COUNT_SCOUT = 10;
+	int MAX_COUNT_SCOUT = 5;
 	int MAX_COUNT_TREE = (int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
 	
 	/**

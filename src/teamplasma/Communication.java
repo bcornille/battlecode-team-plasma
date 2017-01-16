@@ -1,18 +1,5 @@
 package teamplasma;
 
-import static comms.Constants.CHANNEL_MAX_ARCHON;
-import static comms.Constants.CHANNEL_MAX_GARDENER;
-import static comms.Constants.CHANNEL_MAX_LUMBERJACK;
-import static comms.Constants.CHANNEL_MAX_SCOUT;
-import static comms.Constants.CHANNEL_MAX_SOLDIER;
-import static comms.Constants.CHANNEL_MAX_TANK;
-import static comms.Constants.CHANNEL_MIN_ARCHON;
-import static comms.Constants.CHANNEL_MIN_GARDENER;
-import static comms.Constants.CHANNEL_MIN_LUMBERJACK;
-import static comms.Constants.CHANNEL_MIN_SCOUT;
-import static comms.Constants.CHANNEL_MIN_SOLDIER;
-import static comms.Constants.CHANNEL_MIN_TANK;
-
 import battlecode.common.*;
 
 public class Communication {
@@ -58,28 +45,36 @@ public class Communication {
 	
 	static void countMe(int channel) throws GameActionException {
 		int count = rc.readBroadcast(channel);
+		System.out.println("Print channel:  " + channel);
 		rc.broadcast(channel, ++count);
+		System.out.println("Robot count:  " + count);
 	}
 	
 	static void countMe(RobotType type) throws GameActionException {
 		
 		switch (type) {
 		case ARCHON:
+			System.out.println("New Archon");
             countMe(Constants.CHANNEL_COUNT_ARCHON);
             break;
         case GARDENER:
+        	System.out.println("New Gardener");
         	countMe(Constants.CHANNEL_COUNT_GARDENER);
             break;
         case SOLDIER:
+        	System.out.println("New Soldier");
         	countMe(Constants.CHANNEL_COUNT_SOLDIER);
             break;
         case TANK:
+        	System.out.println("New Tank");
         	countMe(Constants.CHANNEL_COUNT_TANK);
         	break;
         case LUMBERJACK:
+        	System.out.println("New Lumberjack");
         	countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
             break;
         case SCOUT:
+        	System.out.println("New Scout");
         	countMe(Constants.CHANNEL_COUNT_SCOUT);
         	break;
         default:
@@ -98,25 +93,22 @@ public class Communication {
 	// Get the channel for the type of robot for the counter
 	static int getCountChannel(int i) {
 
-		int channel = 0;
-
-		if (i >= CHANNEL_MIN_ARCHON && i <= CHANNEL_MAX_ARCHON) {
-			channel = Constants.CHANNEL_COUNT_ARCHON;
-		} else if (i >= CHANNEL_MIN_GARDENER && i <= CHANNEL_MAX_GARDENER) {
-			channel = Constants.CHANNEL_COUNT_GARDENER;
-		} else if (i >= CHANNEL_MIN_LUMBERJACK && i <= CHANNEL_MAX_LUMBERJACK) {
-			channel = Constants.CHANNEL_COUNT_LUMBERJACK;
-		} else if (i >= CHANNEL_MIN_SOLDIER && i <= CHANNEL_MAX_SOLDIER) {
-			channel = Constants.CHANNEL_COUNT_SOLDIER;
-		} else if (i >= CHANNEL_MIN_TANK && i <= CHANNEL_MAX_TANK) {
-			channel = Constants.CHANNEL_COUNT_TANK;
-		} else if (i >= CHANNEL_MIN_SCOUT && i <= CHANNEL_MAX_SCOUT) {
-			channel = Constants.CHANNEL_COUNT_SCOUT;
+		if (i >= Constants.CHANNEL_MIN_ARCHON && i <= Constants.CHANNEL_MAX_ARCHON) {
+			return Constants.CHANNEL_COUNT_ARCHON;
+		} else if (i >= Constants.CHANNEL_MIN_GARDENER && i <= Constants.CHANNEL_MAX_GARDENER) {
+			return Constants.CHANNEL_COUNT_GARDENER;
+		} else if (i >= Constants.CHANNEL_MIN_LUMBERJACK && i <= Constants.CHANNEL_MAX_LUMBERJACK) {
+			return Constants.CHANNEL_COUNT_LUMBERJACK;
+		} else if (i >= Constants.CHANNEL_MIN_SOLDIER && i <= Constants.CHANNEL_MAX_SOLDIER) {
+			return Constants.CHANNEL_COUNT_SOLDIER;
+		} else if (i >= Constants.CHANNEL_MIN_TANK && i <= Constants.CHANNEL_MAX_TANK) {
+			return Constants.CHANNEL_COUNT_TANK;
+		} else if (i >= Constants.CHANNEL_MIN_SCOUT && i <= Constants.CHANNEL_MAX_SCOUT) {
+			return Constants.CHANNEL_COUNT_SCOUT;
 		} else {
 			System.out.println("Invalid check-in channel option");
+			return -1;
 		}
-
-		return channel;
 
 	}
 }

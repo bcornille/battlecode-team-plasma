@@ -76,10 +76,13 @@ public class Archon {
     		int lastCheckIn = rc.readBroadcast(channel);
     		if (currentRound - lastCheckIn > 1 && lastCheckIn != 0) {
     			rc.broadcast(channel, 0);
+    			System.out.println("Robot died on channel " + channel);
     			Communication.zeroComms(channel);
     			int countChannel = Communication.getCountChannel(channel);
+    			System.out.println("Robot count channel " + countChannel);
     			int numRobotsOfType = rc.readBroadcast(countChannel);
     			rc.broadcast(countChannel, --numRobotsOfType);
+    			System.out.println("Robots left " + numRobotsOfType);
     		}
     	}
     }
