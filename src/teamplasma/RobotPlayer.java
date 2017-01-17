@@ -77,7 +77,7 @@ public strictfp class RobotPlayer {
 	   myType = rc.getType();
 //	   System.out.println(myType.toString());
 	   
-	   Communication.countMe(myType);
+//	   Communication.countMe(myType);
 	   
 	   int numSpawned = rc.readBroadcast(Constants.CHANNEL_COUNT_SPAWNED);
 	   mySpawnNumber = ++numSpawned;

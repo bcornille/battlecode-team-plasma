@@ -36,6 +36,7 @@ public class Archon {
                 // Randomly attempt to build a gardener in this direction
                 if (rc.canHireGardener(RobotPlayer.myDirection.opposite()) && rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < Constants.MAX_COUNT_GARDENER) {
                     rc.hireGardener(RobotPlayer.myDirection.opposite());
+                    Communication.countMe(Constants.CHANNEL_COUNT_GARDENER);
                 }
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
