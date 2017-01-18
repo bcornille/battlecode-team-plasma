@@ -24,6 +24,10 @@ public class Gardener {
 
                 // If we need Scouts, hire them
                 int numScout = rc.readBroadcast(CHANNEL_COUNT_SCOUT);
+                
+//                System.out.println(numScout + "/" + MAX_COUNT_SCOUT);
+                
+                
                 if (numScout < MAX_COUNT_SCOUT) {
                    	Build.Scout();
                 }

@@ -8,9 +8,6 @@ public class Archon {
 	
 	static RobotController rc = RobotPlayer.rc;
 	
-
-
-	
     static void run(RobotController rc) throws GameActionException {
         System.out.println("I'm an archon!");
     	
@@ -50,11 +47,6 @@ public class Archon {
                 // Move randomly
                 Movement.tryMove(Movement.randomDirection());
 
-                
-            	
-            	if (rc.getRoundNum() > 5) {
-            		rc.resign();
-            	}
                 
                 // end turn
                 RobotPlayer.endTurn();
@@ -114,8 +106,14 @@ public class Archon {
 	        
 	        float xcen = (xmin+xmax)/2;
 	        float ycen = (ymin+ymax)/2;
-	       
 	        
+	        rc.broadcast(CHANNEL_MAP_XMIN, (int)xmin);
+	        rc.broadcast(CHANNEL_MAP_XMAX, (int)xmax);
+	        rc.broadcast(CHANNEL_MAP_YMIN, (int)ymin);
+	        rc.broadcast(CHANNEL_MAP_YMAX, (int)ymax);
+	        rc.broadcast(CHANNEL_MAP_XCEN, (int)xcen);
+	        rc.broadcast(CHANNEL_MAP_YCEN, (int)ycen);
+	        	        
 		} else {
 			// Do Nothing
 		}

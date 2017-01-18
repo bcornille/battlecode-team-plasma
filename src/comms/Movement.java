@@ -5,6 +5,28 @@ import battlecode.common.*;
 public class Movement {
 	static RobotController rc = RobotPlayer.rc;
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
     /**
      * Returns a random Direction
      * @return a random Direction
