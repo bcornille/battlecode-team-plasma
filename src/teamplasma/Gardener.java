@@ -38,12 +38,16 @@ public class Gardener {
                 	rc.plantTree(dir);
             	} else if (rc.canBuildRobot(RobotType.SCOUT, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
                 	rc.buildRobot(RobotType.SCOUT, dir);
+                	Communication.countMe(Constants.CHANNEL_COUNT_SCOUT);
                 } else if (rc.canBuildRobot(RobotType.TANK, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_TANK) < Constants.MAX_COUNT_TANK) {
                     rc.buildRobot(RobotType.TANK, dir);
+                    Communication.countMe(Constants.CHANNEL_COUNT_TANK);
                 } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
                 	rc.buildRobot(RobotType.LUMBERJACK, dir);
+                	Communication.countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
                 } else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
                     rc.buildRobot(RobotType.SOLDIER, dir);
+                    Communication.countMe(Constants.CHANNEL_COUNT_SOLDIER);
                 }
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
