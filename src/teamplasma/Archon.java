@@ -10,6 +10,11 @@ public class Archon {
         System.out.println("I'm an archon!");
         
         Archon.rc = rc;
+        
+        Communication.countMe(Constants.CHANNEL_COUNT_ARCHON);
+        
+        if(rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON) == 1)
+        	mapGuess();
 
         // The code you want your robot to perform every round should be in this loop
         while (true) {
@@ -50,6 +55,45 @@ public class Archon {
         }
     }
     
+    static void mapGuess() throws GameActionException {      
+       
+        MapLocation myLocation = rc.getLocation();
+        MapLocation[] myArchons = rc.getInitialArchonLocations(RobotPlayer.myTeam);
+        MapLocation[] enemyArchons = rc.getInitialArchonLocations(RobotPlayer.enemyTeam);
+        int numArchons = myArchons.length;
+        
+        // Locate all Archons to get rough outline of map and map center
+        float xmin = myLocation.x;
+        float xmax = myLocation.x;
+        float ymin = myLocation.y;
+        float ymax = myLocation.y;
+        
+        for ( int i = 0; i < numArchons; i++ ) {
+        	
+        	xmin = Math.min(myArchons[i].x,xmin);
+        	xmax = Math.max(myArchons[i].x,xmax);
+        	ymin = Math.min(myArchons[i].y,ymin);
+        	ymax = Math.max(myArchons[i].y,ymax);
+
+        	xmin = Math.min(enemyArchons[i].x,xmin);
+        	xmax = Math.max(enemyArchons[i].x,xmax);
+        	ymin = Math.min(enemyArchons[i].y,ymin);
+        	ymax = Math.max(enemyArchons[i].y,ymax);
+        	
+        }
+        
+        float xcen = (xmin+xmax)/2;
+        float ycen = (ymin+ymax)/2;
+        RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
+        
+        Communication.broadcastFloat(Constants.CHANNEL_MAP_XMIN, xmin);
+        Communication.broadcastFloat(Constants.CHANNEL_MAP_XMAX, xmax);
+        Communication.broadcastFloat(Constants.CHANNEL_MAP_YMIN, ymin);
+        Communication.broadcastFloat(Constants.CHANNEL_MAP_YMAX, ymax);
+        Communication.broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
+        Communication.broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
+    }
+    
      /**
       * 
       * @return true if leader, false otherwise
@@ -71,6 +115,11 @@ public class Archon {
     	return false;
     }
     
+    /**
+     * Cleans up dead robots.
+     * 
+     * @throws GameActionException
+     */
     static void bringOutYourDead() throws GameActionException {
     	int currentRound = rc.getRoundNum();
     	for (int channel = Constants.CHANNEL_MIN_GARDENER; channel <= Constants.CHANNEL_MAX; channel++) {

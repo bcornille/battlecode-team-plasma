@@ -15,6 +15,7 @@ public strictfp class RobotPlayer {
     static Direction myDirection;
     static Team myTeam;
     static Team enemyTeam;
+    static MapLocation mapCenter;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -91,10 +92,14 @@ public strictfp class RobotPlayer {
 	   
 	   myDirection = Movement.randomDirection();
 //	   System.out.println("My direction" + myDirection.toString());
+	   
+	   mapCenter = Communication.readMapCenter();
    }
    
    static void checkIn() throws GameActionException {
 	   if (canCommunicate)
 		   rc.broadcast(myChannel, rc.getRoundNum());
+	   if (rc.getTeamBullets() / GameConstants.BULLET_EXCHANGE_RATE >= GameConstants.VICTORY_POINTS_TO_WIN)
+		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * GameConstants.BULLET_EXCHANGE_RATE);
    }
 }

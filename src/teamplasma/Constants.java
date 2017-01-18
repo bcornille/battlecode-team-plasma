@@ -10,12 +10,12 @@ public interface Constants {
 	 * Sets the maximum number of each robot currently in play at any one time
 	**/
 	int MAX_COUNT_ARCHON = 3;
-	int MAX_COUNT_GARDENER = 5;
-	int MAX_COUNT_LUMBERJACK = 5;
-	int MAX_COUNT_SOLDIER = 5;
-	int MAX_COUNT_TANK = 5;
+	int MAX_COUNT_GARDENER = 10;
+	int MAX_COUNT_LUMBERJACK = 20;
+	int MAX_COUNT_SOLDIER = 50;
+	int MAX_COUNT_TANK = 0;
 	int MAX_COUNT_SCOUT = 5;
-	int MAX_COUNT_TREE = (int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
+	int MAX_COUNT_TREE = 5; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
 	
 	/**
 	 * CHANNEL_COUNT_XXX 
@@ -29,6 +29,18 @@ public interface Constants {
 	int CHANNEL_COUNT_SOLDIER = 4;
 	int CHANNEL_COUNT_TANK = 5;
 	int CHANNEL_COUNT_SCOUT = 6;
+	
+	/**
+	 * CHANNEL_MAP_XXX 
+	 * 
+	 * Sets the channels for keeping track of the map limits
+	**/
+	int CHANNEL_MAP_XMIN = 7;
+	int CHANNEL_MAP_XMAX = 8;
+	int CHANNEL_MAP_YMIN = 9;
+	int CHANNEL_MAP_YMAX = 10;
+	int CHANNEL_MAP_XCEN = 11;
+	int CHANNEL_MAP_YCEN = 12;
 
 	/**
 	 * CHANNEL_MIN/MAX_XXX 

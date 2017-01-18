@@ -111,4 +111,18 @@ public class Communication {
 		}
 
 	}
+	
+	static void broadcastFloat(int channel, float value) throws GameActionException {
+		rc.broadcast(channel, Float.floatToRawIntBits(value));
+	}
+	
+	static void broadcastMapCenter(MapLocation center) throws GameActionException {
+		rc.broadcast(Constants.CHANNEL_MAP_XCEN, Float.floatToRawIntBits(center.x));
+		rc.broadcast(Constants.CHANNEL_MAP_YCEN, Float.floatToRawIntBits(center.y));
+	}
+	
+	static MapLocation readMapCenter() throws GameActionException {
+		return new MapLocation(Float.intBitsToFloat(rc.readBroadcast(Constants.CHANNEL_MAP_XCEN)),
+				Float.intBitsToFloat(rc.readBroadcast(Constants.CHANNEL_MAP_YCEN)));
+	}
 }

@@ -1,8 +1,18 @@
 package teamplasma;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import battlecode.common.*;
 
 public class Gardener {
+	
+	static Comparator<TreeInfo> compareHP = new Comparator<TreeInfo>() {
+		public int compare(TreeInfo tree1, TreeInfo tree2) {
+			return Float.compare(tree1.health, tree2.health);
+		}
+	};
+	
 	static void run(RobotController rc) throws GameActionException {
         System.out.println("I'm a gardener!");
         Team myTeam = rc.getTeam();
@@ -17,7 +27,13 @@ public class Gardener {
             	
                 // Sense trees for watering
                 TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
+                Arrays.sort(trees, compareHP);
+
                 for(TreeInfo tree : trees) {
+                	if (tree.health <= GameConstants.BULLET_TREE_MAX_HEALTH * 0.5) {
+                		Direction towardTree = new Direction(rc.getLocation(), trees[0].location);
+                    	RobotPlayer.myDirection = towardTree;
+                	}
                 	if (rc.canWater(tree.ID))
                 		rc.water(tree.ID);
                 }
@@ -34,7 +50,7 @@ public class Gardener {
                 Direction dir = RobotPlayer.myDirection.opposite();
 
                 // Randomly attempt to build a soldier or lumberjack in this direction
-                if (rc.canPlantTree(dir) && Math.random() < .1) {
+                if (rc.canPlantTree(dir) && trees.length <= Constants.MAX_COUNT_TREE) {
                 	rc.plantTree(dir);
             	} else if (rc.canBuildRobot(RobotType.SCOUT, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
                 	rc.buildRobot(RobotType.SCOUT, dir);
