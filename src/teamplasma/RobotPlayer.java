@@ -91,6 +91,7 @@ public strictfp class RobotPlayer {
 		   canCommunicate = true;
 	   
 	   mapCenter = Communication.readMapCenter();
+	   System.out.println(mapCenter.toString());
 	   
 	   myDirection = new Direction(rc.getLocation(), mapCenter).rotateLeftDegrees(90);
 //	   System.out.println("My direction" + myDirection.toString());

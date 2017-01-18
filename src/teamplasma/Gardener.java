@@ -62,8 +62,7 @@ public class Gardener {
                 		clearForest();
                 		break;
                 	case PLANT_GROVE:
-                		plantGrove();
-                		break;
+                		plantGrove(); // Note intentional fall-through
                 	case BUILD_ARMY:
                 		buildArmy();
                 		break;

@@ -4,6 +4,8 @@ import battlecode.common.*;
 
 public class Scout {
 	
+	
+	
 	static RobotController rc = RobotPlayer.rc;
 
     static void run(RobotController rc) throws GameActionException {
@@ -38,9 +40,10 @@ public class Scout {
            		 
             		switch(robot.getType()) {
             		case ARCHON:
+//            			lastMove = attackHelpless(robot,lastMove);
             			break;
             		case GARDENER:
-            			lastMove = harassing(robot,lastMove);
+            			lastMove = attackHelpless(robot,lastMove);
             			break;
             		case LUMBERJACK:
             			lastMove = harassing(robot,lastMove);
@@ -102,18 +105,7 @@ public class Scout {
 		int moved = 0;
 		
 		MapLocation myLocation = rc.getLocation();
-		MapLocation targetLocation = target.location;		
-		
-		// Attack section: 
-		//		1) Check if can shoot.
-		//		2) Shoot at target.
-		//		3) Potentially add prediction for shooting.
-		
-		if (rc.canFireSingleShot()) {
-			rc.fireSingleShot(myLocation.directionTo(targetLocation));
-		} else {
-			// Do Nothing
-		}
+		MapLocation targetLocation = target.location;
 		
 		// Movement section:
 		//		0) Check if already moved.
@@ -130,13 +122,13 @@ public class Scout {
 			float distance =  myLocation.distanceTo(targetLocation);
 			float stepsize = target.getType().strideRadius;
 			
-			if ( distance > 9 ) {
+			if ( distance > 9.0f ) {
 		    	Direction dir = myLocation.directionTo(targetLocation);
 		        if (rc.canMove(dir,stepsize)) {
 		            rc.move(dir,stepsize);
 		            moved =  1; // moved towards (1)
 		        }
-		    } else if ( distance > 7 ) {
+		    } else if ( distance > 7.0f ) {
 		    	// If last move was left (2), go left
 		    	if (last==2) {
 		    		Direction dir = myLocation.directionTo(targetLocation).rotateLeftDegrees(90);
@@ -172,9 +164,48 @@ public class Scout {
 	    	}	
 		}
 		
+
+		// Attack section: 
+		//		1) Check if can shoot.
+		//		2) Shoot at target.
+		//		3) Potentially add prediction for shooting.
+		myLocation = rc.getLocation();
+		if (rc.canFireSingleShot()) {
+			rc.fireSingleShot(myLocation.directionTo(targetLocation));
+		} else {
+			// Do Nothing
+		}
+		
 		// Return 
 		return moved;
 	
+	}
+	
+	static int attackHelpless(RobotInfo target, int last) throws GameActionException {
+		int moved = 0;
+		
+		MapLocation myLocation = rc.getLocation();
+		MapLocation targetLocation = target.location;
+		
+		if (rc.hasMoved()) {
+			moved = 0;
+		} else {
+			if (Movement.tryMove(myLocation.directionTo(targetLocation),15,1))
+				moved = 1;
+		}
+		
+		// Attack section: 
+		//		1) Check if can shoot.
+		//		2) Shoot at target.
+		//		3) Potentially add prediction for shooting.
+		myLocation = rc.getLocation();
+		if (rc.canFireSingleShot()) {
+			rc.fireSingleShot(myLocation.directionTo(targetLocation));
+		} else {
+			// Do Nothing
+		}
+				
+		return moved;
 	}
 
 

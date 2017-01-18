@@ -36,7 +36,8 @@ public class Movement {
     static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
         // First, try intended direction
-        if (rc.canMove(dir) && !rc.hasMoved()) {
+    	boolean safe = rc.senseNearbyBullets(rc.getLocation().add(dir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+        if (rc.canMove(dir) && !rc.hasMoved() && safe) {
             rc.move(dir);
             return true;
         }
@@ -46,13 +47,17 @@ public class Movement {
 
         while(currentCheck<=checksPerSide) {
             // Try the offset of the left side
-            if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck)) && !rc.hasMoved()) {
-                rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
+        	Direction testDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
+        	safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
+                rc.move(testDir);
                 return true;
             }
             // Try the offset on the right side
-            if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck)) && !rc.hasMoved()) {
-                rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
+            testDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
+            safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
+                rc.move(testDir);
                 return true;
             }
             // No move performed, try slightly further

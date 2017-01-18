@@ -48,7 +48,7 @@ public interface Constants {
 	 * Sets the channels for ID storage for robots currently in play.
 	 * 
 	**/
-	int CHANNEL_MIN_ARCHON = 10;
+	int CHANNEL_MIN_ARCHON = 13;
 	int CHANNEL_MAX_ARCHON = CHANNEL_MIN_ARCHON + MAX_COUNT_ARCHON -1;
 	
 	int CHANNEL_MIN_GARDENER = CHANNEL_MAX_ARCHON + 1;

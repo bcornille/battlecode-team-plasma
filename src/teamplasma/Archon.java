@@ -15,6 +15,7 @@ public class Archon {
         
         if(rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON) == 1)
         	mapGuess();
+        RobotPlayer.mapCenter = Communication.readMapCenter();
 
         // The code you want your robot to perform every round should be in this loop
         while (true) {
