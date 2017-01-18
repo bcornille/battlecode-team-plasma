@@ -87,4 +87,9 @@ public interface Constants {
 	float STRIDE_RADIUS_SOLDIER = 2.0f;
 	float STRIDE_RADIUS_TANK = 1.0f;
 	float STRIDE_RADIUS_SCOUT = 2.5f;
+	
+	/**
+	 * Miscellaneous definitions.
+	 */
+	int EARLY_GAME_END = 100;
 }
