@@ -21,7 +21,7 @@ public class Movement {
      * @throws GameActionException
      */
     static boolean tryMove(Direction dir) throws GameActionException {
-        return tryMove(dir,20,3);
+        return tryMove(dir,15,5);
     }
 
     /**

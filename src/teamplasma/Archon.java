@@ -39,7 +39,9 @@ public class Archon {
             	}
 
                 // Randomly attempt to build a gardener in this direction
-                if (rc.canHireGardener(RobotPlayer.myDirection.opposite()) && rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < Constants.MAX_COUNT_GARDENER) {
+            	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
+            	int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
+                if (rc.canHireGardener(RobotPlayer.myDirection.opposite()) && rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
                     rc.hireGardener(RobotPlayer.myDirection.opposite());
                     Communication.countMe(Constants.CHANNEL_COUNT_GARDENER);
                 }

@@ -69,6 +69,7 @@ public class Gardener {
                 		break;
                 }
                 
+                Movement.dodgeBullets();
 //                // Try to dodge and if not continue moving.
 //            	if (!Movement.dodgeBullets()) {
 //            		if (!Movement.tryMove(RobotPlayer.myDirection)) {

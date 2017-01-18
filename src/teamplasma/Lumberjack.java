@@ -15,7 +15,7 @@ public class Lumberjack {
             	RobotPlayer.checkIn();
 
                 // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
-                RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, RobotPlayer.enemyTeam);
+                RobotInfo[] robots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, RobotPlayer.enemyTeam);
                 TreeInfo[] neutralTrees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+Constants.STRIDE_RADIUS_LUMBERJACK, Team.NEUTRAL);
                 TreeInfo[] enemyTrees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, RobotPlayer.enemyTeam);
                 
