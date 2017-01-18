@@ -10,9 +10,9 @@ public interface Constants {
 	 * Sets the maximum number of each robot currently in play at any one time
 	**/
 	int MAX_COUNT_ARCHON = 3;
-	int MAX_COUNT_GARDENER = 10;
-	int MAX_COUNT_LUMBERJACK = 20;
-	int MAX_COUNT_SOLDIER = 50;
+	int MAX_COUNT_GARDENER = 20;
+	int MAX_COUNT_LUMBERJACK = 30;
+	int MAX_COUNT_SOLDIER = 30;
 	int MAX_COUNT_TANK = 0;
 	int MAX_COUNT_SCOUT = 5;
 	int MAX_COUNT_TREE = 5; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;

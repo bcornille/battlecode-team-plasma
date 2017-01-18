@@ -90,16 +90,20 @@ public strictfp class RobotPlayer {
 	   if (myChannel != -1)
 		   canCommunicate = true;
 	   
-	   myDirection = Movement.randomDirection();
-//	   System.out.println("My direction" + myDirection.toString());
-	   
 	   mapCenter = Communication.readMapCenter();
+	   
+	   myDirection = new Direction(rc.getLocation(), mapCenter).rotateLeftDegrees(90);
+//	   System.out.println("My direction" + myDirection.toString());
    }
    
    static void checkIn() throws GameActionException {
 	   if (canCommunicate)
 		   rc.broadcast(myChannel, rc.getRoundNum());
-	   if (rc.getTeamBullets() / GameConstants.BULLET_EXCHANGE_RATE >= GameConstants.VICTORY_POINTS_TO_WIN)
+	   if (rc.getTeamBullets() / GameConstants.BULLET_EXCHANGE_RATE >= GameConstants.VICTORY_POINTS_TO_WIN) {
 		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * GameConstants.BULLET_EXCHANGE_RATE);
+	   } else if (rc.getRoundLimit() - rc.getRoundNum() < 2) {
+		   float bullets = rc.getTeamBullets();
+		   rc.donate((float)Math.floor(bullets / 10.0f) * 10.0f);
+	   }
    }
 }
