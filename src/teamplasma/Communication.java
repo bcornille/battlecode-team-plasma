@@ -116,13 +116,40 @@ public class Communication {
 		rc.broadcast(channel, Float.floatToRawIntBits(value));
 	}
 	
+	static float readBroadcastFloat(int channel) throws GameActionException{
+		return Float.intBitsToFloat(rc.readBroadcast(channel));
+	}
+
+	static void setMapEdge(float xmin, float xmax, float ymin, float ymax) throws GameActionException {
+		float xcen = (xmin+xmax)/2;
+        float ycen = (ymin+ymax)/2;
+        RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
+        broadcastFloat(Constants.CHANNEL_MAP_XMIN, xmin);
+		broadcastFloat(Constants.CHANNEL_MAP_XMAX, xmax);
+		broadcastFloat(Constants.CHANNEL_MAP_YMIN, ymin);
+		broadcastFloat(Constants.CHANNEL_MAP_YMAX, ymax);
+        broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
+        broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
+	}
+	
+	static void updateMapEdge(MapLocation position) throws GameActionException {
+		float xmin = Math.min(position.x,readBroadcastFloat(Constants.CHANNEL_MAP_XMIN));
+		float xmax = Math.max(position.x,readBroadcastFloat(Constants.CHANNEL_MAP_XMAX));
+		float ymin = Math.min(position.y,readBroadcastFloat(Constants.CHANNEL_MAP_YMIN));
+		float ymax = Math.max(position.y,readBroadcastFloat(Constants.CHANNEL_MAP_YMAX));
+		Communication.setMapEdge(xmin,xmax,ymin,ymax); 
+	}
+	
 	static void broadcastMapCenter(MapLocation center) throws GameActionException {
-		rc.broadcast(Constants.CHANNEL_MAP_XCEN, Float.floatToRawIntBits(center.x));
-		rc.broadcast(Constants.CHANNEL_MAP_YCEN, Float.floatToRawIntBits(center.y));
+		broadcastFloat(Constants.CHANNEL_MAP_XCEN, center.x);
+		broadcastFloat(Constants.CHANNEL_MAP_YCEN, center.y);
 	}
 	
 	static MapLocation readMapCenter() throws GameActionException {
-		return new MapLocation(Float.intBitsToFloat(rc.readBroadcast(Constants.CHANNEL_MAP_XCEN)),
-				Float.intBitsToFloat(rc.readBroadcast(Constants.CHANNEL_MAP_YCEN)));
+		return new MapLocation(
+				readBroadcastFloat(Constants.CHANNEL_MAP_XCEN),
+				readBroadcastFloat(Constants.CHANNEL_MAP_YCEN)
+				);
 	}
+	
 }
