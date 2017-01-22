@@ -89,6 +89,11 @@ public interface Constants {
 	float STRIDE_RADIUS_SCOUT = 2.5f;
 	
 	/**
+	 * Economy related constants.
+	 */
+	float MAX_BULLET_BANK = 500.0f;
+	
+	/**
 	 * Miscellaneous definitions.
 	 */
 	int EARLY_GAME_END = 100;
