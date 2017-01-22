@@ -15,7 +15,6 @@ public class Archon {
         
         if(rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON) == 1)
         	mapGuess();
-        RobotPlayer.mapCenter = Communication.readMapCenter();
 
         // The code you want your robot to perform every round should be in this loop
         while (true) {
@@ -84,17 +83,7 @@ public class Archon {
         	ymax = Math.max(enemyArchons[i].y,ymax);
         	
         }
-        
-        float xcen = (xmin+xmax)/2;
-        float ycen = (ymin+ymax)/2;
-        RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
-        
-        Communication.broadcastFloat(Constants.CHANNEL_MAP_XMIN, xmin);
-        Communication.broadcastFloat(Constants.CHANNEL_MAP_XMAX, xmax);
-        Communication.broadcastFloat(Constants.CHANNEL_MAP_YMIN, ymin);
-        Communication.broadcastFloat(Constants.CHANNEL_MAP_YMAX, ymax);
-        Communication.broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
-        Communication.broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
+        Communication.setMapEdge(xmin, xmax, ymin, ymax);
     }
     
      /**

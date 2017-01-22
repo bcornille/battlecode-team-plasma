@@ -3,9 +3,7 @@ package teamplasma;
 import battlecode.common.*;
 
 public class Scout {
-	
-	
-	
+		
 	static RobotController rc = RobotPlayer.rc;
 
     static void run(RobotController rc) throws GameActionException {
@@ -18,12 +16,10 @@ public class Scout {
         
         int lastMove=0;
 
-        // The code you want your robot to perform every round should be in this loop
         while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
             	
+            	// Check in every turn
             	RobotPlayer.checkIn();
             	                
 //                // Try to dodge and if not continue moving.
@@ -33,7 +29,7 @@ public class Scout {
 //            			Movement.tryMove(RobotPlayer.myDirection);
 //            		}
 //            	}
-                
+               
             	// If nearby Gardener or Lumberjack, harass them
                 RobotInfo[] robots = rc.senseNearbyRobots(rc.getType().sensorRadius, enemy);
             	for (RobotInfo robot : robots) {
@@ -59,7 +55,7 @@ public class Scout {
             	
             	// Nobody of interest nearby, keep scouting
             	moveDir = scouting(moveDir);
-                
+           
                 // endTurn() implements Clock.yield() with extra information such as age
                 RobotPlayer.endTurn();
 
@@ -68,6 +64,29 @@ public class Scout {
                 e.printStackTrace();
             }
         }
+    }
+    
+    /**
+     * treeScout is a sub-type of Scout
+     * 
+     * treeScouts perform three primary tasks:
+     * 		1) Locate trees with bullets and shake them
+     * 		2) Identify trees with key units for Lumberjacks
+     * 		3) Decide if Lumberjacks are needed for key map objective
+     * 
+     * Additionally, they constantly monitor the known map boundaries
+     * 
+     * 
+     * @throws GameActionException
+     */
+    static void treeScout() throws GameActionException {
+    	
+    	MapLocation mapCenter = Communication.readMapCenter();
+    	
+    	Direction moveDir = rc.getLocation().directionTo(mapCenter);
+
+    	
+    	
     }
 
 
