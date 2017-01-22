@@ -106,7 +106,7 @@ public strictfp class RobotPlayer {
 		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * pointXRate);
 	   } else if (rc.getRoundLimit() - rc.getRoundNum() < 2) {
 		   rc.donate((float)Math.floor(ourBullets / pointXRate) * pointXRate);
-	   } else if (ourBullets / pointXRate >= Constants.MAX_BULLET_BANK) {
+	   } else if (ourBullets >= Constants.MAX_BULLET_BANK) {
 		   rc.donate((float)Math.floor((ourBullets - Constants.MAX_BULLET_BANK) / pointXRate) * pointXRate);
 	   }
    }
