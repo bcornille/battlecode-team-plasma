@@ -101,11 +101,13 @@ public strictfp class RobotPlayer {
 	   if (canCommunicate)
 		   rc.broadcast(myChannel, rc.getRoundNum());
 	   float pointXRate = rc.getVictoryPointCost();
-	   if (rc.getTeamBullets() / pointXRate >= GameConstants.VICTORY_POINTS_TO_WIN) {
+	   float ourBullets = rc.getTeamBullets();
+	   if (ourBullets / pointXRate >= GameConstants.VICTORY_POINTS_TO_WIN) {
 		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * pointXRate);
 	   } else if (rc.getRoundLimit() - rc.getRoundNum() < 2) {
-		   float bullets = rc.getTeamBullets();
-		   rc.donate((float)Math.floor(bullets / pointXRate) * pointXRate);
+		   rc.donate((float)Math.floor(ourBullets / pointXRate) * pointXRate);
+	   } else if (ourBullets / pointXRate >= Constants.MAX_BULLET_BANK) {
+		   rc.donate((float)Math.floor((ourBullets - Constants.MAX_BULLET_BANK) / pointXRate) * pointXRate);
 	   }
    }
 }
