@@ -69,33 +69,7 @@ public class Gardener {
                 }
                 
                 Movement.dodgeBullets();
-//                // Try to dodge and if not continue moving.
-//            	if (!Movement.dodgeBullets()) {
-//            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
-//            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
-//            			Movement.tryMove(RobotPlayer.myDirection);
-//            		}
-//            	}
-//
-//                // Generate a random direction
-//                Direction dir = RobotPlayer.myDirection.opposite();
-//
-//                // Randomly attempt to build a soldier or lumberjack in this direction
-//                if (rc.canPlantTree(dir) && trees.length <= Constants.MAX_COUNT_TREE) {
-//                	rc.plantTree(dir);
-//            	} else if (rc.canBuildRobot(RobotType.SCOUT, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
-//                	rc.buildRobot(RobotType.SCOUT, dir);
-//                	Communication.countMe(Constants.CHANNEL_COUNT_SCOUT);
-//                } else if (rc.canBuildRobot(RobotType.TANK, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_TANK) < Constants.MAX_COUNT_TANK) {
-//                    rc.buildRobot(RobotType.TANK, dir);
-//                    Communication.countMe(Constants.CHANNEL_COUNT_TANK);
-//                } else if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
-//                	rc.buildRobot(RobotType.LUMBERJACK, dir);
-//                	Communication.countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
-//                } else if (rc.canBuildRobot(RobotType.SOLDIER, dir) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
-//                    rc.buildRobot(RobotType.SOLDIER, dir);
-//                    Communication.countMe(Constants.CHANNEL_COUNT_SOLDIER);
-//                }
+
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 // endTurn() implements Clock.yield() with extra information such as age
@@ -128,9 +102,12 @@ public class Gardener {
 	}
 	
 	static void earlyGame() throws GameActionException {
-		if (rc.canBuildRobot(RobotType.SCOUT, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
+		if (rc.canBuildRobot(RobotType.SOLDIER, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+			rc.buildRobot(RobotType.SOLDIER, towardCenter);
+			Communication.countMe(RobotType.SOLDIER);
+		} else if (rc.canBuildRobot(RobotType.SCOUT, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
         	rc.buildRobot(RobotType.SCOUT, towardCenter);
-        	Communication.countMe(Constants.CHANNEL_COUNT_SCOUT);
+        	Communication.countMe(RobotType.SCOUT);
         }
 	}
 	
