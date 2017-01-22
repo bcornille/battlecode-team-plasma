@@ -66,30 +66,6 @@ public class Scout {
         }
     }
     
-    /**
-     * treeScout is a sub-type of Scout
-     * 
-     * treeScouts perform three primary tasks:
-     * 		1) Locate trees with bullets and shake them
-     * 		2) Identify trees with key units for Lumberjacks
-     * 		3) Decide if Lumberjacks are needed for key map objective
-     * 
-     * Additionally, they constantly monitor the known map boundaries
-     * 
-     * 
-     * @throws GameActionException
-     */
-    static void treeScout() throws GameActionException {
-    	
-    	MapLocation mapCenter = Communication.readMapCenter();
-    	
-    	Direction moveDir = rc.getLocation().directionTo(mapCenter);
-
-    	
-    	
-    }
-
-
     static Direction scouting(Direction dir) throws GameActionException {
 	
 		// Movement section:
