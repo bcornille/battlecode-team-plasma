@@ -100,11 +100,12 @@ public strictfp class RobotPlayer {
    static void checkIn() throws GameActionException {
 	   if (canCommunicate)
 		   rc.broadcast(myChannel, rc.getRoundNum());
-	   if (rc.getTeamBullets() / GameConstants.BULLET_EXCHANGE_RATE >= GameConstants.VICTORY_POINTS_TO_WIN) {
-		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * GameConstants.BULLET_EXCHANGE_RATE);
+	   float pointXRate = rc.getVictoryPointCost();
+	   if (rc.getTeamBullets() / pointXRate >= GameConstants.VICTORY_POINTS_TO_WIN) {
+		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * pointXRate);
 	   } else if (rc.getRoundLimit() - rc.getRoundNum() < 2) {
 		   float bullets = rc.getTeamBullets();
-		   rc.donate((float)Math.floor(bullets / 10.0f) * 10.0f);
+		   rc.donate((float)Math.floor(bullets / pointXRate) * pointXRate);
 	   }
    }
 }
