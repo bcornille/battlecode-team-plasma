@@ -11,7 +11,6 @@ public class Communication {
     		int channelContents = rc.readBroadcast(i);
     		if(channelContents==0){
     			rc.broadcast(i, rc.getRoundNum());
-    			rc.broadcast(i*10, RobotPlayer.myID);
     			return i;
     		} else if (i==channelMax) {
     			System.out.println("Out of storage");
@@ -45,9 +44,9 @@ public class Communication {
 	
 	static void countMe(int channel) throws GameActionException {
 		int count = rc.readBroadcast(channel);
-		System.out.println("Print channel:  " + channel);
+//		System.out.println("Print channel:  " + channel);
 		rc.broadcast(channel, ++count);
-		System.out.println("Robot count:  " + count);
+//		System.out.println("Robot count:  " + count);
 	}
 	
 	static void countMe(RobotType type) throws GameActionException {
@@ -111,44 +110,36 @@ public class Communication {
 		}
 
 	}
-	
-	static void broadcastFloat(int channel, float value) throws GameActionException {
-		rc.broadcast(channel, Float.floatToRawIntBits(value));
-	}
-	
-	static float readBroadcastFloat(int channel) throws GameActionException{
-		return Float.intBitsToFloat(rc.readBroadcast(channel));
-	}
 
 	static void setMapEdge(float xmin, float xmax, float ymin, float ymax) throws GameActionException {
 		float xcen = (xmin+xmax)/2;
         float ycen = (ymin+ymax)/2;
         RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
-        broadcastFloat(Constants.CHANNEL_MAP_XMIN, xmin);
-		broadcastFloat(Constants.CHANNEL_MAP_XMAX, xmax);
-		broadcastFloat(Constants.CHANNEL_MAP_YMIN, ymin);
-		broadcastFloat(Constants.CHANNEL_MAP_YMAX, ymax);
-        broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
-        broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
+        rc.broadcastFloat(Constants.CHANNEL_MAP_XMIN, xmin);
+		rc.broadcastFloat(Constants.CHANNEL_MAP_XMAX, xmax);
+		rc.broadcastFloat(Constants.CHANNEL_MAP_YMIN, ymin);
+		rc.broadcastFloat(Constants.CHANNEL_MAP_YMAX, ymax);
+        rc.broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
+        rc.broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
 	}
 	
 	static void updateMapEdge(MapLocation position) throws GameActionException {
-		float xmin = Math.min(position.x,readBroadcastFloat(Constants.CHANNEL_MAP_XMIN));
-		float xmax = Math.max(position.x,readBroadcastFloat(Constants.CHANNEL_MAP_XMAX));
-		float ymin = Math.min(position.y,readBroadcastFloat(Constants.CHANNEL_MAP_YMIN));
-		float ymax = Math.max(position.y,readBroadcastFloat(Constants.CHANNEL_MAP_YMAX));
+		float xmin = Math.min(position.x,rc.readBroadcastFloat(Constants.CHANNEL_MAP_XMIN));
+		float xmax = Math.max(position.x,rc.readBroadcastFloat(Constants.CHANNEL_MAP_XMAX));
+		float ymin = Math.min(position.y,rc.readBroadcastFloat(Constants.CHANNEL_MAP_YMIN));
+		float ymax = Math.max(position.y,rc.readBroadcastFloat(Constants.CHANNEL_MAP_YMAX));
 		Communication.setMapEdge(xmin,xmax,ymin,ymax); 
 	}
 	
 	static void broadcastMapCenter(MapLocation center) throws GameActionException {
-		broadcastFloat(Constants.CHANNEL_MAP_XCEN, center.x);
-		broadcastFloat(Constants.CHANNEL_MAP_YCEN, center.y);
+		rc.broadcastFloat(Constants.CHANNEL_MAP_XCEN, center.x);
+		rc.broadcastFloat(Constants.CHANNEL_MAP_YCEN, center.y);
 	}
 	
 	static MapLocation readMapCenter() throws GameActionException {
 		return new MapLocation(
-				readBroadcastFloat(Constants.CHANNEL_MAP_XCEN),
-				readBroadcastFloat(Constants.CHANNEL_MAP_YCEN)
+				rc.readBroadcastFloat(Constants.CHANNEL_MAP_XCEN),
+				rc.readBroadcastFloat(Constants.CHANNEL_MAP_YCEN)
 				);
 	}
 	
