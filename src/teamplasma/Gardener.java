@@ -102,7 +102,7 @@ public class Gardener {
 	}
 	
 	static void earlyGame() throws GameActionException {
-		if (rc.canBuildRobot(RobotType.SOLDIER, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+		if (rc.canBuildRobot(RobotType.SOLDIER, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < 1) {
 			rc.buildRobot(RobotType.SOLDIER, towardCenter);
 			Communication.countMe(RobotType.SOLDIER);
 		} else if (rc.canBuildRobot(RobotType.SCOUT, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
