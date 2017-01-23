@@ -97,4 +97,5 @@ public interface Constants {
 	 * Miscellaneous definitions.
 	 */
 	int EARLY_GAME_END = 100;
+	float TWO_PI = 2.0f * (float)Math.PI;
 }
