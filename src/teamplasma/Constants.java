@@ -10,12 +10,12 @@ public interface Constants {
 	 * Sets the maximum number of each robot currently in play at any one time
 	**/
 	int MAX_COUNT_ARCHON = 3;
-	int MAX_COUNT_GARDENER = 20;
+	int MAX_COUNT_GARDENER = 10;
 	int MAX_COUNT_LUMBERJACK = 30;
-	int MAX_COUNT_SOLDIER = 30;
+	int MAX_COUNT_SOLDIER = 50;
 	int MAX_COUNT_TANK = 0;
-	int MAX_COUNT_SCOUT = 5;
-	int MAX_COUNT_TREE = 5; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
+	int MAX_COUNT_SCOUT = 10;
+	int MAX_COUNT_TREE = 50; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
 	
 	/**
 	 * CHANNEL_COUNT_XXX 
@@ -87,6 +87,20 @@ public interface Constants {
 	float STRIDE_RADIUS_SOLDIER = 2.0f;
 	float STRIDE_RADIUS_TANK = 1.0f;
 	float STRIDE_RADIUS_SCOUT = 2.5f;
+	
+	/**
+	 * XXX_SPACING_FRIEND_YYY
+	 * 
+	 * Desired spacing of friendly units (eventually add all units)
+	 *   
+	 */
+	
+	float SCOUT_SPACING_FROM_ARCHON = 10.0f; 
+	float SCOUT_SPACING_FROM_GARDENER = 10.0f;
+	float SCOUT_SPACING_FROM_LUMBERJACK = 5.0f;
+	float SCOUT_SPACING_FROM_SCOUT = 12.0f;
+	float SCOUT_SPACING_FROM_SOLDIER = 5.0f;
+	float SCOUT_SPACING_FROM_TANK = 5.0f;
 	
 	/**
 	 * Economy related constants.
