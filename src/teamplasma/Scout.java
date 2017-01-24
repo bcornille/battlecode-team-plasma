@@ -41,34 +41,19 @@ public class Scout {
 						// ignore Archons for now
 						break;
 					case GARDENER:
-						myDirection = rc.getLocation().directionTo(bot.getLocation());
-						if ( rc.canFireSingleShot() ) {
-							rc.fireSingleShot(rc.getLocation().directionTo(bot.location));
-						}
+						harassScout(bot);
 						break;
 					case LUMBERJACK:
-						if( seperation < Constants.SCOUT_SPACING_ENEMY_LUMBERJACK ) {
-							myDirection = rc.getLocation().directionTo(bot.getLocation()).opposite();
-						}
+						// ignore for now
 						break;
 					case SCOUT:
-						if( seperation < Constants.SCOUT_SPACING_ENEMY_SCOUT ) {
-							myDirection = rc.getLocation().directionTo(bot.getLocation()).opposite();
-						}
-						if ( rc.canFireSingleShot() ) {
-							
-							rc.fireSingleShot(rc.getLocation().directionTo(bot.getLocation()));
-						}
+						harassScout(bot);
 						break;
 					case SOLDIER:
-						if( seperation < Constants.SCOUT_SPACING_ENEMY_SOLDIER ) {
-							myDirection = rc.getLocation().directionTo(bot.getLocation()).opposite();
-						}
+						// ignore for now
 						break;
 					case TANK:
-						if( seperation < Constants.SCOUT_SPACING_ENEMY_TANK ) {
-							myDirection = rc.getLocation().directionTo(bot.getLocation()).opposite();
-						}
+						// ignore for now
 						break;
 					default:
 						break;
@@ -80,13 +65,13 @@ public class Scout {
             	
             	// Check for bullets in neutral trees:
              	myDirection = checkForBulletTrees(myDirection);
-             	
-             	
-             	
-             	// move
-             	myDirection = tryMove(myDirection,10,15);
+             	             	
+             	// Move
+             	if (!rc.hasMoved()) {
+                 	myDirection = tryMove(myDirection,10,15);
+             	}
 
-
+             	// End Turn
                 RobotPlayer.endTurn();
 
             } catch (Exception e) {
@@ -95,7 +80,62 @@ public class Scout {
             }
         }
     }
+//********************************************************************************************************************************************************************//
     
+    static void harassScout(RobotInfo target) throws GameActionException {
+    	    	
+    	RobotType myType = rc.getType();
+    	MapLocation myLocation = rc.getLocation();
+    	
+    	RobotType targetType = rc.getType();
+    	MapLocation targetLocation = target.getLocation();
+    	
+    	
+    	// Movement section:
+    	
+    	boolean moved = false;
+    	
+    	if (rc.hasMoved()) {
+			moved = true;
+		} else {
+			
+			float distance = myLocation.distanceTo(targetLocation);
+			float stepsize = myType.strideRadius;
+						
+			if ( distance <= myType.strideRadius+myType.bodyRadius+targetType.bodyRadius) {
+				stepsize = distance - myType.bodyRadius - targetType.bodyRadius;
+			}
+			
+			Direction dir = myLocation.directionTo(targetLocation);
+			
+	        if (rc.canMove(dir,stepsize)) {
+	        	moved = Movement.tryMove(dir,10,9);
+	        }			
+		}
+    	
+    	// Shooting section
+    
+    	if ( rc.canFireSingleShot() ) {
+    		// fire at target with random spread
+    		float scatter = (float) (0.25*Math.cos(Math.random()*Math.PI));
+    		MapLocation fireLocation = targetLocation.add((float)(Math.PI/2.0), scatter*targetType.bodyRadius);
+    		Direction firDir = myLocation.directionTo(fireLocation);
+    		
+    		rc.fireSingleShot(firDir);
+    		
+    	}
+    	
+    	
+    }
+    
+    /**
+     * checkFriendlySpacing():
+     * 		Determines if there are nearby friendly units and attempts to move
+     * 		away from them if too close.  		
+     * 		
+     * @param myDirection
+     * @return
+     */
     static Direction checkFriendlySpacing(Direction myDirection) {
     	// Get all friendly robots in sensorRadius
      	RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().sensorRadius,rc.getTeam());
@@ -160,23 +200,6 @@ public class Scout {
      	}//end if    	
     }//end method
 
-    
-    
-    /**
-     * Comparator for sorting TreeInfo arrays by bullet amounts
-     */
-    static Comparator<TreeInfo> compareBullets = comparing(TreeInfo::getContainedBullets, reverseOrder());
-    
-    
-    /**
-     * Comparator for sorting TreeInfo arrays by ContaintedRobotType 
-     * 
-     * VERY EXPENSIVE (~35000 bytecode)
-     */
-    static Comparator<TreeInfo> compareRobots = comparing(TreeInfo::getContainedRobot,nullsLast(naturalOrder()));
-
-    
-    
     /**
      * checkForBulletTrees():
      * 		A given robot checks for nearby trees that contain bullets. It
@@ -399,7 +422,19 @@ public class Scout {
     	int CHANNEL_TREE_UNIT_STOP = 2000;
     	int TREE_UNIT_CHANNELS = 5; 
     }	
+
+    /**
+     * Comparator for sorting TreeInfo arrays by bullet amounts
+     */
+    static Comparator<TreeInfo> compareBullets = comparing(TreeInfo::getContainedBullets, reverseOrder());
     
+    
+    /**
+     * Comparator for sorting TreeInfo arrays by ContaintedRobotType 
+     * 
+     * VERY EXPENSIVE (~35000 bytecode)
+     */
+    static Comparator<TreeInfo> compareRobots = comparing(TreeInfo::getContainedRobot,nullsLast(naturalOrder()));
     
     /**
      * Attempts to move in a given direction, while avoiding small obstacles direction in the path.
