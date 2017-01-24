@@ -10,11 +10,11 @@ public interface Constants {
 	 * Sets the maximum number of each robot currently in play at any one time
 	**/
 	int MAX_COUNT_ARCHON = 3;
-	int MAX_COUNT_GARDENER = 20;
-	int MAX_COUNT_LUMBERJACK = 30;
-	int MAX_COUNT_SOLDIER = 30;
+	int MAX_COUNT_GARDENER = 3;
+	int MAX_COUNT_LUMBERJACK = 0;
+	int MAX_COUNT_SOLDIER = 0;
 	int MAX_COUNT_TANK = 0;
-	int MAX_COUNT_SCOUT = 5;
+	int MAX_COUNT_SCOUT = 200;
 	int MAX_COUNT_TREE = 5; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
 	
 	/**
@@ -89,6 +89,34 @@ public interface Constants {
 	float STRIDE_RADIUS_SCOUT = 2.5f;
 	
 	/**
+	 * XXX_SPACING_FRIEND_YYY
+	 * 
+	 * Desired spacing of friendly units
+	 *   
+	 */
+	
+	float SCOUT_SPACING_FRIEND_ARCHON = 10.0f; 
+	float SCOUT_SPACING_FRIEND_GARDENER = 10.0f;
+	float SCOUT_SPACING_FRIEND_LUMBERJACK = 5.0f;
+	float SCOUT_SPACING_FRIEND_SCOUT = 12.0f;
+	float SCOUT_SPACING_FRIEND_SOLDIER = 5.0f;
+	float SCOUT_SPACING_FRIEND_TANK = 5.0f;
+	
+	/**
+	 * XXX_SPACING_ENEMY_YYY
+	 * 
+	 * Desired spacing of enemy units
+	 *   
+	 */
+	
+	float SCOUT_SPACING_ENEMY_ARCHON = 0.0f; 
+	float SCOUT_SPACING_ENEMY_GARDENER = 0.0f;
+	float SCOUT_SPACING_ENEMY_LUMBERJACK = 3.0f;
+	float SCOUT_SPACING_ENEMY_SCOUT = 1.0f;
+	float SCOUT_SPACING_ENEMY_SOLDIER = 5.0f;
+	float SCOUT_SPACING_ENEMY_TANK = 5.0f;
+	
+	/**
 	 * Economy related constants.
 	 */
 	float MAX_BULLET_BANK = 500.0f;
@@ -96,5 +124,5 @@ public interface Constants {
 	/**
 	 * Miscellaneous definitions.
 	 */
-	int EARLY_GAME_END = 100;
+	int EARLY_GAME_END = 300;
 }
