@@ -3,24 +3,17 @@ package teamplasma;
 import battlecode.common.*;
 
 public class Tank {
+	
+	
 	static void run(RobotController rc) throws GameActionException {
-		System.out.println("I'm an tank!");
-		Team enemy = rc.getTeam().opponent();
-
-		// The code you want your robot to perform every round should be in this
-		// loop
+		// Code to run every turn
 		while (true) {
-
-			// Try/catch blocks stop unhandled exceptions, which cause your
-			// robot to explode
 			try {
-				
+            	// Check in every turn
 				RobotPlayer.checkIn();
 				
-				MapLocation myLocation = rc.getLocation();
-
 				// See if there are any nearby enemy robots
-				RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
+				RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
 
 				// If there are some...
 				if (robots.length > 0) {
@@ -32,18 +25,14 @@ public class Tank {
 					}
 				}
 
-				// Try to dodge and if not continue moving.
-            	if (!Movement.dodgeBullets()) {
-            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
-            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
-            			Movement.tryMove(RobotPlayer.myDirection);
-            		}
-            	}
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
+            	// Adjust movement direction to dodge bullets
+            	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
+            	// Move
+            	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
 
-				// Clock.yield() makes the robot wait until the next turn, then
-				// it will perform this loop again
-				// endTurn() implements Clock.yield() with extra information
-				// such as age
+            	// End Turn
 				RobotPlayer.endTurn();
 
 			} catch (Exception e) {

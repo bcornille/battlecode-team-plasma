@@ -3,40 +3,34 @@ package teamplasma;
 import battlecode.common.*;
 
 public class Lumberjack {
+	
+	
+	
     static void run(RobotController rc) throws GameActionException {
-        System.out.println("I'm a lumberjack!");
-
-        // The code you want your robot to perform every round should be in this loop
+    	// Code to run every turn
         while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
-            	
+            	// Check in every turn
             	RobotPlayer.checkIn();
 
-                // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
+            	// TODO: Make Lumberjacks move to trees/robots that are in sight range but out of strike range if nothing in strike range
+            	
+                // See if there are any enemy robots within striking range
                 RobotInfo[] robots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, RobotPlayer.enemyTeam);
                 TreeInfo[] neutralTrees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.INTERACTION_DIST_FROM_EDGE, Team.NEUTRAL);
                 TreeInfo[] enemyTrees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.INTERACTION_DIST_FROM_EDGE, RobotPlayer.enemyTeam);
                 
-                for (TreeInfo tree : neutralTrees) {
-                	System.out.println(tree.toString());
-                	System.out.println("Can chop: " + rc.canChop(tree.ID));
-                }
-                for (TreeInfo tree : enemyTrees) {
-                	System.out.println(tree.toString());
-                	System.out.println("Can chop: " + rc.canChop(tree.ID));
-                }
+                // TODO: Adjust it so only strike if spread out/will hit more enemies than friends
                 
                 if(robots.length > 0 && !rc.hasAttacked()) {
                     // Use strike() to hit all nearby robots!
                     rc.strike();
                 } else if (neutralTrees.length > 0 && rc.canChop(neutralTrees[0].ID)) {
                 	rc.chop(neutralTrees[0].ID);
-                	System.out.println("Chop tree" + neutralTrees[0].ID);
+                	//System.out.println("Chop tree" + neutralTrees[0].ID);
                 } else if (enemyTrees.length > 0 && rc.canChop(enemyTrees[0].ID)) {
                 	rc.chop(enemyTrees[0].ID);
-                	System.out.println("Chop tree" + enemyTrees[0].ID);
+                	//System.out.println("Chop tree" + enemyTrees[0].ID);
                 } else {
                     // No close robots, so search for robots within sight radius
                     robots = rc.senseNearbyRobots(-1,RobotPlayer.enemyTeam);
@@ -65,18 +59,18 @@ public class Lumberjack {
                     	
                     	Movement.tryMove(toTree);
                     } else {
-                    	// Try to dodge and if not continue moving.
-                    	if (!Movement.dodgeBullets()) {
-                    		if (!Movement.tryMove(RobotPlayer.myDirection)) {
-                    			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
-                    			Movement.tryMove(RobotPlayer.myDirection);
-                    		}
-                    	}
+
                     }
                 }
+                
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
+            	// Adjust movement direction to dodge bullets
+            	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
+            	// Move
+            	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
 
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                // endTurn() implements Clock.yield() with extra information such as age
+                // End Turn
                 RobotPlayer.endTurn();
 
             } catch (Exception e) {

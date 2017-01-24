@@ -23,16 +23,11 @@ public class Gardener {
 	};
 	
 	static void run(RobotController rc) throws GameActionException {
-        System.out.println("I'm a gardener!");
         Gardener.rc = rc;
-//        Team myTeam = rc.getTeam();
-
-        // The code you want your robot to perform every round should be in this loop
+        // Code to run every turn
         while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
-                
+            	// Check in every turn
             	RobotPlayer.checkIn();
             	
             	towardCenter = new Direction(rc.getLocation(), RobotPlayer.mapCenter);
@@ -68,12 +63,15 @@ public class Gardener {
                 		buildArmy();
                 		break;
                 }
-                
-                Movement.dodgeBullets();
 
-
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                // endTurn() implements Clock.yield() with extra information such as age
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
+            	// Adjust movement direction to dodge bullets
+            	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
+            	// Move
+            	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
+            	
+                // End Turn
                 RobotPlayer.endTurn();
 
             } catch (Exception e) {

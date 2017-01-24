@@ -3,41 +3,53 @@ package teamplasma;
 import battlecode.common.*;
 
 public class Archon {
-	static RobotController rc;
+	
+	static RobotController rc = RobotPlayer.rc;
+	
 	static boolean amLeader = false;
 	
+    /**
+     * run():
+     * 		Main control method for RobotType Archon
+     * 
+     * @param rc
+     * @throws GameActionException
+     */
     static void run(RobotController rc) throws GameActionException {
-        System.out.println("I'm an archon!");
         
-        Archon.rc = rc;
+//        Archon.rc = rc;
         
         Communication.countMe(Constants.CHANNEL_COUNT_ARCHON);
         
+        // TODO: Also check for tree density, adjust strategies
         if(rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON) == 1)
         	mapGuess();
 
-        // The code you want your robot to perform every round should be in this loop
+        // Code to run every turn
         while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
-            	
-    	
+            	// Check in every turn    	
             	RobotPlayer.checkIn();
-            	
+            	// Check if this Archon is the leader
             	amLeader = electLeader();
-            	
             	if (amLeader) {
+            		// Leader Archon checks for dead robots
             		bringOutYourDead();
             	}
+
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
+            	// Adjust movement direction to dodge bullets
+            	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
+            	// Move
+            	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
             	
-            	// Try to dodge and if not continue moving.
-            	if (!Movement.dodgeBullets()) {
-            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
-            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
-            			Movement.tryMove(RobotPlayer.myDirection);
-            		}
-            	}
+//            	if (!Movement.dodgeBullets()) {
+//            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
+//            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
+//            			Movement.tryMove(RobotPlayer.myDirection);
+//            		}
+//            	}
 
                 // Randomly attempt to build a gardener in this direction
             	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
@@ -46,11 +58,8 @@ public class Archon {
                     rc.hireGardener(RobotPlayer.myDirection.opposite());
                     Communication.countMe(Constants.CHANNEL_COUNT_GARDENER);
                 }
-
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                // endTurn() implements Clock.yield() with extra information such as age
+                // End Turn
                 RobotPlayer.endTurn();
-
             } catch (Exception e) {
                 System.out.println("Archon Exception");
                 e.printStackTrace();
@@ -58,19 +67,27 @@ public class Archon {
         }
     }
     
+    /**
+     * mapGuess():
+     * 		Uses initial Archon locations to setup a rough size of the
+     * 		map. This information can be used for early game decisions.
+     * 
+     * TODO: Add early game decisions based off map size
+     * 
+     * @throws GameActionException
+     */
     static void mapGuess() throws GameActionException {      
-       
+        // Get necessary Archon information
         MapLocation myLocation = rc.getLocation();
         MapLocation[] myArchons = rc.getInitialArchonLocations(RobotPlayer.myTeam);
         MapLocation[] enemyArchons = rc.getInitialArchonLocations(RobotPlayer.enemyTeam);
         int numArchons = myArchons.length;
-        
-        // Locate all Archons to get rough outline of map and map center
+        // Initialize map variable with Leader location
         float xmin = myLocation.x;
         float xmax = myLocation.x;
         float ymin = myLocation.y;
         float ymax = myLocation.y;
-        
+        // Locate all Archons to get rough outline of map and map center
         for ( int i = 0; i < numArchons; i++ ) {
         	
         	xmin = Math.min(myArchons[i].x,xmin);
@@ -84,6 +101,7 @@ public class Archon {
         	ymax = Math.max(enemyArchons[i].y,ymax);
         	
         }
+        // Save the map information 
         Communication.setMapEdge(xmin, xmax, ymin, ymax);
     }
     
