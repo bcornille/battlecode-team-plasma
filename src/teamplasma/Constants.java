@@ -91,7 +91,7 @@ public interface Constants {
 	/**
 	 * XXX_SPACING_FRIEND_YYY
 	 * 
-	 * Desired spacing of friendly units
+	 * Desired spacing of friendly units (eventually add all units)
 	 *   
 	 */
 	
