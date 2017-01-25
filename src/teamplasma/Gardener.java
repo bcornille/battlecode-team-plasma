@@ -29,6 +29,10 @@ public class Gardener {
             try {
             	// Check in every turn
             	RobotPlayer.checkIn();
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
+            	// Adjust movement direction to dodge bullets
+            	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
             	
             	towardCenter = new Direction(rc.getLocation(), RobotPlayer.mapCenter);
             	
@@ -64,10 +68,7 @@ public class Gardener {
                 		break;
                 }
 
-            	// Check scout spacing, update direction if necessary:
-            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
-            	// Adjust movement direction to dodge bullets
-            	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
+
             	// Move
             	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
             	
@@ -85,6 +86,7 @@ public class Gardener {
 	
 	static void setStrategy() throws GameActionException {
 		float groveRadius = RobotPlayer.myType.bodyRadius + GameConstants.GENERAL_SPAWN_OFFSET + 2.0f * GameConstants.BULLET_TREE_RADIUS;
+		
 		if (rc.getRoundNum() < Constants.EARLY_GAME_END) {
 			myStrategy = Strategy.EARLY_GAME;
 			System.out.println("Early game.");
@@ -101,13 +103,15 @@ public class Gardener {
 	}
 	
 	static void earlyGame() throws GameActionException {
+		tryPlant(towardCenter.opposite());
 		if (rc.canBuildRobot(RobotType.SOLDIER, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < 1) {
-			rc.buildRobot(RobotType.SOLDIER, towardCenter);
-			Communication.countMe(RobotType.SOLDIER);
+				rc.buildRobot(RobotType.SOLDIER, towardCenter);
+				Communication.countMe(RobotType.SOLDIER);
 		} else if (rc.canBuildRobot(RobotType.SCOUT, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
         	rc.buildRobot(RobotType.SCOUT, towardCenter);
         	Communication.countMe(RobotType.SCOUT);
         }
+		
 	}
 	
 	static void clearForest() throws GameActionException {

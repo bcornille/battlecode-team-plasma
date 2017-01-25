@@ -12,6 +12,8 @@ public class Lumberjack {
             try {
             	// Check in every turn
             	RobotPlayer.checkIn();
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
 
             	// TODO: Make Lumberjacks move to trees/robots that are in sight range but out of strike range if nothing in strike range
             	
@@ -63,8 +65,6 @@ public class Lumberjack {
                     }
                 }
                 
-            	// Check scout spacing, update direction if necessary:
-            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
             	// Adjust movement direction to dodge bullets
             	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
             	// Move

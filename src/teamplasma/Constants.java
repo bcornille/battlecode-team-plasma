@@ -142,5 +142,6 @@ public interface Constants {
 	/**
 	 * Miscellaneous definitions.
 	 */
-	int EARLY_GAME_END = 100;
+	int EARLY_GAME_END = 200;
+	int CHANNEL_BUILD_DIRECTION = 9999;
 }

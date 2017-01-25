@@ -16,15 +16,42 @@ public class Archon {
      * @throws GameActionException
      */
     static void run(RobotController rc) throws GameActionException {
-        
-//        Archon.rc = rc;
-        
+        Archon.rc = rc;
+        // Archons count themselves on turn 1
         Communication.countMe(Constants.CHANNEL_COUNT_ARCHON);
+        // First Archon scouts map        
+        if(rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON) == 1) {
+        	mapGuess();
+        }
+        // get starting value
+        int start = rc.readBroadcast(Constants.CHANNEL_BUILD_DIRECTION);
+        // get build direction
+        if (start == 1) {
+        	Direction buildDirection = Direction.EAST;
+        } else if (start == 2) {
+        	Direction buildDirection = Direction.WEST;
+        } else if (start == 3) {
+        	Direction buildDirection = Direction.NORTH;
+        } else if (start == 4) {
+        	Direction buildDirection = Direction.SOUTH;
+        } else {
+        	
+        }
+        // get move direction
+        if (start == 1) {
+        	RobotPlayer.myDirection = Direction.WEST;
+        } else if (start == 2) {
+        	RobotPlayer.myDirection  = Direction.EAST;
+        } else if (start == 3) {
+        	RobotPlayer.myDirection = Direction.SOUTH;
+        } else if (start == 4) {
+        	RobotPlayer.myDirection = Direction.NORTH;
+        } else {
+        	
+        }
         
         // TODO: Also check for tree density, adjust strategies
-        if(rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON) == 1)
-        	mapGuess();
-
+        
         // Code to run every turn
         while (true) {
             try {
@@ -42,14 +69,7 @@ public class Archon {
             	// Adjust movement direction to dodge bullets
             	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
             	// Move
-            	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
-            	
-//            	if (!Movement.dodgeBullets()) {
-//            		if (!Movement.tryMove(RobotPlayer.myDirection)) {
-//            			RobotPlayer.myDirection = RobotPlayer.myDirection.opposite();
-//            			Movement.tryMove(RobotPlayer.myDirection);
-//            		}
-//            	}
+            	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection,30,5);
 
                 // Randomly attempt to build a gardener in this direction
             	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
@@ -103,6 +123,35 @@ public class Archon {
         }
         // Save the map information 
         Communication.setMapEdge(xmin, xmax, ymin, ymax);
+        
+        // Determine starting position
+        float toxmin = Math.abs(myLocation.x - xmin);
+        float toxmax = Math.abs(myLocation.x - xmax);
+        float toymin = Math.abs(myLocation.y - ymin);
+        float toymax = Math.abs(myLocation.y - ymax);
+        
+        float nearest = Math.min(Math.min(toxmin, toxmax), Math.min(toymin, toymax));
+
+        if ( nearest == toxmin ) {
+        	// Left Side
+    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 1);
+        } else  if ( nearest == toxmax ) {
+        	// Right Side
+    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 2);
+        } else  if ( nearest == toymin ) {
+        	// Bottom Side
+    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 3);
+        } else  if ( nearest == toymax ) {
+        	// Top Side
+    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 4);
+        } else {
+        	// error
+        }
+        
+    }
+    
+    static enum startPosition {
+    	BotLeft, BotRight, TopLeft, TopRight
     }
     
      /**

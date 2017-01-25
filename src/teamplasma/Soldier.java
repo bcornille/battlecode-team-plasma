@@ -11,6 +11,8 @@ public class Soldier {
             try {
             	// Check in every turn
             	RobotPlayer.checkIn();
+            	// Check scout spacing, update direction if necessary:
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
             	
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
@@ -18,14 +20,12 @@ public class Soldier {
                 // If there are some...
                 if (robots.length > 0) {
                     // And we have enough bullets, and haven't attacked yet this turn...
-                    if (rc.canFireSingleShot()) {
+                    if (rc.canFireTriadShot()) {
                         // ...Then fire a bullet in the direction of the enemy.
-                        rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
+                        rc.fireTriadShot(rc.getLocation().directionTo(robots[0].location));
                     }
                 }
 
-            	// Check scout spacing, update direction if necessary:
-            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
             	// Adjust movement direction to dodge bullets
             	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
             	// Move
