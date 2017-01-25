@@ -126,12 +126,15 @@ public class Gardener {
 	}
 	
 	static void buildArmy() throws GameActionException {
-		if (rc.canBuildRobot(RobotType.LUMBERJACK, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
+		if (rc.canBuildRobot(RobotType.LUMBERJACK, towardCenter) && rc.senseNearbyTrees(-1, Team.NEUTRAL).length > 0) {
         	rc.buildRobot(RobotType.LUMBERJACK, towardCenter);
         	Communication.countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
         } else if (rc.canBuildRobot(RobotType.SOLDIER, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
             rc.buildRobot(RobotType.SOLDIER, towardCenter);
             Communication.countMe(Constants.CHANNEL_COUNT_SOLDIER);
+        } else if (rc.canBuildRobot(RobotType.TANK, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_TANK) < Constants.MAX_COUNT_TANK) {
+            rc.buildRobot(RobotType.TANK, towardCenter);
+            Communication.countMe(Constants.CHANNEL_COUNT_TANK);
         }
 	}
 	
