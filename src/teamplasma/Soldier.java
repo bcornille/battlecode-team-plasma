@@ -21,6 +21,7 @@ public class Soldier {
                 if (robots.length > 0) {
                     // And we have enough bullets, and haven't attacked yet this turn...
                 	Shooting.shoot(robots[0]);
+                	RobotPlayer.myDirection = Movement.attackTarget(robots[0]);
                 }
 
             	// Adjust movement direction to dodge bullets
