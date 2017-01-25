@@ -156,7 +156,7 @@ public class Scout {
     	MapLocation myLocation = rc.getLocation();
     	    	
     	TreeInfo[] visibleTrees = rc.senseNearbyTrees(rc.getType().sensorRadius,Team.NEUTRAL);
-    	TreeInfo[] closeTrees = rc.senseNearbyTrees(GameConstants.INTERACTION_DIST_FROM_EDGE,Team.NEUTRAL);
+    	TreeInfo[] closeTrees = rc.senseNearbyTrees(RobotPlayer.myType.bodyRadius + GameConstants.INTERACTION_DIST_FROM_EDGE,Team.NEUTRAL);
     	
     	if (closeTrees.length == 0) {
     		// no shakeable trees, look for visible trees

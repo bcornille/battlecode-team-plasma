@@ -25,6 +25,7 @@ public class Tank {
             	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
 
             	// End Turn
+            	RobotPlayer.shakeNearbyTree();
 				RobotPlayer.endTurn();
 
 			} catch (Exception e) {

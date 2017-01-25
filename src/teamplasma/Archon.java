@@ -79,6 +79,7 @@ public class Archon {
                     Communication.countMe(Constants.CHANNEL_COUNT_GARDENER);
                 }
                 // End Turn
+                RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
             } catch (Exception e) {
                 System.out.println("Archon Exception");
