@@ -67,6 +67,17 @@ public strictfp class RobotPlayer {
     	myAge++;
     	Clock.yield();
     }
+   
+   static void shakeNearbyTree() throws GameActionException {
+	   TreeInfo[] closeTrees = rc.senseNearbyTrees(myType.bodyRadius + GameConstants.INTERACTION_DIST_FROM_EDGE,Team.NEUTRAL);
+	   for (TreeInfo tree : closeTrees) {
+		   if (tree.containedBullets > 0 && rc.canShake(tree.ID)) {
+			   rc.shake(tree.ID);
+			   return;
+		   }
+	   }
+	   return;
+   }
     
     /**
      * RobotPlayer.boot():

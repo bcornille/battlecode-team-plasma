@@ -17,6 +17,7 @@ public class Tank {
 				RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
 				if (robots.length > 0) {
 					Shooting.shoot(robots[0]);
+					RobotPlayer.myDirection = Movement.attackTarget(robots[0]);
 				}
 
             	// Adjust movement direction to dodge bullets
@@ -25,6 +26,7 @@ public class Tank {
             	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
 
             	// End Turn
+            	RobotPlayer.shakeNearbyTree();
 				RobotPlayer.endTurn();
 
 			} catch (Exception e) {
