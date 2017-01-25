@@ -8,7 +8,6 @@ import static java.util.Comparator.reverseOrder;
 import static java.util.Comparator.nullsLast;
 
 import battlecode.common.*;
-import teamplasma.Constants;
 
 public class Scout {
 		
@@ -32,25 +31,24 @@ public class Scout {
      * @throws GameActionException
      */
     static void run(RobotController rc) throws GameActionException {
-        // Initialize movement routine
-        Direction myDirection = rc.getLocation().directionTo(Communication.readMapCenter());
         // Code to run every turn
         while (true) {
             try {
             	// Check in every turn
             	RobotPlayer.checkIn();
             	// Check scout spacing, update direction if necessary:
-            	myDirection = checkFriendlySpacing(myDirection);
+            	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
              	// Check for enemies, performs movements if engaged, does not update myDirection:
             	checkEnemyEngage();            	
             	// Check for units in neutral trees (expensive)
             		// checkForUnitTrees();
             	// Check for bullets in neutral trees, update direction if necessary:
-             	myDirection = checkForBulletTrees(myDirection);
-             	// Perform movement in final direction, updated direction if necessary:
-             	if (!rc.hasMoved()) {
-             		myDirection = tryMove(myDirection,10,15);
-             	}
+            	RobotPlayer.myDirection = checkForBulletTrees(RobotPlayer.myDirection);
+                // Adjust movement direction to dodge bullets
+                RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
+             	// Complete movement
+             	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection,10,15);
+             	
              	// End Turn:
                 RobotPlayer.endTurn();
             } catch (Exception e) {
@@ -60,78 +58,7 @@ public class Scout {
         }
     }
     
-    /**
-     * checkFriendlySpacing():
-     * 		Determines if there are nearby friendly units and attempts to move
-     * 		away from them if too close.  		
-     * 		
-     * @param myDirection
-     * @return
-     */
-    static Direction checkFriendlySpacing(Direction myDirection) {
-    	// Get all friendly robots in sensorRadius
-     	RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().sensorRadius,rc.getTeam());
-     	if (friends.length==0){
-     		// You have no friends! How sad. :(
-     		return myDirection;
-     	} else {
-     		// Scan all friendly robots, separation based on average distance from other robots
-         	MapLocation myLocation = rc.getLocation();
-         	MapLocation targetLocation = myLocation;
-         	for (RobotInfo bot : friends){
-         		MapLocation botLocation = bot.getLocation();
-    			float seperation = myLocation.distanceTo(botLocation);
-         		switch(bot.getType()){
-    			case ARCHON:
-    				if( seperation < Constants.SCOUT_SPACING_FROM_ARCHON ) {
-    					targetLocation=targetLocation.add(botLocation.directionTo(myLocation));
-    	         		rc.setIndicatorLine(myLocation, botLocation, 0, 0, 150);
-    				}
-    				break;
-    			case GARDENER:
-    				if( seperation < Constants.SCOUT_SPACING_FROM_GARDENER ) {
-    					targetLocation=targetLocation.add(botLocation.directionTo(myLocation));
-    	         		rc.setIndicatorLine(myLocation, botLocation, 0, 0, 150);
-    				}
-    				break;
-    			case LUMBERJACK:
-    				if( seperation < Constants.SCOUT_SPACING_FROM_LUMBERJACK) {
-    					targetLocation=targetLocation.add(botLocation.directionTo(myLocation));
-    	         		rc.setIndicatorLine(myLocation, botLocation, 0, 0, 150);
-    				}
-    				break;
-    			case SCOUT:
-    				if( seperation < Constants.SCOUT_SPACING_FROM_SCOUT ) {
-    					targetLocation=targetLocation.add(botLocation.directionTo(myLocation));
-    	         		rc.setIndicatorLine(myLocation, botLocation, 0, 0, 150);
-    				}
-    				break;
-    			case SOLDIER:
-    				if( seperation < Constants.SCOUT_SPACING_FROM_SOLDIER ) {
-    					targetLocation=targetLocation.add(botLocation.directionTo(myLocation));
-    	         		rc.setIndicatorLine(myLocation, botLocation, 0, 0, 150);
-    				}
-    				break;
-    			case TANK:
-    				if( seperation < Constants.SCOUT_SPACING_FROM_TANK ) {
-    					targetLocation=targetLocation.add(botLocation.directionTo(myLocation));
-    	         		rc.setIndicatorLine(myLocation, botLocation, 0, 0, 150);
-    				}
-    				break;
-    			default:
-    				break;
-         		}//end switch
-         	}//end for         	
-         	if(myLocation==targetLocation){
-         		return myDirection;
-         	} else {
-				rc.setIndicatorLine(myLocation, targetLocation, 0, 150, 150);
-	         	myDirection = myLocation.directionTo(targetLocation);
-	         	return myDirection;
-         	}
-     	}//end if    	
-    }//end method
-    
+   
     /**
      * checkEnemyEngage():
      * 		Determines if there are nearby enemy units and modifies behavior
@@ -434,50 +361,50 @@ public class Scout {
     	int TREE_UNIT_CHANNELS = 5; 
     }	
 
-    /**
-     * Attempts to move in a given direction, while avoiding small obstacles direction in the path. 
-     * Unlike Movement.tryMove(), it returns a Direction (not a boolean)
-     *
-     * @param dir The intended direction of movement
-     * @param degreeOffset Spacing between checked directions (degrees)
-     * @param checksPerSide Number of extra directions checked on each side, if intended direction was unavailable
-     * @return Direction of the move, unchanged if no move performed
-     * @throws GameActionException
-     */
-    static Direction tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
-
-        // First, try intended direction
-    	boolean safe = rc.senseNearbyBullets(rc.getLocation().add(dir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-        if (rc.canMove(dir) && !rc.hasMoved() && safe) {
-            rc.move(dir);
-            return dir;
-        }
-
-        // Now try a bunch of similar angles
-        int currentCheck = 1;
-
-        while(currentCheck<=checksPerSide) {
-            // Try the offset of the left side
-        	Direction testDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
-        	safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
-                rc.move(testDir);
-                return testDir;
-            }
-            // Try the offset on the right side
-            testDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
-            safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
-                rc.move(testDir);
-                return testDir;
-            }
-            // No move performed, try slightly further
-            currentCheck++;
-        }
-
-        // A move never happened, so return false.
-        return dir;
-    }
-    
+//    /**
+//     * Attempts to move in a given direction, while avoiding small obstacles direction in the path. 
+//     * Unlike Movement.tryMove(), it returns a Direction (not a boolean)
+//     *
+//     * @param dir The intended direction of movement
+//     * @param degreeOffset Spacing between checked directions (degrees)
+//     * @param checksPerSide Number of extra directions checked on each side, if intended direction was unavailable
+//     * @return Direction of the move, unchanged if no move performed
+//     * @throws GameActionException
+//     */
+//    static Direction tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
+//
+//        // First, try intended direction
+//    	boolean safe = rc.senseNearbyBullets(rc.getLocation().add(dir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+//        if (rc.canMove(dir) && !rc.hasMoved() && safe) {
+//            rc.move(dir);
+//            return dir;
+//        }
+//
+//        // Now try a bunch of similar angles
+//        int currentCheck = 1;
+//
+//        while(currentCheck<=checksPerSide) {
+//            // Try the offset of the left side
+//        	Direction testDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
+//        	safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+//            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
+//                rc.move(testDir);
+//                return testDir;
+//            }
+//            // Try the offset on the right side
+//            testDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
+//            safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+//            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
+//                rc.move(testDir);
+//                return testDir;
+//            }
+//            // No move performed, try slightly further
+//            currentCheck++;
+//        }
+//
+//        // A move never happened, so return false.
+//        return dir;
+//    }
+//    
    	
 }
