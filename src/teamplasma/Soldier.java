@@ -20,10 +20,7 @@ public class Soldier {
                 // If there are some...
                 if (robots.length > 0) {
                     // And we have enough bullets, and haven't attacked yet this turn...
-                    if (rc.canFireTriadShot()) {
-                        // ...Then fire a bullet in the direction of the enemy.
-                        rc.fireTriadShot(rc.getLocation().directionTo(robots[0].location));
-                    }
+                	Shooting.shoot(robots[0]);
                 }
 
             	// Adjust movement direction to dodge bullets

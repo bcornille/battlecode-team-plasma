@@ -16,9 +16,7 @@ public class Tank {
 				// See if there are any nearby enemy robots
 				RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
 				if (robots.length > 0) {
-					if (rc.canFirePentadShot()) {
-						rc.firePentadShot(rc.getLocation().directionTo(robots[0].location));
-					}
+					Shooting.shoot(robots[0]);
 				}
 
             	// Adjust movement direction to dodge bullets
