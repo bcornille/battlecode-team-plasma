@@ -8,7 +8,6 @@ import static java.util.Comparator.reverseOrder;
 import static java.util.Comparator.nullsLast;
 
 import battlecode.common.*;
-import teamplasma.Constants;
 
 public class Scout {
 		
