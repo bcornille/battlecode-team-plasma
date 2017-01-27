@@ -26,17 +26,17 @@ public class Communication {
 		
 		switch (type) {
 		case ARCHON:
-            return getOpenChannel(Constants.CHANNEL_MIN_ARCHON, Constants.CHANNEL_MAX_ARCHON);
+            return getOpenChannel(Channels.MIN_ARCHON, Channels.MAX_ARCHON);
         case GARDENER:
-        	return getOpenChannel(Constants.CHANNEL_MIN_GARDENER, Constants.CHANNEL_MAX_GARDENER);
+        	return getOpenChannel(Channels.MIN_GARDENER, Channels.MAX_GARDENER);
         case SOLDIER:
-        	return getOpenChannel(Constants.CHANNEL_MIN_SOLDIER, Constants.CHANNEL_MAX_SOLDIER);
+        	return getOpenChannel(Channels.MIN_SOLDIER, Channels.MAX_SOLDIER);
         case TANK:
-        	return getOpenChannel(Constants.CHANNEL_MIN_TANK, Constants.CHANNEL_MAX_TANK);
+        	return getOpenChannel(Channels.MIN_TANK, Channels.MAX_TANK);
         case LUMBERJACK:
-        	return getOpenChannel(Constants.CHANNEL_MIN_LUMBERJACK, Constants.CHANNEL_MAX_LUMBERJACK);
+        	return getOpenChannel(Channels.MIN_LUMBERJACK, Channels.MAX_LUMBERJACK);
         case SCOUT:
-        	return getOpenChannel(Constants.CHANNEL_MIN_SCOUT, Constants.CHANNEL_MAX_SCOUT);
+        	return getOpenChannel(Channels.MIN_SCOUT, Channels.MAX_SCOUT);
         default:
         	return -1;
 		}
@@ -54,27 +54,27 @@ public class Communication {
 		switch (type) {
 		case ARCHON:
 			System.out.println("New Archon");
-            countMe(Constants.CHANNEL_COUNT_ARCHON);
+            countMe(Channels.COUNT_ARCHON);
             break;
         case GARDENER:
         	System.out.println("New Gardener");
-        	countMe(Constants.CHANNEL_COUNT_GARDENER);
+        	countMe(Channels.COUNT_GARDENER);
             break;
         case SOLDIER:
         	System.out.println("New Soldier");
-        	countMe(Constants.CHANNEL_COUNT_SOLDIER);
+        	countMe(Channels.COUNT_SOLDIER);
             break;
         case TANK:
         	System.out.println("New Tank");
-        	countMe(Constants.CHANNEL_COUNT_TANK);
+        	countMe(Channels.COUNT_TANK);
         	break;
         case LUMBERJACK:
         	System.out.println("New Lumberjack");
-        	countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
+        	countMe(Channels.COUNT_LUMBERJACK);
             break;
         case SCOUT:
         	System.out.println("New Scout");
-        	countMe(Constants.CHANNEL_COUNT_SCOUT);
+        	countMe(Channels.COUNT_SCOUT);
         	break;
         default:
         	System.out.println("An unknown RobotType has appeared!");
@@ -82,7 +82,7 @@ public class Communication {
 	}
 	
 	static void zeroComms(int id) throws GameActionException {
-		int start = Constants.CHANNEL_MAX + Constants.NUM_MESSAGE_CHANNELS*(id - Constants.CHANNEL_MIN) + 1;
+		int start = Channels.MAX_ROBOT + Constants.NUM_MESSAGE_CHANNELS*(id - Channels.MIN_ROBOT) + 1;
 		int end = start + Constants.NUM_MESSAGE_CHANNELS - 1;
 		for (int channel = start; channel <= end; channel++) {
 			rc.broadcast(channel, 0);
@@ -92,18 +92,18 @@ public class Communication {
 	// Get the channel for the type of robot for the counter
 	static int getCountChannel(int i) {
 
-		if (i >= Constants.CHANNEL_MIN_ARCHON && i <= Constants.CHANNEL_MAX_ARCHON) {
-			return Constants.CHANNEL_COUNT_ARCHON;
-		} else if (i >= Constants.CHANNEL_MIN_GARDENER && i <= Constants.CHANNEL_MAX_GARDENER) {
-			return Constants.CHANNEL_COUNT_GARDENER;
-		} else if (i >= Constants.CHANNEL_MIN_LUMBERJACK && i <= Constants.CHANNEL_MAX_LUMBERJACK) {
-			return Constants.CHANNEL_COUNT_LUMBERJACK;
-		} else if (i >= Constants.CHANNEL_MIN_SOLDIER && i <= Constants.CHANNEL_MAX_SOLDIER) {
-			return Constants.CHANNEL_COUNT_SOLDIER;
-		} else if (i >= Constants.CHANNEL_MIN_TANK && i <= Constants.CHANNEL_MAX_TANK) {
-			return Constants.CHANNEL_COUNT_TANK;
-		} else if (i >= Constants.CHANNEL_MIN_SCOUT && i <= Constants.CHANNEL_MAX_SCOUT) {
-			return Constants.CHANNEL_COUNT_SCOUT;
+		if (i >= Channels.MIN_ARCHON && i <= Channels.MAX_ARCHON) {
+			return Channels.COUNT_ARCHON;
+		} else if (i >= Channels.MIN_GARDENER && i <= Channels.MAX_GARDENER) {
+			return Channels.COUNT_GARDENER;
+		} else if (i >= Channels.MIN_LUMBERJACK && i <= Channels.MAX_LUMBERJACK) {
+			return Channels.COUNT_LUMBERJACK;
+		} else if (i >= Channels.MIN_SOLDIER && i <= Channels.MAX_SOLDIER) {
+			return Channels.COUNT_SOLDIER;
+		} else if (i >= Channels.MIN_TANK && i <= Channels.MAX_TANK) {
+			return Channels.COUNT_TANK;
+		} else if (i >= Channels.MIN_SCOUT && i <= Channels.MAX_SCOUT) {
+			return Channels.COUNT_SCOUT;
 		} else {
 			System.out.println("Invalid check-in channel option");
 			return -1;
@@ -115,43 +115,43 @@ public class Communication {
 		float xcen = (xmin+xmax)/2;
         float ycen = (ymin+ymax)/2;
         RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
-        rc.broadcastFloat(Constants.CHANNEL_MAP_XMIN, xmin);
-		rc.broadcastFloat(Constants.CHANNEL_MAP_XMAX, xmax);
-		rc.broadcastFloat(Constants.CHANNEL_MAP_YMIN, ymin);
-		rc.broadcastFloat(Constants.CHANNEL_MAP_YMAX, ymax);
-        rc.broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
-        rc.broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
+        rc.broadcastFloat(Channels.MAP_XMIN, xmin);
+		rc.broadcastFloat(Channels.MAP_XMAX, xmax);
+		rc.broadcastFloat(Channels.MAP_YMIN, ymin);
+		rc.broadcastFloat(Channels.MAP_YMAX, ymax);
+        rc.broadcastFloat(Channels.MAP_XCEN, xcen);
+        rc.broadcastFloat(Channels.MAP_YCEN, ycen);
 	}
 
 	static void setGroveEdge(float xmin, float xmax, float ymin, float ymax) throws GameActionException {
 		float xcen = (xmin+xmax)/2;
         float ycen = (ymin+ymax)/2;
         RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
-        rc.broadcastFloat(Constants.CHANNEL_GROVE_XMIN, xmin);
-		rc.broadcastFloat(Constants.CHANNEL_GROVE_XMAX, xmax);
-		rc.broadcastFloat(Constants.CHANNEL_GROVE_YMIN, ymin);
-		rc.broadcastFloat(Constants.CHANNEL_GROVE_YMAX, ymax);
-        rc.broadcastFloat(Constants.CHANNEL_GROVE_XCEN, xcen);
-        rc.broadcastFloat(Constants.CHANNEL_GROVE_YCEN, ycen);
+        rc.broadcastFloat(Channels.GROVE1_XMIN, xmin);
+		rc.broadcastFloat(Channels.GROVE1_XMAX, xmax);
+		rc.broadcastFloat(Channels.GROVE1_YMIN, ymin);
+		rc.broadcastFloat(Channels.GROVE1_YMAX, ymax);
+        rc.broadcastFloat(Channels.GROVE1_XCEN, xcen);
+        rc.broadcastFloat(Channels.GROVE1_YCEN, ycen);
 	}
 	
 	static void updateMapEdge(MapLocation position) throws GameActionException {
-		float xmin = Math.min(position.x,rc.readBroadcastFloat(Constants.CHANNEL_MAP_XMIN));
-		float xmax = Math.max(position.x,rc.readBroadcastFloat(Constants.CHANNEL_MAP_XMAX));
-		float ymin = Math.min(position.y,rc.readBroadcastFloat(Constants.CHANNEL_MAP_YMIN));
-		float ymax = Math.max(position.y,rc.readBroadcastFloat(Constants.CHANNEL_MAP_YMAX));
+		float xmin = Math.min(position.x,rc.readBroadcastFloat(Channels.MAP_XMIN));
+		float xmax = Math.max(position.x,rc.readBroadcastFloat(Channels.MAP_XMAX));
+		float ymin = Math.min(position.y,rc.readBroadcastFloat(Channels.MAP_YMIN));
+		float ymax = Math.max(position.y,rc.readBroadcastFloat(Channels.MAP_YMAX));
 		Communication.setMapEdge(xmin,xmax,ymin,ymax); 
 	}
 	
 	static void broadcastMapCenter(MapLocation center) throws GameActionException {
-		rc.broadcastFloat(Constants.CHANNEL_MAP_XCEN, center.x);
-		rc.broadcastFloat(Constants.CHANNEL_MAP_YCEN, center.y);
+		rc.broadcastFloat(Channels.MAP_XCEN, center.x);
+		rc.broadcastFloat(Channels.MAP_YCEN, center.y);
 	}
 	
 	static MapLocation readMapCenter() throws GameActionException {
 		return new MapLocation(
-				rc.readBroadcastFloat(Constants.CHANNEL_MAP_XCEN),
-				rc.readBroadcastFloat(Constants.CHANNEL_MAP_YCEN)
+				rc.readBroadcastFloat(Channels.MAP_XCEN),
+				rc.readBroadcastFloat(Channels.MAP_YCEN)
 				);
 	}
 	

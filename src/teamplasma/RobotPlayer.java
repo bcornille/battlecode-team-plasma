@@ -92,9 +92,9 @@ public strictfp class RobotPlayer {
        myTeam = rc.getTeam();
        enemyTeam = myTeam.opponent();
 	   
-       int numSpawned = rc.readBroadcast(Constants.CHANNEL_COUNT_SPAWNED);
+       int numSpawned = rc.readBroadcast(Channels.COUNT_SPAWNED);
 	   mySpawnNumber = ++numSpawned;
-	   rc.broadcast(Constants.CHANNEL_COUNT_SPAWNED, numSpawned);
+	   rc.broadcast(Channels.COUNT_SPAWNED, numSpawned);
 	   
 	   myChannel = Communication.getOpenChannel(myType);
 	   if (myChannel != -1)

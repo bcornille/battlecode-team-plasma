@@ -31,7 +31,7 @@ public class Archon {
     static void run(RobotController rc) throws GameActionException {
 
     	// First Archon has additional startup
-    	if (rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON)==0) {
+    	if (rc.readBroadcast(Channels.COUNT_ARCHON)==0) {
     		firstArchonSetup();
     	}
     	
@@ -56,10 +56,10 @@ public class Archon {
             	}
                     
                 // Attempt to build a gardener in this direction
-            	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
+            	int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
               int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
 
-              if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
+              if (rc.readBroadcast(Channels.COUNT_GARDENER) < maxGardeners) {
                 tryHireGardener();
               }
                 
@@ -69,10 +69,10 @@ public class Archon {
               MapLocation futureLocation = myLocation.add(moveDirection, RobotType.ARCHON.strideRadius);
                 
               if (
-                futureLocation.x < rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMIN) ||
-                futureLocation.x > rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMAX) ||
-                futureLocation.y < rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMIN) ||
-                futureLocation.y > rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMAX)                	
+                futureLocation.x < rc.readBroadcastFloat(Channels.GROVE1_XMIN) ||
+                futureLocation.x > rc.readBroadcastFloat(Channels.GROVE1_XMAX) ||
+                futureLocation.y < rc.readBroadcastFloat(Channels.GROVE1_YMIN) ||
+                futureLocation.y > rc.readBroadcastFloat(Channels.GROVE1_YMAX)                	
                 ){
                 moveDirection = moveDirection.opposite();
               }
@@ -144,23 +144,23 @@ public class Archon {
 
         if ( nearest == toxmin ) {
         	// Left Side
-    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 1);
+    		rc.broadcast(Channels.BUILD_DIRECTION, 1);
         	buildDirection = Direction.NORTH;
         } else  if ( nearest == toxmax ) {
         	// Right Side
-    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 2);
+    		rc.broadcast(Channels.BUILD_DIRECTION, 2);
         	buildDirection = Direction.SOUTH;
         } else  if ( nearest == toymin ) {
         	// find next closest edge
             float second = Math.min(toxmin, toxmax);
         	// Bottom Side
-    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 3);
+    		rc.broadcast(Channels.BUILD_DIRECTION, 3);
         	buildDirection = Direction.NORTH;
         } else  if ( nearest == toymax ) {
         	// find next closest edge
             float second = Math.min(toymin, toymax);
         	// Top Side
-    		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 4);
+    		rc.broadcast(Channels.BUILD_DIRECTION, 4);
         	buildDirection = Direction.SOUTH;
         } else {
         	// error
@@ -172,9 +172,9 @@ public class Archon {
         
         System.out.println("Grove Setup");
         
-        for (int i = 0; i < Constants.NUM_GROVE_MAX; i++) {
-        	rc.broadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS+i, false);
-        	rc.broadcastBoolean(Constants.CHANNEL_GROVE_ASSIGNED+i, false);
+        for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
+        	rc.broadcastBoolean(Channels.GROVE1_LOCATIONS+i, false);
+        	rc.broadcastBoolean(Channels.GROVE1_ASSIGNED+i, false);
         }
         
     	myLocation = rc.getLocation();
@@ -182,10 +182,10 @@ public class Archon {
     	groveCenter = myLocation.add(buildDirection, RobotType.ARCHON.bodyRadius+RobotType.GARDENER.bodyRadius);
     	
     	// setup first grove location
-    	rc.broadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS, true);
-    	rc.broadcastBoolean(Constants.CHANNEL_GROVE_ASSIGNED, false);
-    	rc.broadcastFloat(Constants.CHANNEL_GROVE_X, groveCenter.x);
-    	rc.broadcastFloat(Constants.CHANNEL_GROVE_Y, groveCenter.y);
+    	rc.broadcastBoolean(Channels.GROVE1_LOCATIONS, true);
+    	rc.broadcastBoolean(Channels.GROVE1_ASSIGNED, false);
+    	rc.broadcastFloat(Channels.GROVE1_X, groveCenter.x);
+    	rc.broadcastFloat(Channels.GROVE1_Y, groveCenter.y);
     	
         // Save the grove information 
         Communication.setGroveEdge(
@@ -199,11 +199,11 @@ public class Archon {
     static void initialize() throws GameActionException {
     	
         // Archons count themselves
-        Communication.countMe(Constants.CHANNEL_COUNT_ARCHON);
-        archonNumber = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
+        Communication.countMe(Channels.COUNT_ARCHON);
+        archonNumber = rc.readBroadcast(Channels.COUNT_ARCHON);
         
         // get starting value
-        int start = rc.readBroadcast(Constants.CHANNEL_BUILD_DIRECTION);
+        int start = rc.readBroadcast(Channels.BUILD_DIRECTION);
         
         // get build direction
         if (start == 1) {
@@ -228,16 +228,16 @@ public class Archon {
     
     static void checkGroves() throws GameActionException {
     	
-    	float xmin = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMIN); 
-    	float xmax = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMAX); 
-    	float ymin = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMIN); 
-    	float ymax = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMAX);
+    	float xmin = rc.readBroadcastFloat(Channels.GROVE1_XMIN); 
+    	float xmax = rc.readBroadcastFloat(Channels.GROVE1_XMAX); 
+    	float ymin = rc.readBroadcastFloat(Channels.GROVE1_YMIN); 
+    	float ymax = rc.readBroadcastFloat(Channels.GROVE1_YMAX);
     	
-        for (int i = 0; i < Constants.NUM_GROVE_MAX; i++) {
-        	if(rc.readBroadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS+i)) {	
+        for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
+        	if(rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i)) {	
             	
-				float groveX = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_X+i);
-				float groveY = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_Y+i);
+				float groveX = rc.readBroadcastFloat(Channels.GROVE1_X+i);
+				float groveY = rc.readBroadcastFloat(Channels.GROVE1_Y+i);
         		
             	xmin = Math.min(xmin, groveX);
             	xmax = Math.max(xmax, groveX);
@@ -276,13 +276,13 @@ public class Archon {
       */
     static boolean electLeader() throws GameActionException {
     	int currentRound = rc.getRoundNum();
-    	for (int channel = Constants.CHANNEL_MIN_ARCHON; channel <= RobotPlayer.myChannel; channel++) {
+    	for (int channel = Channels.MIN_ARCHON; channel <= RobotPlayer.myChannel; channel++) {
     		int lastCheckIn = rc.readBroadcast(channel);
     		if ( currentRound - lastCheckIn > 0 && lastCheckIn != 0 ) {
     			rc.broadcast(channel, 0);
     			Communication.zeroComms(channel);
-    			int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
-    			rc.broadcast(Constants.CHANNEL_COUNT_ARCHON, --numArchons);
+    			int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
+    			rc.broadcast(Channels.COUNT_ARCHON, --numArchons);
     		} else {
     			return channel == RobotPlayer.myChannel;
     		}
@@ -297,7 +297,7 @@ public class Archon {
      */
     static void bringOutYourDead() throws GameActionException {
     	int currentRound = rc.getRoundNum();
-    	for (int channel = Constants.CHANNEL_MIN_GARDENER; channel <= Constants.CHANNEL_MAX; channel++) {
+    	for (int channel = Channels.MIN_GARDENER; channel <= Channels.MAX_ROBOT; channel++) {
     		int lastCheckIn = rc.readBroadcast(channel);
     		if (currentRound - lastCheckIn > 1 && lastCheckIn != 0) {
     			rc.broadcast(channel, 0);

@@ -49,7 +49,7 @@ public class Gardener {
 
         
     	// First Gardener has additional startup
-    	if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER)==1) {
+    	if (rc.readBroadcast(Channels.COUNT_GARDENER)==1) {
     		firstGardenerSetup();
     	}
 		
@@ -137,7 +137,7 @@ public class Gardener {
 	static void initialize() throws GameActionException {
 		
 		// get starting value
-		int start = rc.readBroadcast(Constants.CHANNEL_BUILD_DIRECTION);
+		int start = rc.readBroadcast(Channels.BUILD_DIRECTION);
 	        
         // get build direction
         if (start == 1) {
@@ -156,19 +156,19 @@ public class Gardener {
 	
 	static void findGrove() throws GameActionException {
 		
-		for ( int i = 0; i < Constants.NUM_GROVE_MAX; i++ ) {
+		for ( int i = 0; i < Constants.MAX_COUNT_GROVE; i++ ) {
 			
-			foundGrove = rc.readBroadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS+i);
-			assignedGrove = rc.readBroadcastBoolean(Constants.CHANNEL_GROVE_ASSIGNED+i);
+			foundGrove = rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i);
+			assignedGrove = rc.readBroadcastBoolean(Channels.GROVE1_ASSIGNED+i);
 
 			if (foundGrove && !assignedGrove) {
 				
 				assignedGrove = true;
 							
-				rc.broadcastBoolean(Constants.CHANNEL_GROVE_ASSIGNED+i, assignedGrove);		
+				rc.broadcastBoolean(Channels.GROVE1_ASSIGNED+i, assignedGrove);		
 				
-				float groveX = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_X+i);
-				float groveY = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_Y+i);
+				float groveX = rc.readBroadcastFloat(Channels.GROVE1_X+i);
+				float groveY = rc.readBroadcastFloat(Channels.GROVE1_Y+i);
 
 				groveCenter = new MapLocation(groveX,groveY);
 				groveChannel = i;
@@ -243,12 +243,12 @@ public class Gardener {
     		
         	MapLocation newGroveCenter = myLocation.add(buildDirection.rotateRightDegrees(check*90), Constants.GROVE_SPACING);
 
-            for (int i = 0; i < Constants.NUM_GROVE_MAX; i++) {
+            for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
             	            	
-            	if(rc.readBroadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS+i)) {
+            	if(rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i)) {
             	
-            		float oldX = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_X+i);            		
-            		float oldY = rc.readBroadcastFloat(Constants.CHANNEL_GROVE_Y+i);
+            		float oldX = rc.readBroadcastFloat(Channels.GROVE1_X+i);            		
+            		float oldY = rc.readBroadcastFloat(Channels.GROVE1_Y+i);
             		
             		MapLocation oldGrove = new MapLocation(oldX,oldY);
             		
@@ -258,12 +258,12 @@ public class Gardener {
             			break;
             		}
             		
-            	} else if(!rc.readBroadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS+i)) { 
+            	} else if(!rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i)) { 
             		
-            		rc.broadcastBoolean(Constants.CHANNEL_GROVE_LOCATIONS+i, true);
-            		rc.broadcastBoolean(Constants.CHANNEL_GROVE_ASSIGNED+i, false);
-                	rc.broadcastFloat(Constants.CHANNEL_GROVE_X+i, newGroveCenter.x);
-                	rc.broadcastFloat(Constants.CHANNEL_GROVE_Y+i, newGroveCenter.y);
+            		rc.broadcastBoolean(Channels.GROVE1_LOCATIONS+i, true);
+            		rc.broadcastBoolean(Channels.GROVE1_ASSIGNED+i, false);
+                	rc.broadcastFloat(Channels.GROVE1_X+i, newGroveCenter.x);
+                	rc.broadcastFloat(Channels.GROVE1_Y+i, newGroveCenter.y);
                 	break;
                 	
             	}
@@ -361,10 +361,10 @@ public class Gardener {
 					return;
 				}
 			}
-		} else if (rc.canBuildRobot(RobotType.SCOUT, buildDirection) && rc.readBroadcast(Constants.CHANNEL_COUNT_SCOUT) < 1) {
+		} else if (rc.canBuildRobot(RobotType.SCOUT, buildDirection) && rc.readBroadcast(Channels.COUNT_SCOUT) < 1) {
 	    	rc.buildRobot(RobotType.SCOUT, buildDirection);
 	    	Communication.countMe(RobotType.SCOUT);
-		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
 				rc.buildRobot(RobotType.SOLDIER, buildDirection);
 				Communication.countMe(RobotType.SOLDIER);
 		}
@@ -375,10 +375,10 @@ public class Gardener {
 	
 	static void defending() throws GameActionException {
 		
-		if (rc.canBuildRobot(RobotType.TANK, buildDirection) && rc.readBroadcast(Constants.CHANNEL_COUNT_TANK) < Constants.MAX_COUNT_TANK) {
+		if (rc.canBuildRobot(RobotType.TANK, buildDirection) && rc.readBroadcast(Channels.COUNT_TANK) < Constants.MAX_COUNT_TANK) {
 	    	rc.buildRobot(RobotType.TANK, buildDirection);
 	    	Communication.countMe(RobotType.TANK);
-		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
 				rc.buildRobot(RobotType.SOLDIER, buildDirection);
 				Communication.countMe(RobotType.SOLDIER);
 		}
