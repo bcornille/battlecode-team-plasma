@@ -3,19 +3,20 @@ package teamplasma;
 import battlecode.common.*;
 
 public strictfp class RobotPlayer {
+	
     static RobotController rc;
     
     // Common variables for all RobotType
-    static int age = 0;
-    static int myChannel = 0;
     static boolean canCommunicate = false;
-    static int myID = 0;
+    static Direction myDirection;
+    static MapLocation mapCenter;
     static RobotType myType;
     static int mySpawnNumber = 0;
-    static Direction myDirection;
+    static int myChannel = 0;
+    static int myAge = 0;
+    static int myID = 0;
     static Team myTeam;
     static Team enemyTeam;
-    static MapLocation mapCenter;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -27,8 +28,6 @@ public strictfp class RobotPlayer {
         // This is the RobotController object. You use it to perform actions from this robot,
         // and to get information on its current status.
         RobotPlayer.rc = rc;
-        myTeam = rc.getTeam();
-        enemyTeam = myTeam.opponent();
         
         // Setup common to all RobotType
         boot();
@@ -55,7 +54,7 @@ public strictfp class RobotPlayer {
             	Scout.run(rc);
             	break;
             default:
-            	System.out.println("An unkown RobotType has appeared!");
+            	System.out.println("An unknown RobotType has appeared!");
         }
 	}
     
@@ -65,49 +64,96 @@ public strictfp class RobotPlayer {
      * Increments age by 1 and calls Clock.yield().
      */
    static void endTurn() {
-    	age++;
+    	myAge++;
     	Clock.yield();
     }
+   
+   static void shakeNearbyTree() throws GameActionException {
+	   TreeInfo[] closeTrees = rc.senseNearbyTrees(myType.bodyRadius + GameConstants.INTERACTION_DIST_FROM_EDGE,Team.NEUTRAL);
+	   for (TreeInfo tree : closeTrees) {
+		   if (tree.containedBullets > 0 && rc.canShake(tree.ID)) {
+			   rc.shake(tree.ID);
+			   return;
+		   }
+	   }
+	   return;
+   }
     
     /**
-     * Robot boot-up sequence...
+     * RobotPlayer.boot():
+     * 		Boot up sequence for robots. Sets up all local robot constants.
+     * 		
+     * @throws GameActionException
      */
    static void boot() throws GameActionException {
 	   myID = rc.getID();
-//	   System.out.println(myID);
 	   myType = rc.getType();
-//	   System.out.println(myType.toString());
 	   
-//	   Communication.countMe(myType);
+       myTeam = rc.getTeam();
+       enemyTeam = myTeam.opponent();
 	   
-	   int numSpawned = rc.readBroadcast(Constants.CHANNEL_COUNT_SPAWNED);
+       int numSpawned = rc.readBroadcast(Constants.CHANNEL_COUNT_SPAWNED);
 	   mySpawnNumber = ++numSpawned;
-//	   System.out.println(mySpawnNumber);
 	   rc.broadcast(Constants.CHANNEL_COUNT_SPAWNED, numSpawned);
 	   
 	   myChannel = Communication.getOpenChannel(myType);
-	   System.out.println("My channel" + myChannel);
 	   if (myChannel != -1)
 		   canCommunicate = true;
 	   
 	   mapCenter = Communication.readMapCenter();
-	   System.out.println(mapCenter.toString());
 	   
 	   myDirection = new Direction(rc.getLocation(), mapCenter).rotateLeftDegrees(90);
-//	   System.out.println("My direction" + myDirection.toString());
+	     
    }
    
+   /**
+    * RobotPlayer.checkIn(): 
+    * 		A given robot checks in by broadcasting the round number to their 
+    * 		channel. Also handles VictoryPoint purchasing. 
+    * 
+    * @throws GameActionException
+    */
    static void checkIn() throws GameActionException {
+	   // Broadcast to channel
 	   if (canCommunicate)
 		   rc.broadcast(myChannel, rc.getRoundNum());
-	   float pointXRate = rc.getVictoryPointCost();
+	   // Check for Victory Point win
 	   float ourBullets = rc.getTeamBullets();
-	   if (ourBullets / pointXRate >= GameConstants.VICTORY_POINTS_TO_WIN) {
-		   rc.donate(GameConstants.VICTORY_POINTS_TO_WIN * pointXRate);
+	   float canBuyVPs = ourBullets/rc.getVictoryPointCost();
+	   float canWinVPs = GameConstants.VICTORY_POINTS_TO_WIN - rc.getTeamVictoryPoints();
+
+	   System.out.println("VPs can buy: "+canBuyVPs);
+	   System.out.println("VPs can win: "+canWinVPs);
+	   
+	   if (canBuyVPs >= canWinVPs) {
+		   // Have enough victory points to win
+		   System.out.println("We can win!");
+		   donate(ourBullets);
 	   } else if (rc.getRoundLimit() - rc.getRoundNum() < 2) {
-		   rc.donate((float)Math.floor(ourBullets / pointXRate) * pointXRate);
+		   // Game ending, by all the points
+		   System.out.println("Game ending...buy! buy! buy!");
+		  donate(ourBullets);
 	   } else if (ourBullets >= Constants.MAX_BULLET_BANK) {
-		   rc.donate((float)Math.floor((ourBullets - Constants.MAX_BULLET_BANK) / pointXRate) * pointXRate);
+		   // Surplus money, time to invest in victory
+		   System.out.println("We be rich! Let's cash some in!");
+		   donate(ourBullets - Constants.MAX_BULLET_BANK);
 	   }
+   }
+   
+   /**
+    * RobotPlayer.donate():
+    * 		Loads RobotController.donate() and modifies so only who 
+    * 		Victory Points are able to be purchased.
+    * 
+    * @param float bullets
+    * @throws GameActionException
+    */
+   static void donate(float bullets) throws GameActionException {
+	   // Get exchange rate
+	   float pointXRate = rc.getVictoryPointCost();
+	   // Round donation amount to whole Victory Point
+	   float amount = (float)(Math.floor(bullets / pointXRate) * pointXRate);
+	   // Donate bullets
+	   rc.donate(amount);
    }
 }
