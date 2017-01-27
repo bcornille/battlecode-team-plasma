@@ -10,6 +10,8 @@ public class Archon {
 	
 	static RobotController rc = RobotPlayer.rc;
 	
+    static int archonNumber = 0;
+	
 	static MapLocation myLocation;
 	static MapLocation groveCenter;
 
@@ -55,11 +57,11 @@ public class Archon {
                     
                 // Attempt to build a gardener in this direction
             	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
-            	int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit()+1);
-                if (rc.canHireGardener(buildDirection) && rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
-                    rc.hireGardener(buildDirection);
-                    Communication.countMe(Constants.CHANNEL_COUNT_GARDENER);
-                }
+				int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
+				
+				if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
+					tryHireGardener();
+				}
                 
                 // Stay in box
                 myLocation = rc.getLocation();
@@ -78,8 +80,8 @@ public class Archon {
             	// Move
             	moveDirection = Movement.tryMove(moveDirection,90,1);
                 
-                
                 // End Turn
+                RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
             } catch (Exception e) {
                 System.out.println("Archon Exception");
@@ -137,21 +139,29 @@ public class Archon {
         float toymin = Math.abs(myLocation.y - ymin);
         float toymax = Math.abs(myLocation.y - ymax);
         
-        // find closes edge
+        // find closest edge
         float nearest = Math.min(Math.min(toxmin, toxmax), Math.min(toymin, toymax));
 
         if ( nearest == toxmin ) {
         	// Left Side
     		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 1);
+        	buildDirection = Direction.NORTH;
         } else  if ( nearest == toxmax ) {
         	// Right Side
     		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 2);
+        	buildDirection = Direction.SOUTH;
         } else  if ( nearest == toymin ) {
+        	// find next closest edge
+            float second = Math.min(toxmin, toxmax);
         	// Bottom Side
     		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 3);
+        	buildDirection = Direction.NORTH;
         } else  if ( nearest == toymax ) {
+        	// find next closest edge
+            float second = Math.min(toymin, toymax);
         	// Top Side
     		rc.broadcast(Constants.CHANNEL_BUILD_DIRECTION, 4);
+        	buildDirection = Direction.SOUTH;
         } else {
         	// error
         }
@@ -190,7 +200,8 @@ public class Archon {
     	
         // Archons count themselves
         Communication.countMe(Constants.CHANNEL_COUNT_ARCHON);
-       
+        archonNumber = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
+        
         // get starting value
         int start = rc.readBroadcast(Constants.CHANNEL_BUILD_DIRECTION);
         
@@ -208,16 +219,11 @@ public class Archon {
         }
         
         // get move direction
-        moveDirection = buildDirection.opposite();
+        moveDirection = buildDirection.rotateRightDegrees(90);
         
         // TODO: Also check for tree density, adjust strategies
         
         // TODO: Add early game decisions based off map size
-
-
-        
-        
-        
     }
     
     static void checkGroves() throws GameActionException {
@@ -302,6 +308,17 @@ public class Archon {
     			int numRobotsOfType = rc.readBroadcast(countChannel);
     			rc.broadcast(countChannel, --numRobotsOfType);
     			System.out.println("Robots left " + numRobotsOfType);
+    		}
+    	}
+    }
+    
+    static void tryHireGardener() throws GameActionException {
+    	int maxChecks = 360;
+    	float radianOffset = Constants.TWO_PI / maxChecks;
+    	for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
+    			if (rc.canBuildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check))) {
+    			rc.buildRobot(RobotType.GARDENER, buildDirection);
+    			break;
     		}
     	}
     }

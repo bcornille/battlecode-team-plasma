@@ -347,8 +347,7 @@ public class Gardener {
 	
 	static void moving() throws GameActionException {
 		
-		// TODO: make the sense range for trees a constant? 
-		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.strideRadius * 5.0f, Team.NEUTRAL);
+		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.sensorRadius, Team.NEUTRAL);
 				
 		if (trees.length>0) {
 			System.out.println("omg trees!");

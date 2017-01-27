@@ -77,7 +77,7 @@ public class Communication {
         	countMe(Constants.CHANNEL_COUNT_SCOUT);
         	break;
         default:
-        	System.out.println("An unkown RobotType has appeared!");
+        	System.out.println("An unknown RobotType has appeared!");
 		}
 	}
 	

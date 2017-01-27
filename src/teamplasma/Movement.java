@@ -270,6 +270,27 @@ public class Movement {
     	}
     }
     
+    static Direction attackTarget(RobotInfo target) {
+    	switch (target.type) {
+		case ARCHON:
+			// Move toward Archons
+			return rc.getLocation().directionTo(target.location);
+		case GARDENER:
+			// Move toward Gardeners
+			return rc.getLocation().directionTo(target.location);
+		case LUMBERJACK:
+			return rc.getLocation().directionTo(target.location);
+		case SCOUT:
+			// Move toward Scouts
+			return rc.getLocation().directionTo(target.location);
+		case SOLDIER:
+			return rc.getLocation().directionTo(target.location);
+		case TANK:
+			return rc.getLocation().directionTo(target.location);
+		default:
+			return RobotPlayer.myDirection;
+    	}
+    }
 }
 
 
