@@ -64,7 +64,7 @@ public class Archon {
               }
                 
               // Stay in box
-              MyLocation = rc.getLocation();
+              myLocation = rc.getLocation();
                 
               MapLocation futureLocation = myLocation.add(moveDirection, RobotType.ARCHON.strideRadius);
                 
