@@ -25,6 +25,7 @@ public class Soldier {
                 	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
                     // And we have enough bullets, and haven't attacked yet this turn...
                 	Shooting.shoot(robots[0]);
+                    
                 } else {
                 	// Move
                 	RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);

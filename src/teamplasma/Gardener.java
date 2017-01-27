@@ -17,7 +17,7 @@ public class Gardener {
 	static RobotController rc = RobotPlayer.rc;
 	
 	static Strategy myStrategy;
-	
+
 	static MapLocation myLocation;
 	static MapLocation buildLocation;
 	static MapLocation moveLocation;
@@ -46,6 +46,7 @@ public class Gardener {
      * @throws GameActionException
      */
 	static void run(RobotController rc) throws GameActionException {
+
         
     	// First Gardener has additional startup
     	if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER)==1) {
@@ -115,6 +116,7 @@ public class Gardener {
 
             	
                 // End Turn
+                RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
 
             } catch (Exception e) {
@@ -234,6 +236,7 @@ public class Gardener {
 
 	}
 	
+
 	static void newGroves() throws GameActionException {
     	
     	for (int check = 0; check<4; check++) {
@@ -383,7 +386,7 @@ public class Gardener {
 	}
 	
 	static void attacking() throws GameActionException {
-		
+		// TODO: ADD THIS
 		
 		
 	}

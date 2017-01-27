@@ -57,29 +57,29 @@ public class Archon {
                     
                 // Attempt to build a gardener in this direction
             	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
-				int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
-				
-				if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
-					tryHireGardener();
-				}
+              int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
+
+              if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
+                tryHireGardener();
+              }
                 
-                // Stay in box
-                myLocation = rc.getLocation();
+              // Stay in box
+              MyLocation = rc.getLocation();
                 
-                MapLocation futureLocation = myLocation.add(moveDirection, RobotType.ARCHON.strideRadius);
+              MapLocation futureLocation = myLocation.add(moveDirection, RobotType.ARCHON.strideRadius);
                 
-                if (
-                	futureLocation.x < rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMIN) ||
-                	futureLocation.x > rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMAX) ||
-                	futureLocation.y < rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMIN) ||
-                	futureLocation.y > rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMAX)                	
-                	){
-                	moveDirection = moveDirection.opposite();
-                }
+              if (
+                futureLocation.x < rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMIN) ||
+                futureLocation.x > rc.readBroadcastFloat(Constants.CHANNEL_GROVE_XMAX) ||
+                futureLocation.y < rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMIN) ||
+                futureLocation.y > rc.readBroadcastFloat(Constants.CHANNEL_GROVE_YMAX)                	
+                ){
+                moveDirection = moveDirection.opposite();
+              }
                 
             	// Move
             	moveDirection = Movement.tryMove(moveDirection,90,1);
-                
+
                 // End Turn
                 RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
@@ -313,6 +313,7 @@ public class Archon {
     }
     
     static void tryHireGardener() throws GameActionException {
+
     	int maxChecks = 360;
     	float radianOffset = Constants.TWO_PI / maxChecks;
     	for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
