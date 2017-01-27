@@ -14,6 +14,7 @@ public class Gardener {
 	
 	static Strategy myStrategy;
 	static Direction towardCenter;
+	static Direction openSide;
 	
 	static Comparator<TreeInfo> compareHP = new Comparator<TreeInfo>() {
 		public int compare(TreeInfo tree1, TreeInfo tree2) {
@@ -23,6 +24,10 @@ public class Gardener {
 	
 	static void run(RobotController rc) throws GameActionException {
         Gardener.rc = rc;
+
+        towardCenter = new Direction(rc.getLocation(), RobotPlayer.mapCenter);
+        openSide = new Direction((float)(Math.floor(towardCenter.getAngleDegrees()/90.0f) * Math.PI) / 2.0f);
+
         // Code to run every turn
         while (true) {
             try {
@@ -122,7 +127,7 @@ public class Gardener {
 	}
 	
 	static void plantGrove() throws GameActionException {
-		tryPlant(towardCenter.opposite());
+		tryPlant(openSide.opposite());
 	}
 	
 	static void buildArmy() throws GameActionException {
@@ -130,7 +135,7 @@ public class Gardener {
         	rc.buildRobot(RobotType.LUMBERJACK, towardCenter);
         	Communication.countMe(Constants.CHANNEL_COUNT_LUMBERJACK);
         } else if (rc.canBuildRobot(RobotType.SOLDIER, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
-            rc.buildRobot(RobotType.SOLDIER, towardCenter);
+            rc.buildRobot(RobotType.SOLDIER, openSide);
             Communication.countMe(Constants.CHANNEL_COUNT_SOLDIER);
         } else if (rc.canBuildRobot(RobotType.TANK, towardCenter) && rc.readBroadcast(Constants.CHANNEL_COUNT_TANK) < Constants.MAX_COUNT_TANK) {
             rc.buildRobot(RobotType.TANK, towardCenter);

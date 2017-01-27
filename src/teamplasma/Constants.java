@@ -142,6 +142,7 @@ public interface Constants {
 	/**
 	 * Miscellaneous definitions.
 	 */
+	float TWO_PI = 2.0f * (float)Math.PI;
 	int EARLY_GAME_END = 200;
 	int CHANNEL_BUILD_DIRECTION = 9999;
 }

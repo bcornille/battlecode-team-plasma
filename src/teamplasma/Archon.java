@@ -74,10 +74,11 @@ public class Archon {
                 // Randomly attempt to build a gardener in this direction
             	int numArchons = rc.readBroadcast(Constants.CHANNEL_COUNT_ARCHON);
             	int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
-                if (rc.canHireGardener(RobotPlayer.myDirection.opposite()) && rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
-                    rc.hireGardener(RobotPlayer.myDirection.opposite());
-                    Communication.countMe(Constants.CHANNEL_COUNT_GARDENER);
-                }
+
+            	if (rc.readBroadcast(Constants.CHANNEL_COUNT_GARDENER) < maxGardeners) {
+            		tryHireGardener();
+            	}
+
                 // End Turn
                 RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
@@ -194,6 +195,19 @@ public class Archon {
     			int numRobotsOfType = rc.readBroadcast(countChannel);
     			rc.broadcast(countChannel, --numRobotsOfType);
     			System.out.println("Robots left " + numRobotsOfType);
+    		}
+    	}
+    }
+    
+    static void tryHireGardener() throws GameActionException {
+    	int maxChecks = 9;
+    	float radianOffset = Constants.TWO_PI / maxChecks;
+    	for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
+    		Direction currentDirection = new Direction(check);
+    		MapLocation targetLocation = rc.getLocation().add(currentDirection, RobotPlayer.myType.bodyRadius + GameConstants.GENERAL_SPAWN_OFFSET);
+    		rc.setIndicatorDot(targetLocation, 0, 0, 0);
+    		if (rc.canBuildRobot(RobotType.GARDENER, currentDirection)) {
+    			rc.buildRobot(RobotType.GARDENER, currentDirection);
     		}
     	}
     }
