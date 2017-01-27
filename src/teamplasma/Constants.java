@@ -15,7 +15,7 @@ public interface Constants {
 	int MAX_COUNT_SOLDIER = 50;
 	int MAX_COUNT_TANK = 0;
 	int MAX_COUNT_SCOUT = 10;
-	int MAX_COUNT_TREE = 50; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
+	int MAX_COUNT_TREE = 5; //(int)(GameConstants.WATER_HEALTH_REGEN_RATE / GameConstants.BULLET_TREE_DECAY_RATE) * MAX_COUNT_GARDENER;
 	
 	/**
 	 * CHANNEL_COUNT_XXX 
@@ -41,6 +41,18 @@ public interface Constants {
 	int CHANNEL_MAP_YMAX = 10;
 	int CHANNEL_MAP_XCEN = 11;
 	int CHANNEL_MAP_YCEN = 12;
+	
+	/**
+	 * CHANNEL_GROVE_XXX 
+	 * 
+	 * Sets the channels for keeping track of the grove limits
+	**/
+	int CHANNEL_GROVE_XMIN = 13;
+	int CHANNEL_GROVE_XMAX = 14;
+	int CHANNEL_GROVE_YMIN = 15;
+	int CHANNEL_GROVE_YMAX = 16;
+	int CHANNEL_GROVE_XCEN = 17;
+	int CHANNEL_GROVE_YCEN = 18;
 
 	/**
 	 * CHANNEL_MIN/MAX_XXX 
@@ -48,7 +60,7 @@ public interface Constants {
 	 * Sets the channels for ID storage for robots currently in play.
 	 * 
 	**/
-	int CHANNEL_MIN_ARCHON = 13;
+	int CHANNEL_MIN_ARCHON = 1000;
 	int CHANNEL_MAX_ARCHON = CHANNEL_MIN_ARCHON + MAX_COUNT_ARCHON -1;
 	
 	int CHANNEL_MIN_GARDENER = CHANNEL_MAX_ARCHON + 1;
@@ -143,5 +155,21 @@ public interface Constants {
 	 * Miscellaneous definitions.
 	 */
 	int EARLY_GAME_END = 200;
-	int CHANNEL_BUILD_DIRECTION = 9999;
+	
+	/**
+	 * Gardening Constants
+	 */
+	float GROVE_SPACING = 6.0f*GameConstants.BULLET_TREE_RADIUS + 2.1f*RobotType.ARCHON.bodyRadius; 
+	
+	int CHANNEL_BUILD_DIRECTION = 20;
+	
+	int CHANNEL_GROVE_START = 9000;
+	int NUM_GROVE_MAX = 100;
+	
+	int CHANNEL_GROVE_LOCATIONS = CHANNEL_GROVE_START;
+	int CHANNEL_GROVE_ASSIGNED = CHANNEL_GROVE_START + NUM_GROVE_MAX;
+	int CHANNEL_GROVE_X = CHANNEL_GROVE_START + 2*NUM_GROVE_MAX;
+	int CHANNEL_GROVE_Y = CHANNEL_GROVE_START + 3*NUM_GROVE_MAX;
+	
+	
 }

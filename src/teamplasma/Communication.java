@@ -122,6 +122,18 @@ public class Communication {
         rc.broadcastFloat(Constants.CHANNEL_MAP_XCEN, xcen);
         rc.broadcastFloat(Constants.CHANNEL_MAP_YCEN, ycen);
 	}
+
+	static void setGroveEdge(float xmin, float xmax, float ymin, float ymax) throws GameActionException {
+		float xcen = (xmin+xmax)/2;
+        float ycen = (ymin+ymax)/2;
+        RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
+        rc.broadcastFloat(Constants.CHANNEL_GROVE_XMIN, xmin);
+		rc.broadcastFloat(Constants.CHANNEL_GROVE_XMAX, xmax);
+		rc.broadcastFloat(Constants.CHANNEL_GROVE_YMIN, ymin);
+		rc.broadcastFloat(Constants.CHANNEL_GROVE_YMAX, ymax);
+        rc.broadcastFloat(Constants.CHANNEL_GROVE_XCEN, xcen);
+        rc.broadcastFloat(Constants.CHANNEL_GROVE_YCEN, ycen);
+	}
 	
 	static void updateMapEdge(MapLocation position) throws GameActionException {
 		float xmin = Math.min(position.x,rc.readBroadcastFloat(Constants.CHANNEL_MAP_XMIN));

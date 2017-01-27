@@ -110,21 +110,15 @@ public strictfp class RobotPlayer {
 	   float ourBullets = rc.getTeamBullets();
 	   float canBuyVPs = ourBullets/rc.getVictoryPointCost();
 	   float canWinVPs = GameConstants.VICTORY_POINTS_TO_WIN - rc.getTeamVictoryPoints();
-
-	   System.out.println("VPs can buy: "+canBuyVPs);
-	   System.out.println("VPs can win: "+canWinVPs);
 	   
 	   if (canBuyVPs >= canWinVPs) {
 		   // Have enough victory points to win
-		   System.out.println("We can win!");
 		   donate(ourBullets);
 	   } else if (rc.getRoundLimit() - rc.getRoundNum() < 2) {
 		   // Game ending, by all the points
-		   System.out.println("Game ending...buy! buy! buy!");
 		  donate(ourBullets);
 	   } else if (ourBullets >= Constants.MAX_BULLET_BANK) {
 		   // Surplus money, time to invest in victory
-		   System.out.println("We be rich! Let's cash some in!");
 		   donate(ourBullets - Constants.MAX_BULLET_BANK);
 	   }
    }
