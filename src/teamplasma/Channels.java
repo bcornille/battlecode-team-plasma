@@ -93,6 +93,18 @@ public interface Channels {
 	int MAX_ROBOT = MAX_SCOUT;
 	
 	/**
+	 * GARDENER_XXX 
+	 * 
+	 * Sets the channels for keeping track of the gardeners
+	**/
+	
+	int GARDENER_START = 6000;
+	
+	int GARDENER_ID = GARDENER_START;
+	int GARDENER_NUMBER = GARDENER_START + Constants.MAX_COUNT_GARDENER;;
+	int GARDENER_PARENT = GARDENER_START + 2*Constants.MAX_COUNT_GARDENER;
+		
+	/**
 	 * GROVEi_XXX 
 	 * 
 	 * Sets the channels for keeping track of the grove contents

@@ -11,7 +11,7 @@ public class Archon {
 	static RobotController rc = RobotPlayer.rc;
 	
     static int archonNumber = 0;
-	
+
 	static MapLocation myLocation;
 	static MapLocation groveCenter;
 
@@ -46,22 +46,26 @@ public class Archon {
             	
             	// Check if this Archon is the leader
             	amLeader = electLeader();
+            	
             	if (amLeader) {
             		// Leader Archon checks for dead robots
             		bringOutYourDead();
             		
+            		System.out.println(rc.readBroadcast(Channels.COUNT_ARCHON));
+            		System.out.println(rc.readBroadcast(Channels.COUNT_GARDENER));
+            		System.out.println(rc.readBroadcast(Channels.COUNT_LUMBERJACK));
+            		System.out.println(rc.readBroadcast(Channels.COUNT_SCOUT));
+            		System.out.println(rc.readBroadcast(Channels.COUNT_SOLDIER));
+            		System.out.println(rc.readBroadcast(Channels.COUNT_TANK));
+
             		// Check grove mesh
             		checkGroves();
 
             	}
                     
-                // Attempt to build a gardener in this direction
-            	int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
-              int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
-
-              if (rc.readBroadcast(Channels.COUNT_GARDENER) < maxGardeners) {
-                tryHireGardener();
-              }
+              // Attempt to build a gardener
+              tryHireGardener();
+ 
                 
               // Stay in box
               myLocation = rc.getLocation();
@@ -151,14 +155,10 @@ public class Archon {
     		rc.broadcast(Channels.BUILD_DIRECTION, 2);
         	buildDirection = Direction.SOUTH;
         } else  if ( nearest == toymin ) {
-        	// find next closest edge
-            float second = Math.min(toxmin, toxmax);
         	// Bottom Side
     		rc.broadcast(Channels.BUILD_DIRECTION, 3);
         	buildDirection = Direction.NORTH;
         } else  if ( nearest == toymax ) {
-        	// find next closest edge
-            float second = Math.min(toymin, toymax);
         	// Top Side
     		rc.broadcast(Channels.BUILD_DIRECTION, 4);
         	buildDirection = Direction.SOUTH;
@@ -166,36 +166,9 @@ public class Archon {
         	// error
         }
     	
-    	/*-------------------*
-    	 * FIRST GROVE SETUP *
-    	 *-------------------*/
-        
-        System.out.println("Grove Setup");
-        
-        for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
-        	rc.broadcastBoolean(Channels.GROVE1_LOCATIONS+i, false);
-        	rc.broadcastBoolean(Channels.GROVE1_ASSIGNED+i, false);
-        }
-        
-    	myLocation = rc.getLocation();
-
-    	groveCenter = myLocation.add(buildDirection, RobotType.ARCHON.bodyRadius+RobotType.GARDENER.bodyRadius);
-    	
-    	// setup first grove location
-    	rc.broadcastBoolean(Channels.GROVE1_LOCATIONS, true);
-    	rc.broadcastBoolean(Channels.GROVE1_ASSIGNED, false);
-    	rc.broadcastFloat(Channels.GROVE1_X, groveCenter.x);
-    	rc.broadcastFloat(Channels.GROVE1_Y, groveCenter.y);
-    	
-        // Save the grove information 
-        Communication.setGroveEdge(
-        		groveCenter.x-RobotType.ARCHON.sensorRadius, 
-        		groveCenter.x+RobotType.ARCHON.sensorRadius,
-        		groveCenter.y-RobotType.ARCHON.sensorRadius,
-        		groveCenter.y+RobotType.ARCHON.sensorRadius);
-
     }
     
+
     static void initialize() throws GameActionException {
     	
         // Archons count themselves
@@ -218,12 +191,72 @@ public class Archon {
         	
         }
         
+        // Setup my home grove
+        groveSetup();
+        
         // get move direction
         moveDirection = buildDirection.rotateRightDegrees(90);
         
         // TODO: Also check for tree density, adjust strategies
         
         // TODO: Add early game decisions based off map size
+    }
+    
+    static void groveSetup() throws GameActionException {
+        
+		int CHANNEL_GROVE_LOCATIONS;
+		int CHANNEL_GROVE_ASSIGNED;
+		int CHANNEL_GROVE_X;
+		int CHANNEL_GROVE_Y;
+    	
+    	switch(archonNumber) {
+    	case 1: 
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE1_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE1_Y;
+    		break;
+    	case 2:
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE2_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE2_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE2_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE2_Y;
+    		break;
+    	case 3:
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE3_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE3_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE3_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE3_Y;
+    		break;
+    	default:
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE1_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE1_Y;    		
+    		break;
+    	}
+    	
+        for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
+        	rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS+i, false);
+        	rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+i, false);
+        }
+        
+    	myLocation = rc.getLocation();
+
+    	groveCenter = myLocation.add(buildDirection, RobotType.ARCHON.bodyRadius+RobotType.GARDENER.bodyRadius);
+    	
+    	// setup first grove location
+    	rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS, true);
+    	rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED, false);
+    	rc.broadcastFloat(CHANNEL_GROVE_X, groveCenter.x);
+    	rc.broadcastFloat(CHANNEL_GROVE_Y, groveCenter.y);
+    	
+        // Save the grove information 
+        Communication.setGroveEdge( archonNumber,
+        		groveCenter.x-RobotType.ARCHON.sensorRadius, 
+        		groveCenter.x+RobotType.ARCHON.sensorRadius,
+        		groveCenter.y-RobotType.ARCHON.sensorRadius,
+        		groveCenter.y+RobotType.ARCHON.sensorRadius);
     }
     
     static void checkGroves() throws GameActionException {
@@ -244,7 +277,7 @@ public class Archon {
             	ymin = Math.min(ymin, groveY);
             	ymax = Math.max(ymax, groveY);
 
-            	Communication.setGroveEdge(xmin, xmax, ymin, ymax);
+            	Communication.setGroveEdge(archonNumber, xmin, xmax, ymin, ymax);
             	
 				groveCenter = new MapLocation(groveX,groveY);
 				rc.setIndicatorDot(groveCenter, 0, 0, 0);
@@ -314,13 +347,37 @@ public class Archon {
     
     static void tryHireGardener() throws GameActionException {
 
-    	int maxChecks = 360;
-    	float radianOffset = Constants.TWO_PI / maxChecks;
-    	for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
+    	int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
+        int numGardeners = rc.readBroadcast(Channels.COUNT_GARDENER);
+        int maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
+        
+	    if (numGardeners < maxGardeners) {
+	
+	    	int maxChecks = 360;
+	    	float radianOffset = Constants.TWO_PI / maxChecks;
+	    	
+	    	for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
     			if (rc.canBuildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check))) {
-    			rc.buildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check));
-    			break;
-    		}
-    	}
+
+    				// Build the Gardener
+	    			rc.buildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check));
+	    			// Count the Gardener
+	    			rc.broadcast(Channels.COUNT_GARDENER, ++numGardeners);
+	    			// Locate the Gardener
+	    			float gDist = RobotType.ARCHON.bodyRadius + RobotType.GARDENER.bodyRadius + GameConstants.GENERAL_SPAWN_OFFSET;
+	    			MapLocation gLoc = myLocation.add(buildDirection.rotateRightRads(check),gDist);
+	    			int gID = rc.senseRobotAtLocation(gLoc).getID();
+	    			
+	    			for (int i = 0; i < Constants.MAX_COUNT_GARDENER; i++) {
+	    				if (rc.readBroadcast(Channels.GARDENER_ID)==0){
+			    			rc.broadcast(Channels.GARDENER_ID+i, gID);
+			    			rc.broadcast(Channels.GARDENER_NUMBER+i, numGardeners);
+			    			rc.broadcast(Channels.GARDENER_PARENT+i, archonNumber);
+			    			break;
+	    				}
+	    			}
+	    		}
+	    	}
+	    }
     }
 }

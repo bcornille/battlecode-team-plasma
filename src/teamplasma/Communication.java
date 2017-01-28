@@ -122,18 +122,6 @@ public class Communication {
         rc.broadcastFloat(Channels.MAP_XCEN, xcen);
         rc.broadcastFloat(Channels.MAP_YCEN, ycen);
 	}
-
-	static void setGroveEdge(float xmin, float xmax, float ymin, float ymax) throws GameActionException {
-		float xcen = (xmin+xmax)/2;
-        float ycen = (ymin+ymax)/2;
-        RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
-        rc.broadcastFloat(Channels.GROVE1_XMIN, xmin);
-		rc.broadcastFloat(Channels.GROVE1_XMAX, xmax);
-		rc.broadcastFloat(Channels.GROVE1_YMIN, ymin);
-		rc.broadcastFloat(Channels.GROVE1_YMAX, ymax);
-        rc.broadcastFloat(Channels.GROVE1_XCEN, xcen);
-        rc.broadcastFloat(Channels.GROVE1_YCEN, ycen);
-	}
 	
 	static void updateMapEdge(MapLocation position) throws GameActionException {
 		float xmin = Math.min(position.x,rc.readBroadcastFloat(Channels.MAP_XMIN));
@@ -153,6 +141,63 @@ public class Communication {
 				rc.readBroadcastFloat(Channels.MAP_XCEN),
 				rc.readBroadcastFloat(Channels.MAP_YCEN)
 				);
+	}
+	
+
+	static void setGroveEdge(int myNumber, float xmin, float xmax, float ymin, float ymax) throws GameActionException {
+		float xcen = (xmin+xmax)/2;
+        float ycen = (ymin+ymax)/2;
+        RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
+        
+        
+        int CHANNEL_GROVE_XMIN;
+        int CHANNEL_GROVE_XMAX;
+        int CHANNEL_GROVE_XCEN;
+        int CHANNEL_GROVE_YMIN;
+        int CHANNEL_GROVE_YMAX;
+        int CHANNEL_GROVE_YCEN;
+        
+    	switch(myNumber) {
+    	case 1: 
+    		CHANNEL_GROVE_XMIN = Channels.GROVE1_XMIN;
+    		CHANNEL_GROVE_XMAX = Channels.GROVE1_XMAX;
+    		CHANNEL_GROVE_XCEN = Channels.GROVE1_XCEN;
+    		CHANNEL_GROVE_YMIN = Channels.GROVE1_YMIN;
+    		CHANNEL_GROVE_YMAX = Channels.GROVE1_YMAX;
+    		CHANNEL_GROVE_YCEN = Channels.GROVE1_YCEN;
+    		break;
+    	case 2:
+    		CHANNEL_GROVE_XMIN = Channels.GROVE2_XMIN;
+    		CHANNEL_GROVE_XMAX = Channels.GROVE2_XMAX;
+    		CHANNEL_GROVE_XCEN = Channels.GROVE2_XCEN;
+    		CHANNEL_GROVE_YMIN = Channels.GROVE2_YMIN;
+    		CHANNEL_GROVE_YMAX = Channels.GROVE2_YMAX;
+    		CHANNEL_GROVE_YCEN = Channels.GROVE2_YCEN;
+    		break;
+    	case 3:
+    		CHANNEL_GROVE_XMIN = Channels.GROVE3_XMIN;
+    		CHANNEL_GROVE_XMAX = Channels.GROVE3_XMAX;
+    		CHANNEL_GROVE_XCEN = Channels.GROVE3_XCEN;
+    		CHANNEL_GROVE_YMIN = Channels.GROVE3_YMIN;
+    		CHANNEL_GROVE_YMAX = Channels.GROVE3_YMAX;
+    		CHANNEL_GROVE_YCEN = Channels.GROVE3_YCEN;
+    		break;
+    	default:
+    		CHANNEL_GROVE_XMIN = Channels.GROVE1_XMIN;
+    		CHANNEL_GROVE_XMAX = Channels.GROVE1_XMAX;
+    		CHANNEL_GROVE_XCEN = Channels.GROVE1_XCEN;
+    		CHANNEL_GROVE_YMIN = Channels.GROVE1_YMIN;
+    		CHANNEL_GROVE_YMAX = Channels.GROVE1_YMAX;
+    		CHANNEL_GROVE_YCEN = Channels.GROVE1_YCEN;
+    		break;
+    	}
+        
+        rc.broadcastFloat(CHANNEL_GROVE_XMIN, xmin);
+		rc.broadcastFloat(CHANNEL_GROVE_XMAX, xmax);
+		rc.broadcastFloat(CHANNEL_GROVE_YMIN, ymin);
+		rc.broadcastFloat(CHANNEL_GROVE_YMAX, ymax);
+        rc.broadcastFloat(CHANNEL_GROVE_XCEN, xcen);
+        rc.broadcastFloat(CHANNEL_GROVE_YCEN, ycen);
 	}
 	
 }

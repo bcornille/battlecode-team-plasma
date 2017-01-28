@@ -33,6 +33,9 @@ public class Gardener {
 	static boolean callHelp = false;
 	
 	static int groveChannel;
+	static int myParent;
+	static int myNumber;
+	static int myID;
 	
 	static float sqrt2 = (float)Math.sqrt(2);
 	
@@ -136,7 +139,17 @@ public class Gardener {
 	
 	static void initialize() throws GameActionException {
 		
-		// get starting value
+		// Identify Gardener
+		for (int i = 0; i < Constants.MAX_COUNT_GARDENER; i++) {
+			myID = rc.readBroadcast(Channels.GARDENER_ID+i);
+			if (myID==rc.getID()){
+				myNumber = rc.readBroadcast(Channels.GARDENER_NUMBER+i);
+				myParent = rc.readBroadcast(Channels.GARDENER_PARENT+i);
+				break;
+			}
+		}		
+		
+	// get starting value
 		int start = rc.readBroadcast(Channels.BUILD_DIRECTION);
 	        
         // get build direction
@@ -334,7 +347,6 @@ public class Gardener {
 	}
 	
 	static void setStrategy() throws GameActionException {
-		float groveRadius = RobotPlayer.myType.bodyRadius + GameConstants.GENERAL_SPAWN_OFFSET + 2.0f * GameConstants.BULLET_TREE_RADIUS;
 		
 		if (!inGrove) {
 			myStrategy = Strategy.MOVING;
