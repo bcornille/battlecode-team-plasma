@@ -318,7 +318,7 @@ public class Archon {
     	float radianOffset = Constants.TWO_PI / maxChecks;
     	for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
     			if (rc.canBuildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check))) {
-    			rc.buildRobot(RobotType.GARDENER, buildDirection);
+    			rc.buildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check));
     			break;
     		}
     	}
