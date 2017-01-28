@@ -81,8 +81,8 @@ public class Communication {
 		}
 	}
 	
-	static void zeroComms(int id) throws GameActionException {
-		int start = Channels.MAX_ROBOT + Constants.NUM_MESSAGE_CHANNELS*(id - Channels.MIN_ROBOT) + 1;
+	static void zeroComms(int idChannel) throws GameActionException {
+		int start = Channels.MAX_ROBOT + Constants.NUM_MESSAGE_CHANNELS*(idChannel - Channels.MIN_ROBOT) + 1;
 		int end = start + Constants.NUM_MESSAGE_CHANNELS - 1;
 		for (int channel = start; channel <= end; channel++) {
 			rc.broadcast(channel, 0);

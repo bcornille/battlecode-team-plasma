@@ -37,6 +37,11 @@ public class Gardener {
 	static int myNumber;
 	static int myID;
 	
+	static int CHANNEL_GROVE_LOCATIONS;
+	static int CHANNEL_GROVE_ASSIGNED;
+	static int CHANNEL_GROVE_X;
+	static int CHANNEL_GROVE_Y;
+	
 	static float sqrt2 = (float)Math.sqrt(2);
 	
     static int treeCount = 0;
@@ -50,7 +55,6 @@ public class Gardener {
      */
 	static void run(RobotController rc) throws GameActionException {
 
-        
     	// First Gardener has additional startup
     	if (rc.readBroadcast(Channels.COUNT_GARDENER)==1) {
     		firstGardenerSetup();
@@ -96,11 +100,7 @@ public class Gardener {
                			} else {
                				callHelp = false;
                			}
-               			
-               			
-               			
-               			
-               			
+        				
                			// 
             			maintainGrove();            			
             		} else {
@@ -111,13 +111,7 @@ public class Gardener {
             		// We need a home!
             		findGrove();
             	}
-            	
 
-            	
-         
-
-
-            	
                 // End Turn
                 RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
@@ -140,7 +134,7 @@ public class Gardener {
 	static void initialize() throws GameActionException {
 		
 		// Identify Gardener
-		for (int i = 0; i < Constants.MAX_COUNT_GARDENER; i++) {
+		for (int i = 0; i <= Constants.MAX_COUNT_GARDENER; i++) {
 			myID = rc.readBroadcast(Channels.GARDENER_ID+i);
 			if (myID==rc.getID()){
 				myNumber = rc.readBroadcast(Channels.GARDENER_NUMBER+i);
@@ -148,6 +142,34 @@ public class Gardener {
 				break;
 			}
 		}		
+		
+		// get Grove channels
+    	switch(myParent) {
+    	case 1: 
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE1_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE1_Y;
+    		break;
+    	case 2:
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE2_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE2_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE2_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE2_Y;
+    		break;
+    	case 3:
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE3_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE3_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE3_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE3_Y;
+    		break;
+    	default:
+    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
+    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
+    		CHANNEL_GROVE_X = Channels.GROVE1_X;
+    		CHANNEL_GROVE_Y = Channels.GROVE1_Y;    		
+    		break;
+    	}
 		
 	// get starting value
 		int start = rc.readBroadcast(Channels.BUILD_DIRECTION);
@@ -171,17 +193,17 @@ public class Gardener {
 		
 		for ( int i = 0; i < Constants.MAX_COUNT_GROVE; i++ ) {
 			
-			foundGrove = rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i);
-			assignedGrove = rc.readBroadcastBoolean(Channels.GROVE1_ASSIGNED+i);
+			foundGrove = rc.readBroadcastBoolean(CHANNEL_GROVE_LOCATIONS+i);
+			assignedGrove = rc.readBroadcastBoolean(CHANNEL_GROVE_ASSIGNED+i);
 
 			if (foundGrove && !assignedGrove) {
 				
 				assignedGrove = true;
 							
-				rc.broadcastBoolean(Channels.GROVE1_ASSIGNED+i, assignedGrove);		
+				rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+i, assignedGrove);		
 				
-				float groveX = rc.readBroadcastFloat(Channels.GROVE1_X+i);
-				float groveY = rc.readBroadcastFloat(Channels.GROVE1_Y+i);
+				float groveX = rc.readBroadcastFloat(CHANNEL_GROVE_X+i);
+				float groveY = rc.readBroadcastFloat(CHANNEL_GROVE_Y+i);
 
 				groveCenter = new MapLocation(groveX,groveY);
 				groveChannel = i;
@@ -205,14 +227,10 @@ public class Gardener {
 	}
 	
 	static void moveToGrove() throws GameActionException {
-		
-    	rc.setIndicatorDot(myLocation,	0, 0, 0);
-    	rc.setIndicatorDot(groveCenter,	0, 0, 200);
     	
     	if (myLocation.distanceTo(groveCenter) < rc.getType().strideRadius/10) {
     		// in grove, no more moving
     		inGrove = true;
-    		rc.setIndicatorDot(groveCenter,	0, 200, 0);
     		// look for neighbor groves
     		newGroves();
     		
@@ -236,16 +254,13 @@ public class Gardener {
     		// check if move is on the map
     		onMap = rc.onTheMap(myLocation.add(moveDirection),rc.getType().strideRadius);
     		if(onMap){
-        	moveDirection = Movement.tryMove(moveDirection,10,18);
+        	moveDirection = Movement.tryMove(moveDirection,10,36);
     		} else {
     			assignedGrove = false;
     		}
 
     		rc.setIndicatorLine(myLocation,groveCenter,	200, 0, 0);
-    		rc.setIndicatorLine(myLocation,myLocation.add(moveDirection,rc.getType().strideRadius), 0, 200, 0);
-    		
-    		// TODO: can't go around object :(
-    	}
+       	}
 
 	}
 	
@@ -258,10 +273,10 @@ public class Gardener {
 
             for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
             	            	
-            	if(rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i)) {
+            	if(rc.readBroadcastBoolean(CHANNEL_GROVE_LOCATIONS+i)) {
             	
-            		float oldX = rc.readBroadcastFloat(Channels.GROVE1_X+i);            		
-            		float oldY = rc.readBroadcastFloat(Channels.GROVE1_Y+i);
+            		float oldX = rc.readBroadcastFloat(CHANNEL_GROVE_X+i);            		
+            		float oldY = rc.readBroadcastFloat(CHANNEL_GROVE_Y+i);
             		
             		MapLocation oldGrove = new MapLocation(oldX,oldY);
             		
@@ -271,12 +286,12 @@ public class Gardener {
             			break;
             		}
             		
-            	} else if(!rc.readBroadcastBoolean(Channels.GROVE1_LOCATIONS+i)) { 
+            	} else if(!rc.readBroadcastBoolean(CHANNEL_GROVE_LOCATIONS+i)) { 
             		
-            		rc.broadcastBoolean(Channels.GROVE1_LOCATIONS+i, true);
-            		rc.broadcastBoolean(Channels.GROVE1_ASSIGNED+i, false);
-                	rc.broadcastFloat(Channels.GROVE1_X+i, newGroveCenter.x);
-                	rc.broadcastFloat(Channels.GROVE1_Y+i, newGroveCenter.y);
+            		rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS+i, true);
+            		rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+i, false);
+                	rc.broadcastFloat(CHANNEL_GROVE_X+i, newGroveCenter.x);
+                	rc.broadcastFloat(CHANNEL_GROVE_Y+i, newGroveCenter.y);
                 	break;
                 	
             	}

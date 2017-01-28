@@ -43,13 +43,13 @@ public class Movement {
                 rc.move(testDir);
                 return testDir;
             }
-            // Try the offset on the right side
-            testDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
-            safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
-                rc.move(testDir);
-                return testDir;
-            }
+//            // Try the offset on the right side
+//            testDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
+//            safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
+//            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
+//                rc.move(testDir);
+//                return testDir;
+//            }
             // No move performed, try slightly further
             currentCheck++;
         }
