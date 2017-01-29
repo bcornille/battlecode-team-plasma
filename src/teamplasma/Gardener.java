@@ -101,12 +101,21 @@ public class Gardener {
                				callHelp = false;
                			}
         				
-               			// 
-            			maintainGrove();            			
+               			// Do grove things
+            			maintainGrove();  
+            			
             		} else {
             			// Not in grove, move to it
             			moveToGrove();         			
-            		}            		
+            		}     
+               		
+               		// If low health, un-assign your grove 
+               		// TODO: add constant
+               		float healthFraction = 0.3f;
+               		if (rc.getHealth() < RobotType.GARDENER.maxHealth * healthFraction){
+               			rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+groveChannel, false);
+               		}
+               		
             	} else {
             		// We need a home!
             		findGrove();
@@ -171,7 +180,7 @@ public class Gardener {
     		break;
     	}
 		
-	// get starting value
+    	// get starting value
 		int start = rc.readBroadcast(Channels.BUILD_DIRECTION);
 	        
         // get build direction
@@ -238,7 +247,7 @@ public class Gardener {
     		// grove is within one step
     		moveDirection = rc.getLocation().directionTo(groveCenter);
     		// check if move is on the map
-    		onMap = rc.onTheMap(myLocation.add(moveDirection,rc.getType().strideRadius));
+    		onMap = rc.onTheMap(myLocation.add(moveDirection,rc.getType().strideRadius*2.0f));
     		if(onMap){
         		if ( rc.canMove(myLocation.directionTo(groveCenter), myLocation.distanceTo(groveCenter)) ) {
         			rc.move(myLocation.directionTo(groveCenter), myLocation.distanceTo(groveCenter) );
@@ -252,11 +261,11 @@ public class Gardener {
     		// go to grove
     		moveDirection = rc.getLocation().directionTo(groveCenter);
     		// check if move is on the map
-    		onMap = rc.onTheMap(myLocation.add(moveDirection),rc.getType().strideRadius);
+    		onMap = rc.onTheMap(myLocation.add(moveDirection),rc.getType().strideRadius*2.0f);
     		if(onMap){
-        	moveDirection = Movement.tryMove(moveDirection,10,36);
+        	moveDirection = Movement.tryMove(moveDirection,60,3);
     		} else {
-    			assignedGrove = false;
+    			assignedGrove = false;    			
     		}
 
     		rc.setIndicatorLine(myLocation,groveCenter,	200, 0, 0);
@@ -288,12 +297,15 @@ public class Gardener {
             		
             	} else if(!rc.readBroadcastBoolean(CHANNEL_GROVE_LOCATIONS+i)) { 
             		
-            		rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS+i, true);
-            		rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+i, false);
-                	rc.broadcastFloat(CHANNEL_GROVE_X+i, newGroveCenter.x);
-                	rc.broadcastFloat(CHANNEL_GROVE_Y+i, newGroveCenter.y);
-                	break;
-                	
+            		if (!rc.onTheMap(myLocation.add(buildDirection.rotateRightDegrees(check*90),RobotType.GARDENER.sensorRadius)))  {
+            			break;
+            		} else {
+	            		rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS+i, true);
+	            		rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+i, false);
+	                	rc.broadcastFloat(CHANNEL_GROVE_X+i, newGroveCenter.x);
+	                	rc.broadcastFloat(CHANNEL_GROVE_Y+i, newGroveCenter.y);
+	                	break;
+            		}
             	}
             }
     	}
