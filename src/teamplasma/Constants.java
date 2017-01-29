@@ -104,5 +104,9 @@ public interface Constants {
 	float TWO_PI = 2.0f * (float)Math.PI;
 	int EARLY_GAME_END = 200;
 	
+	/**
+	 * Related to pathing
+	 */
+	int MAX_PATH_DEPTH = 10;
 
 }
