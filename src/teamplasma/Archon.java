@@ -1,7 +1,6 @@
 package teamplasma;
 
 import battlecode.common.*;
-import scala.reflect.internal.Printers.RawTreePrinter;
 
 public class Archon {
 
