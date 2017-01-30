@@ -246,7 +246,7 @@ public class Gardener {
 			// grove is within one step
 			moveDirection = rc.getLocation().directionTo(groveCenter);
 			// check if move is on the map
-			onMap = rc.onTheMap(myLocation.add(moveDirection, rc.getType().strideRadius * 2.0f));
+			onMap = rc.onTheMap(myLocation.add(moveDirection, rc.getType().strideRadius), rc.getType().bodyRadius);
 			if (onMap) {
 				if (rc.canMove(myLocation.directionTo(groveCenter), myLocation.distanceTo(groveCenter))) {
 					rc.move(myLocation.directionTo(groveCenter), myLocation.distanceTo(groveCenter));
@@ -261,7 +261,10 @@ public class Gardener {
 			// go to grove
 			moveDirection = rc.getLocation().directionTo(groveCenter);
 			// check if move is on the map
-			onMap = rc.onTheMap(myLocation.add(moveDirection), rc.getType().strideRadius * 2.0f);
+			boolean onMap = true;
+			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
+				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
+			}
 			if (onMap) {
 				moveDirection = Movement.tryMove(moveDirection, 60, 3);
 			} else {
