@@ -146,8 +146,7 @@ public class Communication {
 		float xcen = (xmin+xmax)/2;
         float ycen = (ymin+ymax)/2;
         RobotPlayer.mapCenter = new MapLocation(xcen, ycen);
-        
-        
+                
         int CHANNEL_GROVE_XMIN;
         int CHANNEL_GROVE_XMAX;
         int CHANNEL_GROVE_XCEN;

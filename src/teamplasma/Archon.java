@@ -1,6 +1,7 @@
 package teamplasma;
 
 import battlecode.common.*;
+import scala.reflect.internal.Printers.RawTreePrinter;
 
 public class Archon {
 
@@ -12,7 +13,6 @@ public class Archon {
 
 	static int archonNumber = 0;
 	static int gardenerNumber = 0;
-	static int groveCount = 0;
 
 	static MapLocation myLocation;
 	static MapLocation groveCenter;
@@ -102,8 +102,6 @@ public class Archon {
 		 * MAP BOUNDARIES *
 		 *----------------*/
 
-		System.out.println("Mappping Boundaries");
-
 		myLocation = rc.getLocation();
 
 		MapLocation[] enemyArchons = rc.getInitialArchonLocations(RobotPlayer.enemyTeam);
@@ -137,8 +135,6 @@ public class Archon {
 		/*------------------------*
 		 * MAP STARTING POSITIONS *
 		 *------------------------*/
-
-		System.out.println("Start Locations");
 
 		float toxmin = Math.abs(myLocation.x - xmin);
 		float toxmax = Math.abs(myLocation.x - xmax);
@@ -211,7 +207,89 @@ public class Archon {
 		}
 
 		myLocation = rc.getLocation();
+		
+		System.out.println(" ");
+		System.out.println(archonNumber);
+		
+		// check if in another Archon's grove
+		if (archonNumber==2) {
+			// 2rd Archon checks if in 1nd's grove
+			
+			float xmin = rc.readBroadcastFloat(Channels.GROVE1_XMIN);
+			float xmax = rc.readBroadcastFloat(Channels.GROVE1_XMAX);
+			float ymin = rc.readBroadcastFloat(Channels.GROVE1_YMIN);
+			float ymax = rc.readBroadcastFloat(Channels.GROVE1_YMAX);
+			
+			System.out.println("(" + xmin + "," + ymin + ")" );
+			System.out.println("(" + myLocation.x + "," + myLocation.y + ")" );
+			System.out.println("(" + xmax + "," + ymax + ")" );
 
+			boolean xcheck = (xmin <= myLocation.x && xmax >= myLocation.x);
+			boolean ycheck = (ymin <= myLocation.y && ymax >= myLocation.y);
+			
+			System.out.println(xcheck + ", " + ycheck);
+
+			if ( xcheck && ycheck ){
+				// in grove 1, don't make our own grove
+				Communication.setGroveEdge( archonNumber,xmin,xmax,ymin,ymax);
+				archonNumber = 1;
+				groveChannels();
+				return;
+			}
+			
+		} else if (archonNumber==3) {
+			// 3rd Archon checks if in 2nd's grove
+			
+			float xmin = rc.readBroadcastFloat(Channels.GROVE2_XMIN);
+			float xmax = rc.readBroadcastFloat(Channels.GROVE2_XMAX);
+			float ymin = rc.readBroadcastFloat(Channels.GROVE2_YMIN);
+			float ymax = rc.readBroadcastFloat(Channels.GROVE2_YMAX);
+
+			System.out.print("(" + xmin + "," + ymin + ")" );
+			System.out.print("(" + myLocation.x + "," + myLocation.y + ")" );
+			System.out.print("(" + xmax + "," + ymax + ")" );
+
+			
+			boolean xcheck = (xmin <= myLocation.x && xmax >= myLocation.x);
+			boolean ycheck = (ymin <= myLocation.y && ymax >= myLocation.y);
+
+			System.out.println(xcheck + ", " + ycheck);
+			
+			if ( xcheck && ycheck ){
+				// 3rd Archon checks if in 1nd's grove as well
+				
+				xmin = rc.readBroadcastFloat(Channels.GROVE1_XMIN);
+				xmax = rc.readBroadcastFloat(Channels.GROVE1_XMAX);
+				ymin = rc.readBroadcastFloat(Channels.GROVE1_YMIN);
+				ymax = rc.readBroadcastFloat(Channels.GROVE1_YMAX);
+				
+				System.out.println("(" + xmin + "," + ymin + ")" );
+				System.out.println("(" + myLocation.x + "," + myLocation.y + ")" );
+				System.out.println("(" + xmax + "," + ymax + ")" );
+
+				xcheck = (xmin <= myLocation.x && xmax >= myLocation.x);
+				ycheck = (ymin <= myLocation.y && ymax >= myLocation.y);
+
+				System.out.println(xcheck + ", " + ycheck);
+				
+				// Check if inside grove 1
+				if ( xcheck && ycheck ){
+					// in grove 1, don't make our own grove
+					Communication.setGroveEdge( archonNumber,xmin,xmax,ymin,ymax);
+					archonNumber = 1;
+					groveChannels();
+					return;
+				} else {
+					// in grove 2, don't make our own grove
+					Communication.setGroveEdge( archonNumber,xmin,xmax,ymin,ymax);
+					archonNumber = 2;
+					groveChannels();
+					return;
+				}
+			}
+		}
+		
+		// Not in another grove, so lets make our own
 		groveCenter = myLocation.add(buildDirection, RobotType.ARCHON.bodyRadius + RobotType.GARDENER.bodyRadius);
 
 		// setup first grove location
@@ -220,7 +298,7 @@ public class Archon {
 		rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED, false);
 		rc.broadcastFloat(CHANNEL_GROVE_X, groveCenter.x);
 		rc.broadcastFloat(CHANNEL_GROVE_Y, groveCenter.y);
-
+		
 		// Save the grove information
 		Communication.setGroveEdge( archonNumber, 
 				groveCenter.x - RobotType.ARCHON.sensorRadius,
@@ -231,8 +309,8 @@ public class Archon {
 	}
 
 	static void checkGroves() throws GameActionException {
-
-		groveCount = 0;
+		
+		System.out.println(archonNumber);
 
 		float xmin = rc.readBroadcastFloat(CHANNEL_GROVE_XMIN);
 		float xmax = rc.readBroadcastFloat(CHANNEL_GROVE_XMAX);
@@ -241,8 +319,6 @@ public class Archon {
 
 		for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
 			if (rc.readBroadcastBoolean(CHANNEL_GROVE_LOCATIONS + i)) {
-
-				groveCount++;
 
 				float groveX = rc.readBroadcastFloat(CHANNEL_GROVE_X + i);
 				float groveY = rc.readBroadcastFloat(CHANNEL_GROVE_Y + i);
@@ -352,8 +428,6 @@ public class Archon {
 		
     	boolean canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) );
     	
-    	System.out.println(canBuild);
-
 		int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
 		int numGardeners = rc.readBroadcast(CHANNEL_GARDENER_COUNT);
 		int totGardeners = rc.readBroadcast(Channels.COUNT_GARDENER);

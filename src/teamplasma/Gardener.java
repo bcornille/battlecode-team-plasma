@@ -459,7 +459,6 @@ public class Gardener {
 		
 	}
 	
-	
 	static void moving() throws GameActionException {
 		
 		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.sensorRadius, Team.NEUTRAL);
