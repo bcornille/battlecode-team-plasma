@@ -32,6 +32,7 @@ public class Gardener {
 	static boolean assignedGrove = false;
 	static boolean callHelp = false;
 	static boolean amFirst = false;
+	static boolean canBuild = false;
 	
 	static int groveChannel;
 	static int myParent;
@@ -104,12 +105,12 @@ public class Gardener {
             		break;
               	}
             	
-            	boolean canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) );
-            			
-            	// Check grove status
+            	System.out.println("checkpoint 1");
+            	
+			   	// Check grove status
             	if (assignedGrove) {
             		// Grove is assigned
-               		if (inGrove && canBuild) {
+               		if (inGrove) {
                			
                			// Check for threats
                			RobotInfo[] robots = rc.senseNearbyRobots(RobotType.GARDENER.sensorRadius, RobotPlayer.enemyTeam );
@@ -352,9 +353,11 @@ public class Gardener {
     	
     	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+GameConstants.BULLET_TREE_RADIUS, rc.getTeam());
         Arrays.sort(trees, compareHP);
+        
+    	canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) || canBuild );
 
     	treeCount = trees.length;
-    	if (treeCount <= maxTreeCount) {
+    	if (treeCount <= maxTreeCount && canBuild) {
     		for (int i = 0; i < maxTreeCount; i++) {
     			MapLocation treeLocation = groveTrees[i];
     			if(rc.canPlantTree(myLocation.directionTo(treeLocation))){
