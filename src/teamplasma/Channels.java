@@ -117,6 +117,20 @@ public interface Channels {
 	
 	
 	/**
+	 * ENEMY_ARCHONi_XXX
+	 * 
+	 * offset = 0 : Archon ID
+	 * offset = 1 : Archon x location
+	 * offset = 2 : Archon y location
+	 * offset = 3 : Archon last seen
+	 */
+	int ENEMY_ARCHON_OFFSET = 4;
+	int ENEMY_ARCHON1_START = 5000;
+	int ENEMY_ARCHON2_START = ENEMY_ARCHON1_START + ENEMY_ARCHON_OFFSET;
+	int ENEMY_ARCHON3_START = ENEMY_ARCHON2_START + ENEMY_ARCHON_OFFSET;
+	int ENEMY_ARCHON_END = ENEMY_ARCHON3_START + ENEMY_ARCHON_OFFSET - 1;
+	
+	/**
 	 * GARDENER_XXX
 	 * 
 	 * Sets the channels for keeping track of the gardeners

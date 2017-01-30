@@ -109,7 +109,18 @@ public class Archon {
 		MapLocation[] enemyArchons = rc.getInitialArchonLocations(RobotPlayer.enemyTeam);
 		MapLocation[] myArchons = rc.getInitialArchonLocations(RobotPlayer.myTeam);
 		int numArchons = myArchons.length;
-
+		
+		rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, enemyArchons[0].x);
+        rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, enemyArchons[0].y);
+        if (enemyArchons.length > 1) {
+        	rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, enemyArchons[1].x);
+            rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, enemyArchons[1].y);
+        }
+        if (enemyArchons.length > 2) {
+        	rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, enemyArchons[2].x);
+            rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, enemyArchons[2].y);
+        }
+        
 		// Initialize map variable with Leader location
 		float xmin = myLocation.x;
 		float xmax = myLocation.x;
