@@ -111,9 +111,11 @@ public class Gardener {
 
 					// If low health, un-assign your grove
 					// TODO: add constant
-					float healthFraction = 0.3f;
+					float healthFraction = 0.30f;
 					if (rc.getHealth() < RobotType.GARDENER.maxHealth * healthFraction) {
 						rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED + groveChannel, false);
+						if (inGrove)
+							rc.disintegrate();
 					}
 
 				} else {
@@ -265,7 +267,8 @@ public class Gardener {
 			boolean open = true;
 			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
 				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
-				open = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL).length == 0;
+				if (onMap)
+					open = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL).length == 0;
 			}
 			if (onMap && open) {
 				moveDirection = Movement.pathing(moveDirection, groveCenter);
@@ -397,6 +400,8 @@ public class Gardener {
 		} else if (inGrove && treeCount == 4) {
 			myStrategy = Strategy.ATTACKING;
 			System.out.println("ATTACKING");
+		} else {
+			myStrategy = Strategy.ATTACKING;
 		}
 	}
 
@@ -440,7 +445,15 @@ public class Gardener {
 
 	static void attacking() throws GameActionException {
 		// TODO: ADD THIS
-
+		if (rc.canBuildRobot(RobotType.TANK, buildDirection)
+				&& rc.readBroadcast(Channels.COUNT_TANK) < Constants.MAX_COUNT_TANK) {
+			rc.buildRobot(RobotType.TANK, buildDirection);
+			Communication.countMe(RobotType.TANK);
+		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection)
+				&& rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+			rc.buildRobot(RobotType.SOLDIER, buildDirection);
+			Communication.countMe(RobotType.SOLDIER);
+		}
 	}
 
 }

@@ -415,11 +415,11 @@ class CornerNode extends Node{
 		float stride = RobotPlayer.myType.strideRadius;
 		System.out.println("Depth: " + nodeDepth);
 		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
-		System.out.println("Test value: " + Clock.getBytecodeNum() / 5 * nodeDepth);
+		System.out.println("Test value: " + Clock.getBytecodeNum() / 4 * nodeDepth);
 		if (!isOpen()) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0, 0);
 			return false;
-		} else if (nodeDepth == Constants.MAX_PATH_DEPTH || Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 5 * nodeDepth) {
+		} else if (nodeDepth == Constants.MAX_PATH_DEPTH || Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 4 * nodeDepth) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255, 0);
 			return true;
 		} else {
@@ -463,11 +463,11 @@ class EdgeNode extends Node {
 		float stride = RobotPlayer.myType.strideRadius;
 		System.out.println("Depth: " + nodeDepth);
 		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
-		System.out.println("Test value: " + Clock.getBytecodeNum() / 5 * nodeDepth);
+		System.out.println("Test value: " + Clock.getBytecodeNum() / 4 * nodeDepth);
 		if (!isOpen()) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0, 0);
 			return false;
-		} else if (nodeDepth == Constants.MAX_PATH_DEPTH || Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 5 * nodeDepth) {
+		} else if (nodeDepth == Constants.MAX_PATH_DEPTH || Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 4 * nodeDepth) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255, 0);
 			return true;
 		} else {
