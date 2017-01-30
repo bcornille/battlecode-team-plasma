@@ -1,5 +1,7 @@
 package teamplasma;
 
+import java.util.Arrays;
+
 import battlecode.common.*;
 import java.util.Arrays;
 
@@ -534,3 +536,5 @@ class EdgeNode extends Node {
 		}
 	}
 }
+
+

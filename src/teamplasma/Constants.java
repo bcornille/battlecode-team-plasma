@@ -15,8 +15,8 @@ public interface Constants {
 	int MAX_COUNT_LUMBERJACK = 10;
 	int MAX_COUNT_SOLDIER = 50;
 	int MAX_COUNT_TANK = 10;
-	int MAX_COUNT_SCOUT = 10;
-
+	int MAX_COUNT_SCOUT = 3;
+ 	
 	/**
 	 * Gardening Constants
 	 */
@@ -50,32 +50,32 @@ public interface Constants {
 	 * Desired spacing of friendly units (eventually add all units)
 	 * 
 	 */
-
-	float SPACING_ARCHON_ARCHON = 5.0f;
-	float SPACING_GARDENER_GARDENER = 8.0f;
+	
+	float SPACING_ARCHON_ARCHON = 5.0f; 
+	float SPACING_GARDENER_GARDENER = 5.0f;
 	float SPACING_LUMBERJACK_LUMBERJACK = 2.0f;
 	float SPACING_SCOUT_SCOUT = 12.0f;
-	float SPACING_SOLDIER_SOLDIER = 3.0f;
-	float SPACING_TANK_TANK = 5.0f;
+	float SPACING_SOLDIER_SOLDIER = 2.0f;
+	float SPACING_TANK_TANK = 3.0f;
 
-	float SPACING_ARCHON_GARDENER = 5.0f;
+	float SPACING_ARCHON_GARDENER = 2.0f;
 	float SPACING_ARCHON_LUMBERJACK = 5.0f;
-	float SPACING_ARCHON_SCOUT = 12.0f;
+	float SPACING_ARCHON_SCOUT = 3.0f;
 	float SPACING_ARCHON_SOLDIER = 3.0f;
-	float SPACING_ARCHON_TANK = 3.0f;
+	float SPACING_ARCHON_TANK = 2.0f;
 	float SPACING_GARDENER_LUMBERJACK = 3.0f;
 	float SPACING_GARDENER_SCOUT = 12.0f;
 	float SPACING_GARDENER_SOLDIER = 3.0f;
-	float SPACING_GARDENER_TANK = 10.0f;
-	float SPACING_LUMBERJACK_SCOUT = 12.0f;
+	float SPACING_GARDENER_TANK = 3.0f;
+	float SPACING_LUMBERJACK_SCOUT = 3.0f;
 	float SPACING_LUMBERJACK_SOLDIER = 3.0f;
 	float SPACING_LUMBERJACK_TANK = 3.0f;
-	float SPACING_SCOUT_SOLDIER = 5.0f;
-	float SPACING_SCOUT_TANK = 5.0f;
-	float SPACING_SOLDIER_TANK = 3.0f;
-
-	float SPACING_GARDENER_ARCHON = SPACING_ARCHON_GARDENER;
-	float SPACING_LUMBERJACK_ARCHON = SPACING_ARCHON_LUMBERJACK;
+	float SPACING_SCOUT_SOLDIER = 3.0f;
+	float SPACING_SCOUT_TANK = 3.0f;
+	float SPACING_SOLDIER_TANK = 4.0f;
+	
+	float SPACING_GARDENER_ARCHON = SPACING_ARCHON_GARDENER; 
+	float SPACING_LUMBERJACK_ARCHON = SPACING_ARCHON_LUMBERJACK; 
 	float SPACING_LUMBERJACK_GARDENER = SPACING_GARDENER_LUMBERJACK;
 	float SPACING_SCOUT_ARCHON = SPACING_ARCHON_SCOUT;
 	float SPACING_SCOUT_GARDENER = SPACING_GARDENER_SCOUT;
@@ -93,7 +93,8 @@ public interface Constants {
 	/**
 	 * Economy related constants.
 	 */
-	float MAX_BULLET_BANK = 500.0f;
+	float MAX_BULLET_BANK = 1000.0f;
+	
 
 	/**
 	 * Miscellaneous definitions.
@@ -105,5 +106,6 @@ public interface Constants {
 	 * Related to pathing
 	 */
 	int MAX_PATH_DEPTH = 100;
+
 
 }
