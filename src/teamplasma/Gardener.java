@@ -38,10 +38,18 @@ public class Gardener {
 	static int myNumber;
 	static int myID;
 	
+	static int CHANNEL_GARDENER_COUNT;
+	static int CHANNEL_GROVE_COUNT;
+	
 	static int CHANNEL_GROVE_LOCATIONS;
 	static int CHANNEL_GROVE_ASSIGNED;
 	static int CHANNEL_GROVE_X;
 	static int CHANNEL_GROVE_Y;
+
+	static int CHANNEL_GROVE_XMIN;
+	static int CHANNEL_GROVE_XMAX;
+	static int CHANNEL_GROVE_YMIN;
+	static int CHANNEL_GROVE_YMAX;
 	
 	static float sqrt2 = (float)Math.sqrt(2);
 	
@@ -57,13 +65,15 @@ public class Gardener {
      */
 	static void run(RobotController rc) throws GameActionException {
 
-    	// First Gardener has additional startup
-    	if (rc.readBroadcast(Channels.COUNT_GARDENER)==1) {
-    		firstGardenerSetup();
-    	}
-		
     	// Setup for all Gardeners
 		initialize();
+
+		// Identify first Gardener
+		if (myNumber == 1) {
+			amFirst = true;
+		}
+		
+		System.out.println(Clock.getBytecodesLeft());
 		
         // Code to run every turn
         while (true) {
@@ -94,10 +104,12 @@ public class Gardener {
             		break;
               	}
             	
+            	boolean canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) );
+            			
             	// Check grove status
             	if (assignedGrove) {
             		// Grove is assigned
-               		if (inGrove) {
+               		if (inGrove && canBuild) {
                			
                			// Check for threats
                			RobotInfo[] robots = rc.senseNearbyRobots(RobotType.GARDENER.sensorRadius, RobotPlayer.enemyTeam );
@@ -122,6 +134,8 @@ public class Gardener {
                		if (rc.getHealth() < RobotType.GARDENER.maxHealth * healthFraction){
                			rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+groveChannel, false);
                			if (inGrove) {
+               				int numGrove = rc.readBroadcast(CHANNEL_GROVE_COUNT);
+               				rc.broadcast(CHANNEL_GROVE_COUNT, --numGrove);
                				rc.disintegrate();
                			}
                		}
@@ -130,7 +144,7 @@ public class Gardener {
             		// We need a home!
             		findGrove();
             	}
-
+            	
                 // End Turn
                 RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
@@ -143,14 +157,6 @@ public class Gardener {
         
        
     }
-	
-	static void firstGardenerSetup() throws GameActionException {
-		// placeholder for now. Will add some extra logic for first gardener
-		// to avoid early game pitfalls
-		
-		amFirst = true;
-
-	}
 	
 	static void initialize() throws GameActionException {
 		
@@ -165,32 +171,7 @@ public class Gardener {
 		}		
 		
 		// get Grove channels
-    	switch(myParent) {
-    	case 1: 
-    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
-    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
-    		CHANNEL_GROVE_X = Channels.GROVE1_X;
-    		CHANNEL_GROVE_Y = Channels.GROVE1_Y;
-    		break;
-    	case 2:
-    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE2_LOCATIONS;
-    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE2_ASSIGNED;
-    		CHANNEL_GROVE_X = Channels.GROVE2_X;
-    		CHANNEL_GROVE_Y = Channels.GROVE2_Y;
-    		break;
-    	case 3:
-    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE3_LOCATIONS;
-    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE3_ASSIGNED;
-    		CHANNEL_GROVE_X = Channels.GROVE3_X;
-    		CHANNEL_GROVE_Y = Channels.GROVE3_Y;
-    		break;
-    	default:
-    		CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
-    		CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
-    		CHANNEL_GROVE_X = Channels.GROVE1_X;
-    		CHANNEL_GROVE_Y = Channels.GROVE1_Y;    		
-    		break;
-    	}
+		groveChannels();
 		
     	// get starting value
 		int start = rc.readBroadcast(Channels.BUILD_DIRECTION);
@@ -255,7 +236,6 @@ public class Gardener {
 			rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+groveChannel, assignedGrove);	
 		}
 		
-		
 	}
 	
 	static void moveToGrove() throws GameActionException {
@@ -287,6 +267,7 @@ public class Gardener {
     		
     		onMap = true;
 			boolean open = true;
+			
 			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
 				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
 				if (onMap)
@@ -295,9 +276,12 @@ public class Gardener {
 			if (onMap && open) {
 				moveDirection = Movement.pathing(moveDirection, groveCenter);
 				moveDirection = Movement.tryMove(moveDirection, 60, 3);
-			} else {
-				if (!open)
-					rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED + groveChannel, false);
+			} else if (!open) { 
+				rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED + groveChannel, false);
+				assignedGrove = false;
+			} else if (!onMap) {
+				int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);
+				rc.broadcast(CHANNEL_GROVE_COUNT, --numGroves);
 				assignedGrove = false;
 			}
 
@@ -308,6 +292,8 @@ public class Gardener {
 	
 
 	static void newGroves() throws GameActionException {
+		
+		int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);
     	
     	for (int check = 0; check<4; check++) {
     		
@@ -324,7 +310,7 @@ public class Gardener {
             		
             		float diff = oldGrove.distanceTo(newGroveCenter);
             		
-            		if( diff < 1 ) {
+            		if( diff < 0.9f*Constants.GROVE_SPACING ) {
             			break;
             		}
             		
@@ -333,6 +319,7 @@ public class Gardener {
             		if (!rc.onTheMap(myLocation.add(buildDirection.rotateRightDegrees(check*90),RobotType.GARDENER.sensorRadius)))  {
             			break;
             		} else {
+            			rc.broadcast(CHANNEL_GROVE_COUNT, ++numGroves);
 	            		rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS+i, true);
 	            		rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+i, false);
 	                	rc.broadcastFloat(CHANNEL_GROVE_X+i, newGroveCenter.x);
@@ -383,9 +370,7 @@ public class Gardener {
       	if (rc.canWater(tree.ID))
       		rc.water(tree.ID);
       }
-    	
-    	
-		
+
 	}
 	
 	static Comparator<TreeInfo> compareHP = new Comparator<TreeInfo>() {
@@ -420,6 +405,7 @@ public class Gardener {
 			myStrategy = Strategy.BUILDING;
 			System.out.println("Strategy: Building");
 		}
+		
 	}
 	
 	
@@ -427,35 +413,43 @@ public class Gardener {
 		
 		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.sensorRadius, Team.NEUTRAL);
 		
+		System.out.println(Clock.getBytecodesLeft());
+		
 		int numTree = trees.length;
 		int numLumberjack = rc.readBroadcast(Channels.COUNT_LUMBERJACK);
 		int numSoldier = rc.readBroadcast(Channels.COUNT_SOLDIER);
 		int numScout = rc.readBroadcast(Channels.COUNT_SCOUT);
 		
-		if (numTree > 0 && (numLumberjack < 1 || numScout < 1)) {
-			System.out.println("omg trees!");
+		boolean condition1 = ( (numLumberjack < 1) && (rc.getTeamBullets() > RobotType.LUMBERJACK.bulletCost));
+		boolean condition2 = ( (numSoldier < 2) && (rc.getTeamBullets() > RobotType.SOLDIER.bulletCost));
+		boolean condition3 = ( (numScout < 1) && (rc.getTeamBullets() > RobotType.SCOUT.bulletCost));
+
+
+
+		if (numTree > 0 && condition1) {
 			for (int check = 0; check < 360; check++) {
-				if (rc.canBuildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check)) && numLumberjack < 1) {
+				if (rc.canBuildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check)) && condition1) {
 					rc.buildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check));
 					Communication.countMe(RobotType.LUMBERJACK);
 					return;
-				} else if (rc.canBuildRobot(RobotType.SCOUT, buildDirection.rotateLeftDegrees(check)) && numScout < 1) {
-			    	rc.buildRobot(RobotType.SCOUT, buildDirection.rotateLeftDegrees(check));
+				}
+			}
+		} else if ( condition2 ){
+			for (int check = 0; check < 8; check++) {
+				if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection.rotateLeftDegrees(check*45)) && condition2) {
+				rc.buildRobot(RobotType.SOLDIER, buildDirection.rotateLeftDegrees(check*45));
+				Communication.countMe(RobotType.SOLDIER);
+				return;
+				}
+			}
+		} else if ( condition3 ){ 
+			for (int check = 0; check < 8; check++) {
+				if (rc.canBuildRobot(RobotType.SCOUT, buildDirection.rotateLeftDegrees(check*45)) && condition3) {
+			    	rc.buildRobot(RobotType.SCOUT, buildDirection.rotateLeftDegrees(check*45));
 			    	Communication.countMe(RobotType.SCOUT);
 			    	return;
 				}
 			}
-		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && numSoldier < 2) {
-			rc.buildRobot(RobotType.SOLDIER, buildDirection);
-			Communication.countMe(RobotType.SOLDIER);
-			return;
-		} else if (rc.canBuildRobot(RobotType.SCOUT, buildDirection) && numScout < 1) {
-	    	rc.buildRobot(RobotType.SCOUT, buildDirection);
-	    	Communication.countMe(RobotType.SCOUT);
-	    	return;
-		} else if (rc.getRoundNum() > 100) {
-			amFirst = false;
-			return;
 		} else if (numScout > 0 && numSoldier > 1) {
 			amFirst = false;
 			return;	
@@ -470,8 +464,7 @@ public class Gardener {
 		
 		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.sensorRadius, Team.NEUTRAL);
 				
-		if (trees.length>0 && rc.readBroadcast(Channels.COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
-			System.out.println("omg trees!");
+		if (trees.length>0 && rc.readBroadcast(Channels.COUNT_LUMBERJACK) < 2*rc.readBroadcast(Channels.COUNT_GARDENER)) {
 			for (int check = 0; check < 360; check++) {
 				if (rc.canBuildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check))) {
 					rc.buildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check));
@@ -496,20 +489,19 @@ public class Gardener {
 	static void defending() throws GameActionException {
 		// TODO: ADD THIS
 
-		if (rc.canBuildRobot(RobotType.TANK, buildDirection) && rc.readBroadcast(Channels.COUNT_TANK) < Constants.MAX_COUNT_TANK) {
-	    	rc.buildRobot(RobotType.TANK, buildDirection);
-	    	Communication.countMe(RobotType.TANK);
-		}
-//		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
-//				rc.buildRobot(RobotType.SOLDIER, buildDirection);
-//				Communication.countMe(RobotType.SOLDIER);
+//		if (rc.canBuildRobot(RobotType.TANK, buildDirection) && rc.readBroadcast(Channels.COUNT_TANK) < Constants.MAX_COUNT_TANK) {
+//	    	rc.buildRobot(RobotType.TANK, buildDirection);
+//	    	Communication.countMe(RobotType.TANK);
 //		}
+		if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+				rc.buildRobot(RobotType.SOLDIER, buildDirection);
+				Communication.countMe(RobotType.SOLDIER);
+		}
 		
 	}
 	
 	static void attacking() throws GameActionException {
-		// TODO: ADD THIS
-		
+				
 		int maxSoldier = Constants.MAX_COUNT_SOLDIER;
 		int maxTank = Constants.MAX_COUNT_TANK;
 		
@@ -534,9 +526,90 @@ public class Gardener {
 
 	static void building() throws GameActionException {
 		// TODO: ADD THIS
+		if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+			rc.buildRobot(RobotType.SOLDIER, buildDirection);
+			Communication.countMe(RobotType.SOLDIER);
+		} else if (rc.canBuildRobot(RobotType.LUMBERJACK, buildDirection) && rc.readBroadcast(Channels.COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
+			rc.buildRobot(RobotType.LUMBERJACK, buildDirection);
+			Communication.countMe(RobotType.LUMBERJACK);
+		}
 		
 		
-		
+	}
+	
+	/**
+	 * Gets the correct channels for all of the gardener/grove management. 
+	 * Definitely not the best way to do this stuff, but fuck it. We are 
+	 * almost out of time. 
+	 */
+	static void groveChannels() {
+
+		switch (myParent) {
+		case 1:
+			
+			CHANNEL_GARDENER_COUNT= Channels.GARDENER1_COUNT;
+			CHANNEL_GROVE_COUNT = Channels.GROVE1_COUNT;
+
+			CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
+			CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
+			CHANNEL_GROVE_X = Channels.GROVE1_X;
+			CHANNEL_GROVE_Y = Channels.GROVE1_Y;
+			
+			CHANNEL_GROVE_XMIN = Channels.GROVE1_XMIN;
+			CHANNEL_GROVE_XMAX = Channels.GROVE1_XMAX;
+			CHANNEL_GROVE_YMIN = Channels.GROVE1_YMIN;
+			CHANNEL_GROVE_YMAX = Channels.GROVE1_YMAX;
+
+			break;
+		case 2:
+			
+			CHANNEL_GARDENER_COUNT= Channels.GARDENER2_COUNT;
+			CHANNEL_GROVE_COUNT = Channels.GROVE2_COUNT;
+			
+			CHANNEL_GROVE_LOCATIONS = Channels.GROVE2_LOCATIONS;
+			CHANNEL_GROVE_ASSIGNED = Channels.GROVE2_ASSIGNED;
+			CHANNEL_GROVE_X = Channels.GROVE2_X;
+			CHANNEL_GROVE_Y = Channels.GROVE2_Y;
+			
+			CHANNEL_GROVE_XMIN = Channels.GROVE2_XMIN;
+			CHANNEL_GROVE_XMAX = Channels.GROVE2_XMAX;
+			CHANNEL_GROVE_YMIN = Channels.GROVE2_YMIN;
+			CHANNEL_GROVE_YMAX = Channels.GROVE2_YMAX;
+
+			break;
+		case 3:
+			
+			CHANNEL_GARDENER_COUNT= Channels.GARDENER3_COUNT;
+			CHANNEL_GROVE_COUNT = Channels.GROVE3_COUNT;
+			
+			CHANNEL_GROVE_LOCATIONS = Channels.GROVE3_LOCATIONS;
+			CHANNEL_GROVE_ASSIGNED = Channels.GROVE3_ASSIGNED;
+			CHANNEL_GROVE_X = Channels.GROVE3_X;
+			CHANNEL_GROVE_Y = Channels.GROVE3_Y;
+			
+			CHANNEL_GROVE_XMIN = Channels.GROVE3_XMIN;
+			CHANNEL_GROVE_XMAX = Channels.GROVE3_XMAX;
+			CHANNEL_GROVE_YMIN = Channels.GROVE3_YMIN;
+			CHANNEL_GROVE_YMAX = Channels.GROVE3_YMAX;
+			
+			break;
+		default:
+			
+			CHANNEL_GARDENER_COUNT= Channels.GARDENER1_COUNT;
+			CHANNEL_GROVE_COUNT = Channels.GROVE1_COUNT;
+			
+			CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
+			CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
+			CHANNEL_GROVE_X = Channels.GROVE1_X;
+			CHANNEL_GROVE_Y = Channels.GROVE1_Y;
+			
+			CHANNEL_GROVE_XMIN = Channels.GROVE1_XMIN;
+			CHANNEL_GROVE_XMAX = Channels.GROVE1_XMAX;
+			CHANNEL_GROVE_YMIN = Channels.GROVE1_YMIN;
+			CHANNEL_GROVE_YMAX = Channels.GROVE1_YMAX;
+
+			break;
+		}
 	}
 	
 }
