@@ -105,7 +105,11 @@ public class Gardener {
             		break;
               	}
             	
-            	System.out.println("checkpoint 1");
+            	// Check for obstructing trees
+            	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+3.0f*GameConstants.BULLET_TREE_RADIUS, Team.NEUTRAL);
+        		if (trees.length > 0) {
+       				Communication.callForChop(trees[0]);
+           		}
             	
 			   	// Check grove status
             	if (assignedGrove) {
@@ -343,16 +347,16 @@ public class Gardener {
     	groveTrees[0] = groveCenter.add(buildDirection.rotateLeftDegrees(90), treeSep);
     	groveTrees[1] = groveCenter.add(buildDirection.rotateLeftDegrees(30), treeSep);
     	groveTrees[2] = groveCenter.add(buildDirection.rotateRightDegrees(30), treeSep);
-    	groveTrees[3] = groveCenter.add(buildDirection.rotateRightDegrees(90), (treeSep)*sqrt2);
+    	groveTrees[3] = groveCenter.add(buildDirection.rotateRightDegrees(90), treeSep);
     	
     	// Show grove position
     	rc.setIndicatorDot(groveCenter, 250, 0, 0);
-    	rc.setIndicatorDot(groveTrees[0], 0, 250, 0);
-    	rc.setIndicatorDot(groveTrees[1], 0, 250, 0);
-    	rc.setIndicatorDot(groveTrees[2], 0, 250, 0);
-    	rc.setIndicatorDot(groveTrees[3], 0, 250, 0);
+    	rc.setIndicatorDot(groveTrees[0], 0, 0, 250);
+    	rc.setIndicatorDot(groveTrees[1], 0, 0, 250);
+    	rc.setIndicatorDot(groveTrees[2], 0, 0, 250);
+    	rc.setIndicatorDot(groveTrees[3], 0, 0, 250);
     	
-    	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+GameConstants.BULLET_TREE_RADIUS, rc.getTeam());
+    	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+2.0f*GameConstants.BULLET_TREE_RADIUS, rc.getTeam());
         Arrays.sort(trees, compareHP);
         
     	canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) || canBuild );
