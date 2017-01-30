@@ -1,5 +1,7 @@
 package teamplasma;
 
+import java.util.Arrays;
+
 import battlecode.common.*;
 import java.lang.reflect.*;
 import java.util.Arrays;
@@ -293,10 +295,216 @@ public class Movement {
 			return RobotPlayer.myDirection;
     	}
     }
+<<<<<<< Upstream, based on origin/movement
     
     static Direction pathing(Direction myDirection, MapLocation goal) {
     	return new BaseNode(RobotPlayer.rc.getLocation(), goal).getNextStep(myDirection);
     }
+=======
+
+    static Direction pathing(Direction myDirection, MapLocation goal) {
+    	return new BaseNode(RobotPlayer.rc.getLocation(), goal).getNextStep(myDirection);
+    }
+}
+
+abstract class Node implements Comparable<Node> {
+	
+	static MapLocation goal;
+	
+	MapLocation nodeLocation;
+	
+	int nodeDepth;
+	
+	Node(MapLocation nodeLocation, int nodeDepth) {
+		this.nodeLocation = nodeLocation;
+		this.nodeDepth = nodeDepth;
+	}
+	
+	abstract boolean descend();
+	
+	void setGoal(MapLocation goal) {
+		this.goal = goal;
+	}
+	
+	public int compareTo(Node other) {
+		return Float.compare(this.nodeLocation.distanceTo(goal), other.nodeLocation.distanceTo(goal));
+	}
+	
+	boolean isOpen() {
+		RobotInfo[] robotsA = RobotPlayer.rc.senseNearbyRobots(nodeLocation, RobotPlayer.myType.bodyRadius, Team.A);
+		RobotInfo[] robotsB = RobotPlayer.rc.senseNearbyRobots(nodeLocation, RobotPlayer.myType.bodyRadius, Team.B);
+		TreeInfo[] treesA = RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius, Team.A);
+		TreeInfo[] treesB = RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius, Team.B);
+		TreeInfo[] treesN = RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius, Team.NEUTRAL);
+		return robotsA.length == 0 && robotsB.length == 0 && treesA.length == 0 && treesB.length == 0 && treesN.length == 0;
+	}
+	
+	RobotInfo[] concatenate (RobotInfo[] a, RobotInfo[] b) {
+	    int aLen = a.length;
+	    int bLen = b.length;
+
+	    RobotInfo[] c = new RobotInfo[aLen + bLen];
+	    System.arraycopy(a, 0, c, 0, aLen);
+	    System.arraycopy(b, 0, c, aLen, bLen);
+
+	    return c;
+	}
+	
+	TreeInfo[] concatenate (TreeInfo[] a, TreeInfo[] b) {
+	    int aLen = a.length;
+	    int bLen = b.length;
+
+	    TreeInfo[] c = new TreeInfo[aLen + bLen];
+	    System.arraycopy(a, 0, c, 0, aLen);
+	    System.arraycopy(b, 0, c, aLen, bLen);
+
+	    return c;
+	}
+	
+	enum FromSide { LEFT, RIGHT}
+}
+
+class BaseNode extends Node {
+	BaseNode(MapLocation nodeLocation, MapLocation goal) {
+		super(nodeLocation, 0);
+		setGoal(goal);
+	}
+	
+	boolean descend() {
+		return true;
+	}
+	
+	Direction getNextStep(Direction myDirection) {
+		Direction goalDirection = nodeLocation.directionTo(goal);
+		int newDepth = nodeDepth + 1;
+		Direction[] directions = { goalDirection,
+				goalDirection.rotateRightDegrees(60),
+				goalDirection.rotateLeftDegrees(60),
+				goalDirection.rotateLeftDegrees(120),
+				goalDirection.rotateRightDegrees(120),
+				goalDirection.opposite()
+				};
+		Node[] branches = { new CornerNode(nodeLocation.add(directions[0], RobotPlayer.myType.strideRadius), newDepth, directions[0]),
+				new CornerNode(nodeLocation.add(directions[1], RobotPlayer.myType.strideRadius), newDepth, directions[1]),
+				new CornerNode(nodeLocation.add(directions[2], RobotPlayer.myType.strideRadius), newDepth, directions[2]),
+				new CornerNode(nodeLocation.add(directions[3], RobotPlayer.myType.strideRadius), newDepth, directions[3]),
+				new CornerNode(nodeLocation.add(directions[4], RobotPlayer.myType.strideRadius), newDepth, directions[4]),
+				new CornerNode(nodeLocation.add(directions[5], RobotPlayer.myType.strideRadius), newDepth, directions[5])
+				};
+		
+		if (branches[0].descend()) {
+			return directions[0];
+		} else if (branches[1].descend()) {
+			return directions[1];
+		} else if (branches[2].descend()) {
+			return directions[2];
+		} else if (branches[3].descend()) {
+			return directions[3];
+		} else if (branches[4].descend()) {
+			return directions[4];
+		} else if (branches[5].descend()) {
+			return directions[5];
+		}
+		
+		return myDirection;
+	}
+}
+
+class CornerNode extends Node{
+	
+	Direction fromDirection;
+	
+	CornerNode(MapLocation nodeLocation, int nodeDepth, Direction fromDirection) {
+		super(nodeLocation, nodeDepth);
+		this.fromDirection = fromDirection;
+	}
+	
+	boolean descend() {
+		float stride = RobotPlayer.myType.strideRadius;
+		System.out.println("Depth: " + nodeDepth);
+		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
+		System.out.println("Test value: " + Clock.getBytecodeNum() / 4 * nodeDepth);
+		if (!isOpen()) {
+			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0, 0);
+			return false;
+		} else if (nodeDepth == Constants.MAX_PATH_DEPTH || Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 4 * nodeDepth) {
+			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255, 0);
+			return true;
+		} else {
+			int newDepth = nodeDepth + 1;
+			Direction[] directions = { fromDirection,
+					fromDirection.rotateLeftDegrees(60),
+					fromDirection.rotateRightDegrees(60)
+					};
+			Node[] branches  = {new CornerNode(nodeLocation.add(directions[0], stride), newDepth, directions[0]),
+					new EdgeNode(nodeLocation.add(directions[1], stride), newDepth, directions[1], FromSide.LEFT),
+					new EdgeNode(nodeLocation.add(directions[1], stride), newDepth, directions[1], FromSide.RIGHT)
+					};
+			
+			Arrays.sort(branches);
+			for (Node branch : branches) {
+				if (branch.descend()) {
+					RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255, 0);
+					return true;
+				}
+			}
+			
+			return false;
+		}
+	}
+}
+
+class EdgeNode extends Node {
+	
+	Direction fromDirection;
+	
+	FromSide fromSide;
+	
+	EdgeNode(MapLocation nodeLocation, int nodeDepth, Direction fromDirection, FromSide fromSide) {
+		super(nodeLocation, nodeDepth);
+		this.fromDirection = fromDirection;
+		this.fromSide = fromSide;
+	}
+	
+	
+	boolean descend() {
+		float stride = RobotPlayer.myType.strideRadius;
+		System.out.println("Depth: " + nodeDepth);
+		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
+		System.out.println("Test value: " + Clock.getBytecodeNum() / 4 * nodeDepth);
+		if (!isOpen()) {
+			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0, 0);
+			return false;
+		} else if (nodeDepth == Constants.MAX_PATH_DEPTH || Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 4 * nodeDepth) {
+			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255, 0);
+			return true;
+		} else {
+			int newDepth = nodeDepth + 1;
+			Direction[] directions = new Direction[2];
+			directions[0] = fromDirection;
+			Node[] branches  = new Node[2];
+			if (fromSide == FromSide.RIGHT) {
+				directions[1] = fromDirection.rotateLeftDegrees(60);
+				branches[0] = new EdgeNode(nodeLocation.add(directions[0], stride), newDepth, directions[0], FromSide.RIGHT);
+				branches[1] = new EdgeNode(nodeLocation.add(directions[1], stride), newDepth, directions[1], FromSide.LEFT);
+			} else {
+				directions[1] = fromDirection.rotateRightDegrees(60);
+				branches[0] = new EdgeNode(nodeLocation.add(directions[0], stride), newDepth, directions[0], FromSide.LEFT);
+				branches[1] = new EdgeNode(nodeLocation.add(directions[1], stride), newDepth, directions[1], FromSide.RIGHT);
+			}
+			
+			Arrays.sort(branches);
+			for (Node branch : branches) {
+				if (branch.descend()) {
+					RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255, 0);
+					return true;
+				}
+			}
+			
+			return false;
+		}
+	}
+>>>>>>> c81624c Added in pathing changes
 }
 
 abstract class Node implements Comparable<Node> {

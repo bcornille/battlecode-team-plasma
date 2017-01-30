@@ -280,13 +280,22 @@ public class Gardener {
     	} else {
     		// go to grove
     		moveDirection = rc.getLocation().directionTo(groveCenter);
-    		// check if move is on the map
-    		onMap = rc.onTheMap(myLocation.add(moveDirection),rc.getType().strideRadius*2.0f);
-    		if(onMap){
-        	moveDirection = Movement.tryMove(moveDirection,60,3);
-    		} else {
-    			assignedGrove = false;    			
-    		}
+    		// check if move is on the map or obstructed
+    		
+			boolean open = true;
+			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
+				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
+				if (onMap)
+					open = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL).length == 0;
+			}
+			if (onMap && open) {
+				moveDirection = Movement.pathing(moveDirection, groveCenter);
+				moveDirection = Movement.tryMove(moveDirection, 60, 3);
+			} else {
+				if (!open)
+					rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED + groveChannel, false);
+				assignedGrove = false;
+			}
 
     		rc.setIndicatorLine(myLocation,groveCenter,	200, 0, 0);
        	}
