@@ -22,6 +22,7 @@ public class Archon {
 
 	static boolean amLeader = false;
 	static boolean onMap = false;
+	static boolean canBuild = false;
 
 	static int CHANNEL_GARDENER_COUNT;
 	static int CHANNEL_GROVE_COUNT;
@@ -350,7 +351,7 @@ public class Archon {
 	 */
 	static void tryHireGardener() throws GameActionException {
 		
-    	boolean canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) );
+    	canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) || canBuild );
     	
     	System.out.println(canBuild);
 
