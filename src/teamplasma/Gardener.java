@@ -121,6 +121,9 @@ public class Gardener {
                		float healthFraction = 0.3f;
                		if (rc.getHealth() < RobotType.GARDENER.maxHealth * healthFraction){
                			rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+groveChannel, false);
+               			if (inGrove) {
+               				rc.disintegrate();
+               			}
                		}
                		
             	} else {
@@ -282,6 +285,7 @@ public class Gardener {
     		moveDirection = rc.getLocation().directionTo(groveCenter);
     		// check if move is on the map or obstructed
     		
+    		onMap = true;
 			boolean open = true;
 			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
 				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
