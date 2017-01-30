@@ -93,30 +93,6 @@ public interface Channels {
 	int MAX_ROBOT = MAX_SCOUT;
 
 	/**
-	 * SOLDIER_XXX
-	 * 
-	 * Sets the channels for keeping track of the gardeners
-	 **/
-
-	int SOLDIER_START = 2000;
-
-	int SOLDIER_ID = SOLDIER_START;
-	int SOLDIER_NUMBER = SOLDIER_START + Constants.MAX_COUNT_SOLDIER;
-
-	/**
-	 * TANK_XXX
-	 * 
-	 * Sets the channels for keeping track of the gardeners
-	 **/
-
-	int TANK_START = 3000;
-
-	int TANK_ID = TANK_START;
-	int TANK_NUMBER = TANK_START + Constants.MAX_COUNT_TANK;
-
-	
-	
-	/**
 	 * ENEMY_ARCHONi_XXX
 	 * 
 	 * offset = 0 : Archon ID
@@ -135,6 +111,26 @@ public interface Channels {
 	 */
 	int HELP_START = ENEMY_ARCHON_END + 1;
 	int HELP_END = HELP_START + 2;
+	
+
+	
+	/**
+	 * UNIT_TREEi_XXX
+	 * 
+	 * offset = 0 : TREE ID
+	 * offset = 1 : TREE x location
+	 * offset = 2 : TREE y location
+	 */
+	int UNIT_TREE_OFFSET = 3;
+	int UNIT_TREE_START = 6000;
+	int UNIT_TREE_STOP = UNIT_TREE_START + UNIT_TREE_OFFSET - 1;
+	
+	/**
+	 * CHOP_XXX
+	 */
+	int CHOP_START = UNIT_TREE_STOP + 1;
+	int CHOP_END = CHOP_START + 2;
+	
 	
 	/**
 	 * GARDENER_XXX

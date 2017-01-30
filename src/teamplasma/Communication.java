@@ -305,4 +305,12 @@ public class Communication {
 		rc.broadcastFloat(Channels.HELP_START + 2, enemy.location.y);
 		return;
 	}
+	
+	static void callForChop(TreeInfo tree) throws GameActionException {
+		rc.broadcast(Channels.CHOP_START, rc.getRoundNum());
+		rc.broadcastFloat(Channels.CHOP_START + 1, tree.location.x);
+		rc.broadcastFloat(Channels.CHOP_START + 2, tree.location.y);
+		return;
+	}
+	
 }
