@@ -334,22 +334,40 @@ abstract class Node implements Comparable<Node> {
 		return Float.compare(this.nodeLocation.distanceTo(goal), other.nodeLocation.distanceTo(goal));
 	}
 
-	// boolean isOpen() throws GameActionException {
-	// RobotInfo[] robotsA = RobotPlayer.rc.senseNearbyRobots(nodeLocation,
-	// RobotPlayer.myType.bodyRadius, Team.A);
-	// RobotInfo[] robotsB = RobotPlayer.rc.senseNearbyRobots(nodeLocation,
-	// RobotPlayer.myType.bodyRadius, Team.B);
-	// TreeInfo[] treesA = RobotPlayer.rc.senseNearbyTrees(nodeLocation,
-	// RobotPlayer.myType.bodyRadius, Team.A);
-	// TreeInfo[] treesB = RobotPlayer.rc.senseNearbyTrees(nodeLocation,
-	// RobotPlayer.myType.bodyRadius, Team.B);
-	// TreeInfo[] treesN = RobotPlayer.rc.senseNearbyTrees(nodeLocation,
-	// RobotPlayer.myType.bodyRadius, Team.NEUTRAL);
-	// return robotsA.length == 0 && robotsB.length == 0 && treesA.length == 0
-	// && treesB.length == 0 && treesN.length == 0;
-	// return RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation,
-	// RobotPlayer.myType.bodyRadius);
-	// }
+	boolean isOpen() throws GameActionException {
+		// RobotInfo[] robotsA = RobotPlayer.rc.senseNearbyRobots(nodeLocation,
+		// RobotPlayer.myType.bodyRadius, Team.A);
+		// RobotInfo[] robotsB = RobotPlayer.rc.senseNearbyRobots(nodeLocation,
+		// RobotPlayer.myType.bodyRadius, Team.B);
+		// TreeInfo[] treesA = RobotPlayer.rc.senseNearbyTrees(nodeLocation,
+		// RobotPlayer.myType.bodyRadius, Team.A);
+		// TreeInfo[] treesB = RobotPlayer.rc.senseNearbyTrees(nodeLocation,
+		// RobotPlayer.myType.bodyRadius, Team.B);
+		// TreeInfo[] treesN = RobotPlayer.rc.senseNearbyTrees(nodeLocation,
+		// RobotPlayer.myType.bodyRadius, Team.NEUTRAL);
+		// return robotsA.length == 0 && robotsB.length == 0 && treesA.length ==
+		// 0
+		// && treesB.length == 0 && treesN.length == 0;
+		// return RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation,
+		// RobotPlayer.myType.bodyRadius);
+		switch (RobotPlayer.myType) {
+		case ARCHON:
+			break;
+		case GARDENER:
+			return !RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius);
+		case LUMBERJACK:
+			break;
+		case SCOUT:
+			break;
+		case SOLDIER:
+			return !RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius);
+		case TANK:
+			return RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius, RobotPlayer.myTeam).length == 0;
+		default:
+			break;
+		}
+		return false;
+	}
 
 	RobotInfo[] concatenate(RobotInfo[] a, RobotInfo[] b) {
 		int aLen = a.length;
@@ -447,7 +465,7 @@ class CornerNode extends Node {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
 					0);
 			return true;
-		} else if (RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius)
+		} else if (!isOpen()//RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius)
 				|| !RobotPlayer.rc.onTheMap(nodeLocation, body)) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0,
 					0);
@@ -499,7 +517,7 @@ class EdgeNode extends Node {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
 					0);
 			return true;
-		} else if (RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, body)
+		} else if (!isOpen()//RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, body)
 				|| !RobotPlayer.rc.onTheMap(nodeLocation, body)) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0,
 					0);

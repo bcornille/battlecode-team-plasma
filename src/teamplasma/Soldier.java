@@ -13,7 +13,7 @@ public class Soldier {
             	RobotPlayer.checkIn();
             	// Check scout spacing, update direction if necessary:
             	RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
-//            	System.out.println("Archon location: " + Communication.getEnemyArchonLocation().toString());
+            	System.out.println("Archon location: " + Communication.getEnemyArchonLocation().toString());
            	
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
