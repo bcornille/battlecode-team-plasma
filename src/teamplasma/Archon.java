@@ -71,6 +71,14 @@ public class Archon {
 				checkGroves();
 				// Attempt to build a gardener
 				tryHireGardener();
+				
+				
+       			// Check for threats
+       			RobotInfo[] robots = rc.senseNearbyRobots(RobotType.GARDENER.sensorRadius, RobotPlayer.enemyTeam );
+				if (robots.length>0) {
+       				System.out.println("omg enemies!");
+       				Communication.callForHelp(robots[0]);
+       			}
 
 				// Stay in box
 				myLocation = rc.getLocation();
