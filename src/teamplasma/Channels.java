@@ -131,6 +131,12 @@ public interface Channels {
 	int ENEMY_ARCHON_END = ENEMY_ARCHON3_START + ENEMY_ARCHON_OFFSET - 1;
 	
 	/**
+	 * HELP_XXX
+	 */
+	int HELP_START = ENEMY_ARCHON_END + 1;
+	int HELP_END = HELP_START + 2;
+	
+	/**
 	 * GARDENER_XXX
 	 * 
 	 * Sets the channels for keeping track of the gardeners

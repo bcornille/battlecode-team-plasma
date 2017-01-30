@@ -115,6 +115,7 @@ public class Gardener {
                			RobotInfo[] robots = rc.senseNearbyRobots(RobotType.GARDENER.sensorRadius, RobotPlayer.enemyTeam );
         				if (robots.length>0) {
                				System.out.println("omg enemies!");
+               				Communication.callForHelp(robots[0]);
                				callHelp = true;
                			} else {
                				callHelp = false;
