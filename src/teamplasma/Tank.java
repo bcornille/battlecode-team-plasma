@@ -21,12 +21,16 @@ public class Tank {
               RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
               if (robots.length > 0) {
                 // Move toward target
-                RobotPlayer.myDirection = Movement.attackTarget(robots[0]);
+//                RobotPlayer.myDirection = Movement.attackTarget(robots[0]);
+                RobotPlayer.myDirection = Movement.pathing(RobotPlayer.myDirection, robots[0].location);
                 // Move
                 RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
                   // And we have enough bullets, and haven't attacked yet this turn...
                 Shooting.shoot(robots[0]);
               } else {
+            	RobotPlayer.myDirection = Movement.pathing(RobotPlayer.myDirection, Communication.getEnemyArchonLocation());
+              	// Adjust movement direction to dodge bullets
+              	RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
                 // Move
                 RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
               }

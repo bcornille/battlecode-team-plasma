@@ -193,8 +193,116 @@ public class Communication {
 		rc.broadcastFloat(CHANNEL_GROVE_XMAX, xmax);
 		rc.broadcastFloat(CHANNEL_GROVE_YMIN, ymin);
 		rc.broadcastFloat(CHANNEL_GROVE_YMAX, ymax);
-        rc.broadcastFloat(CHANNEL_GROVE_XCEN, xcen);
-        rc.broadcastFloat(CHANNEL_GROVE_YCEN, ycen);
+		rc.broadcastFloat(CHANNEL_GROVE_XCEN, xcen);
+		rc.broadcastFloat(CHANNEL_GROVE_YCEN, ycen);
+	}
+
+	static MapLocation getEnemyArchonLocation() throws GameActionException {
+//		for (int i = Channels.ENEMY_ARCHON1_START; i <= Channels.ENEMY_ARCHON_END; i += Channels.ENEMY_ARCHON_OFFSET) {
+//			System.out.println(rc.readBroadcast(i));
+//			System.out.println(rc.readBroadcastFloat(i + 1));
+//			System.out.println(rc.readBroadcastFloat(i + 2));
+//			System.out.println(rc.readBroadcast(i + 3));
+//		}
+		if (rc.readBroadcast(Channels.HELP_START) > rc.getRoundNum() - 2) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.HELP_START + 1),
+					rc.readBroadcastFloat(Channels.HELP_START + 2));
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) != 0
+				&& rc.readBroadcast(Channels.ENEMY_ARCHON1_START + 3) > rc.getRoundNum() - 2) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) != 0
+				&& rc.readBroadcast(Channels.ENEMY_ARCHON2_START + 3) > rc.getRoundNum() - 2) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) != 0
+				&& rc.readBroadcast(Channels.ENEMY_ARCHON3_START + 3) > rc.getRoundNum() - 2) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+		} else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START) == 0
+				&& rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1) > 0) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+		} else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START) == 0
+				&& rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1) > 0) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+		} else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START) == 0
+				&& rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1) > 0) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) != 0
+				&& rc.readBroadcast(Channels.ENEMY_ARCHON1_START + 3) > rc.readBroadcast(Channels.ENEMY_ARCHON2_START + 3)
+				&& rc.readBroadcast(Channels.ENEMY_ARCHON1_START + 3) > rc.readBroadcast(Channels.ENEMY_ARCHON3_START + 3)) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) != 0
+				&& rc.readBroadcast(Channels.ENEMY_ARCHON2_START + 3) > rc.readBroadcast(Channels.ENEMY_ARCHON3_START + 3)) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) != 0) {
+			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
+					rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+		} // else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1) >
+			// 0) {
+			// return new
+			// MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START +
+			// 1),
+			// rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+			// } else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START +
+			// 1) >
+			// 0) {
+			// return new
+			// MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START +
+			// 1),
+			// rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+			// } else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START +
+			// 1) >
+			// 0) {
+			// return new
+			// MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START +
+			// 1),
+			// rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+			// }
+		return RobotPlayer.mapCenter;
+	}
+
+	static void spotEnemyArchon(RobotInfo Archon) throws GameActionException {
+		if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == 0) {
+			rc.broadcast(Channels.ENEMY_ARCHON1_START, Archon.ID);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON1_START + 3, rc.getRoundNum());
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == Archon.ID) {
+			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON1_START + 3, rc.getRoundNum());
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == 0) {
+			rc.broadcast(Channels.ENEMY_ARCHON2_START, Archon.ID);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON2_START + 3, rc.getRoundNum());
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == Archon.ID) {
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON2_START + 3, rc.getRoundNum());
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == 0) {
+			rc.broadcast(Channels.ENEMY_ARCHON3_START, Archon.ID);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON3_START + 3, rc.getRoundNum());
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == Archon.ID) {
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON3_START + 3, rc.getRoundNum());
+		}
+		return;
 	}
 	
+	static void callForHelp(RobotInfo enemy) throws GameActionException {
+		rc.broadcast(Channels.HELP_START, rc.getRoundNum());
+		rc.broadcastFloat(Channels.HELP_START + 1, enemy.location.x);
+		rc.broadcastFloat(Channels.HELP_START + 2, enemy.location.y);
+		return;
+	}
 }
