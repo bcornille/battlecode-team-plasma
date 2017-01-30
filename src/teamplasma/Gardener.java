@@ -262,12 +262,17 @@ public class Gardener {
 			moveDirection = rc.getLocation().directionTo(groveCenter);
 			// check if move is on the map
 			boolean onMap = true;
+			boolean open = true;
 			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
 				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
+				open = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL).length == 0;
 			}
-			if (onMap) {
+			if (onMap && open) {
+				moveDirection = Movement.pathing(moveDirection, groveCenter);
 				moveDirection = Movement.tryMove(moveDirection, 60, 3);
 			} else {
+				if (!open)
+					rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED + groveChannel, false);
 				assignedGrove = false;
 			}
 
