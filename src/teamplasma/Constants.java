@@ -11,11 +11,11 @@ public interface Constants {
 	 **/
 
 	int MAX_COUNT_ARCHON = 3;
-	int MAX_COUNT_GARDENER = 20;
-	int MAX_COUNT_LUMBERJACK = 10;
-	int MAX_COUNT_SOLDIER = 50;
-	int MAX_COUNT_TANK = 10;
-	int MAX_COUNT_SCOUT = 3;
+	int MAX_COUNT_GARDENER = 10;
+	int MAX_COUNT_LUMBERJACK = 20;
+	int MAX_COUNT_SOLDIER = 40;
+	int MAX_COUNT_TANK = 20;
+	int MAX_COUNT_SCOUT = 2;
  	
 	/**
 	 * Gardening Constants

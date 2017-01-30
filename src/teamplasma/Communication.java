@@ -44,9 +44,7 @@ public class Communication {
 	
 	static void countMe(int channel) throws GameActionException {
 		int count = rc.readBroadcast(channel);
-//		System.out.println("Print channel:  " + channel);
 		rc.broadcast(channel, ++count);
-//		System.out.println("Robot count:  " + count);
 	}
 	
 	static void countMe(RobotType type) throws GameActionException {

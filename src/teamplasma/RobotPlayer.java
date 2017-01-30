@@ -114,9 +114,11 @@ public strictfp class RobotPlayer {
     * @throws GameActionException
     */
    static void checkIn() throws GameActionException {
+
 	   // Broadcast to channel
 	   if (canCommunicate)
 		   rc.broadcast(myChannel, rc.getRoundNum());
+	   
 	   // Check for Victory Point win
 	   float ourBullets = rc.getTeamBullets();
 	   float canBuyVPs = ourBullets/rc.getVictoryPointCost();
