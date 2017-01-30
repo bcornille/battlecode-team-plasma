@@ -80,7 +80,7 @@ public class Scout {
 				// ignore for now
 				break;
 			case SCOUT:
-				harassClose(bot);
+				// harassClose(bot);
 				break;
 			case SOLDIER:
 				// ignore for now
@@ -360,51 +360,5 @@ public class Scout {
     	int CHANNEL_TREE_UNIT_STOP = 2000;
     	int TREE_UNIT_CHANNELS = 5; 
     }	
-
-//    /**
-//     * Attempts to move in a given direction, while avoiding small obstacles direction in the path. 
-//     * Unlike Movement.tryMove(), it returns a Direction (not a boolean)
-//     *
-//     * @param dir The intended direction of movement
-//     * @param degreeOffset Spacing between checked directions (degrees)
-//     * @param checksPerSide Number of extra directions checked on each side, if intended direction was unavailable
-//     * @return Direction of the move, unchanged if no move performed
-//     * @throws GameActionException
-//     */
-//    static Direction tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
-//
-//        // First, try intended direction
-//    	boolean safe = rc.senseNearbyBullets(rc.getLocation().add(dir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-//        if (rc.canMove(dir) && !rc.hasMoved() && safe) {
-//            rc.move(dir);
-//            return dir;
-//        }
-//
-//        // Now try a bunch of similar angles
-//        int currentCheck = 1;
-//
-//        while(currentCheck<=checksPerSide) {
-//            // Try the offset of the left side
-//        	Direction testDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
-//        	safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-//            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
-//                rc.move(testDir);
-//                return testDir;
-//            }
-//            // Try the offset on the right side
-//            testDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
-//            safe = rc.senseNearbyBullets(rc.getLocation().add(testDir, RobotPlayer.myType.strideRadius), RobotPlayer.myType.bodyRadius).length == 0;
-//            if(rc.canMove(testDir) && !rc.hasMoved() && safe) {
-//                rc.move(testDir);
-//                return testDir;
-//            }
-//            // No move performed, try slightly further
-//            currentCheck++;
-//        }
-//
-//        // A move never happened, so return false.
-//        return dir;
-//    }
-//    
-   	
+ 	
 }
