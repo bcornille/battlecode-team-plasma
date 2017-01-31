@@ -457,6 +457,8 @@ public class Archon {
 		maxGardeners = Math.min(maxGardeners, Constants.MAX_COUNT_GARDENER);
 
 		System.out.println("Gardeners: " + numGardeners + "/" + maxGardeners);
+		
+
 
 		if (totGardeners == 0 || (numGardeners < maxGardeners && numGardeners < numGroves && canBuild)) {
 
@@ -466,6 +468,11 @@ public class Archon {
 			for (float check = 0.0f; check < Constants.TWO_PI; check += radianOffset) {
 				if (rc.canBuildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check))) {
 
+					// If all other gardeners had died, reset the grove
+					if (totGardeners == 0 && rc.getRoundNum() > 10) {
+						groveSetup();
+					}
+					
 					// Build the Gardener
 					rc.buildRobot(RobotType.GARDENER, buildDirection.rotateRightRads(check));
 					// Count the Gardener
