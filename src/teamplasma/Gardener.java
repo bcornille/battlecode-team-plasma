@@ -8,7 +8,7 @@ import java.util.Comparator;
 
 import battlecode.common.*;
 
-public class Gardener {
+public class Gardener implements Constants {
 	
 	/*---------------------------*
 	 * GARDENER GLOBAL VARIABLES *
@@ -24,6 +24,7 @@ public class Gardener {
 	static MapLocation groveCenter;
 	
 	static Direction buildDirection;
+	static Direction robotDirection;
 	static Direction moveDirection;
 	
 	static boolean onMap = false;
@@ -52,11 +53,11 @@ public class Gardener {
 	static int CHANNEL_GROVE_YMIN;
 	static int CHANNEL_GROVE_YMAX;
 	
-	static float sqrt2 = (float)Math.sqrt(2);
-	
-    static int treeCount = 0;
     static int maxTreeCount = Constants.MAX_COUNT_TREE;
-
+	static int lumberjackCount = 0;
+    static int treeCount = 0;
+    
+	static boolean[] planted = new boolean[maxTreeCount];
 
     /**
      * Main control method for RobotType Gardener
@@ -86,25 +87,6 @@ public class Gardener {
             	// get strategy for turn
             	setStrategy();
 
-            	switch (myStrategy) {
-            	case FIRST:
-            		first();
-            		break;
-            	case MOVING:
-            		moving();
-            		break;
-            	case DEFENDING:
-            		defending();
-            		break;
-            	case ATTACKING:
-            		attacking();
-            		break;
-            	case BUILDING:
-            		building();
-            	default:
-            		break;
-              	}
-            	
             	// Check for obstructing trees
             	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+3.0f*GameConstants.BULLET_TREE_RADIUS, Team.NEUTRAL);
         		if (trees.length > 0) {
@@ -112,7 +94,7 @@ public class Gardener {
            		}
             	
 			   	// Check grove status
-            	if (assignedGrove) {
+        		if (assignedGrove) {
             		// Grove is assigned
                		if (inGrove) {
                			
@@ -126,16 +108,17 @@ public class Gardener {
                				callHelp = false;
                			}
         				
-               			// Do grove things
-            			maintainGrove();  
-            			
+        				if (!amFirst) {
+        					// Do grove things
+        					maintainGrove();  
+        				}
+        				
             		} else {
             			// Not in grove, move to it
             			moveToGrove();         			
             		}     
                		
                		// If low health, un-assign your grove 
-               		// TODO: add constant
                		float healthFraction = 0.3f;
                		if (rc.getHealth() < RobotType.GARDENER.maxHealth * healthFraction){
                			rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED+groveChannel, false);
@@ -151,6 +134,26 @@ public class Gardener {
             		findGrove();
             	}
             	
+            	// Build units based on strategy
+            	switch (myStrategy) {
+            	case FIRST:
+            		first();
+            		break;
+            	case MOVING:
+            		moving();
+            		break;
+            	case DEFENDING:
+            		defending();
+            		break;
+            	case ATTACKING:
+            		attacking();
+            		break;
+            	case ECONOMY:
+            		economy();
+            	default:
+            		break;
+              	}
+            	
                 // End Turn
                 RobotPlayer.shakeNearbyTree();
                 RobotPlayer.endTurn();
@@ -165,6 +168,10 @@ public class Gardener {
     }
 	
 	static void initialize() throws GameActionException {
+		
+		for (int i = 0; i<planted.length; i++){
+	    	planted[i] = false;
+		}
 		
 		// Identify Gardener
 		for (int i = 0; i <= Constants.MAX_COUNT_GARDENER; i++) {
@@ -194,6 +201,8 @@ public class Gardener {
         } else {
         	
         }
+        
+        robotDirection = buildDirection.opposite();
 
 	}
 	
@@ -300,10 +309,17 @@ public class Gardener {
 	static void newGroves() throws GameActionException {
 		
 		int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);
-    	
+		float groveSpacing = Constants.GROVE_SPACING_V;
+		
     	for (int check = 0; check<4; check++) {
     		
-        	MapLocation newGroveCenter = myLocation.add(buildDirection.rotateRightDegrees(check*90), Constants.GROVE_SPACING);
+    		if ( check%2 == 0 ){
+    			groveSpacing = Constants.GROVE_SPACING_V;
+    		} else {
+    			groveSpacing = Constants.GROVE_SPACING_H;
+    		}
+    		
+        	MapLocation newGroveCenter = myLocation.add(buildDirection.rotateRightDegrees(check*90), groveSpacing);
 
             for (int i = 0; i < Constants.MAX_COUNT_GROVE; i++) {
             	            	
@@ -316,7 +332,7 @@ public class Gardener {
             		
             		float diff = oldGrove.distanceTo(newGroveCenter);
             		
-            		if( diff < 0.9f*Constants.GROVE_SPACING ) {
+            		if( diff < 0.9f*groveSpacing) {
             			break;
             		}
             		
@@ -340,7 +356,7 @@ public class Gardener {
 	static void maintainGrove() throws GameActionException {
 				
     	// Tree Locations
-    	MapLocation[] groveTrees = new MapLocation[5];
+    	MapLocation[] groveTrees = new MapLocation[4];
 
     	float treeSep = RobotType.GARDENER.bodyRadius+GameConstants.BULLET_TREE_RADIUS+GameConstants.GENERAL_SPAWN_OFFSET;
 
@@ -349,35 +365,44 @@ public class Gardener {
     	groveTrees[2] = groveCenter.add(buildDirection.rotateRightDegrees(30), treeSep);
     	groveTrees[3] = groveCenter.add(buildDirection.rotateRightDegrees(90), treeSep);
     	
-    	// Show grove position
-    	rc.setIndicatorDot(groveCenter, 250, 0, 0);
-    	rc.setIndicatorDot(groveTrees[0], 0, 0, 250);
-    	rc.setIndicatorDot(groveTrees[1], 0, 0, 250);
-    	rc.setIndicatorDot(groveTrees[2], 0, 0, 250);
-    	rc.setIndicatorDot(groveTrees[3], 0, 0, 250);
-    	
-    	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+2.0f*GameConstants.BULLET_TREE_RADIUS, rc.getTeam());
+    	TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius+1.0f*GameConstants.BULLET_TREE_RADIUS, rc.getTeam());
         Arrays.sort(trees, compareHP);
-        
-    	canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) || canBuild );
-
     	treeCount = trees.length;
-    	if (treeCount <= maxTreeCount && canBuild) {
-    		for (int i = 0; i < maxTreeCount; i++) {
+    	
+    	for(TreeInfo tree : trees) {
+    		if (rc.canWater(tree.ID))
+    			rc.water(tree.ID);
+    	}
+
+    	canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) || canBuild );
+    	
+    	if (treeCount <= Constants.MAX_COUNT_TREE && canBuild) {
+        	maxTreeCount = Constants.MAX_COUNT_TREE;
+    		for (int i = 0; i < Constants.MAX_COUNT_TREE; i++) {
     			MapLocation treeLocation = groveTrees[i];
-    			if(rc.canPlantTree(myLocation.directionTo(treeLocation))){
+    			Direction treeDirection = myLocation.directionTo(treeLocation);
+    			if(rc.canPlantTree(treeDirection)){
     				rc.plantTree(myLocation.directionTo(treeLocation));
-    				break;
+    				planted[i] = true;
     			} else if (!rc.onTheMap(treeLocation,GameConstants.BULLET_TREE_RADIUS)){
     				maxTreeCount--;
-    			}
+    			} else {
+    				continue;
+    			}    			
     		}
     	}
     	
-      for(TreeInfo tree : trees) {
-      	if (rc.canWater(tree.ID))
-      		rc.water(tree.ID);
-      }
+    	// Show grove position
+    	rc.setIndicatorDot(groveCenter, 250, 0, 0);
+    	for (int i = 0; i<planted.length; i++){
+    		if(planted[i]) {
+    	    	rc.setIndicatorDot(groveTrees[i], 0, 250, 0);
+    		} else {
+    	    	rc.setIndicatorDot(groveTrees[i], 0, 0, 250);
+    		}
+    	}
+
+
 
 	}
 	
@@ -391,7 +416,35 @@ public class Gardener {
 	//-------------------------------------------------------------------------
 	
 	enum Strategy {
-		FIRST, MOVING, DEFENDING, ATTACKING, BUILDING
+		FIRST, MOVING, DEFENDING, ATTACKING, ECONOMY
+	}
+	
+	
+	static void checkLumberjack() throws GameActionException {
+		
+		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.bodyRadius + 3.0f*GameConstants.BULLET_TREE_RADIUS, Team.NEUTRAL);
+		
+		int maxLumberjacks = Constants.MAX_COUNT_LUMBERJACK;
+		int numLumberjacks = rc.readBroadcast(Channels.COUNT_LUMBERJACK);
+		int numGardeners = rc.readBroadcast(Channels.COUNT_GARDENER);
+		int numTrees = trees.length;
+		
+		boolean check1 = numTrees > 0;
+		boolean check2 = lumberjackCount < 2;
+		boolean check3 = numLumberjacks < maxLumberjacks;
+		boolean check4 = numLumberjacks < 2*numGardeners;
+		
+		if ( check1 && check2 && check3 && check4 ) {
+			for (int check = 0; check < 360; check++) {
+				if (rc.canBuildRobot(RobotType.LUMBERJACK,robotDirection.rotateLeftDegrees(check))) {
+					rc.buildRobot(RobotType.LUMBERJACK,robotDirection.rotateLeftDegrees(check));
+					Communication.countMe(RobotType.LUMBERJACK);
+					lumberjackCount++;
+					return;
+				}
+			}
+		}		
+		
 	}
 	
 	
@@ -406,12 +459,12 @@ public class Gardener {
 		} else if (inGrove && callHelp) {
 			myStrategy = Strategy.DEFENDING;
 			System.out.println("Stategy: Defence");
-		} else if (inGrove && treeCount == maxTreeCount) {
+		} else if (inGrove && treeCount == maxTreeCount && rc.getTeamBullets() > Constants.ATTACK_BULLET_BANK) {
 			myStrategy = Strategy.ATTACKING;
 			System.out.println("Strategy: Attacking");
 		} else {
-			myStrategy = Strategy.BUILDING;
-			System.out.println("Strategy: Building");
+			myStrategy = Strategy.ECONOMY;
+			System.out.println("Strategy: Economy");
 		}
 		
 	}
@@ -439,21 +492,22 @@ public class Gardener {
 				if (rc.canBuildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check)) && condition1) {
 					rc.buildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check));
 					Communication.countMe(RobotType.LUMBERJACK);
+					lumberjackCount++;
 					return;
 				}
 			}
 		} else if ( condition2 ){
 			for (int check = 0; check < 8; check++) {
-				if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection.rotateLeftDegrees(check*45)) && condition2) {
-				rc.buildRobot(RobotType.SOLDIER, buildDirection.rotateLeftDegrees(check*45));
+				if (rc.canBuildRobot(RobotType.SOLDIER, robotDirection.rotateLeftDegrees(check*45)) && condition2) {
+				rc.buildRobot(RobotType.SOLDIER, robotDirection.rotateLeftDegrees(check*45));
 				Communication.countMe(RobotType.SOLDIER);
 				return;
 				}
 			}
 		} else if ( condition3 ){ 
 			for (int check = 0; check < 8; check++) {
-				if (rc.canBuildRobot(RobotType.SCOUT, buildDirection.rotateLeftDegrees(check*45)) && condition3) {
-			    	rc.buildRobot(RobotType.SCOUT, buildDirection.rotateLeftDegrees(check*45));
+				if (rc.canBuildRobot(RobotType.SCOUT, robotDirection.rotateLeftDegrees(check*45)) && condition3) {
+			    	rc.buildRobot(RobotType.SCOUT, robotDirection.rotateLeftDegrees(check*45));
 			    	Communication.countMe(RobotType.SCOUT);
 			    	return;
 				}
@@ -467,47 +521,52 @@ public class Gardener {
 		
 	}
 	
+	/**
+	 * Unit making strategy when in moving phase
+	 */	
 	static void moving() throws GameActionException {
 		
-		TreeInfo[] trees = rc.senseNearbyTrees(RobotType.GARDENER.sensorRadius, Team.NEUTRAL);
-				
-		if (trees.length>0 && rc.readBroadcast(Channels.COUNT_LUMBERJACK) < 2*rc.readBroadcast(Channels.COUNT_GARDENER)) {
-			for (int check = 0; check < 360; check++) {
-				if (rc.canBuildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check))) {
-					rc.buildRobot(RobotType.LUMBERJACK,buildDirection.rotateLeftDegrees(check));
-					Communication.countMe(RobotType.LUMBERJACK);
-					return;
-				}
-			}
-		} else if (rc.canBuildRobot(RobotType.SCOUT, buildDirection) && rc.readBroadcast(Channels.COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {
-	    	rc.buildRobot(RobotType.SCOUT, buildDirection);
+		checkLumberjack();
+		
+		rc.setIndicatorLine(myLocation, myLocation.add(robotDirection), 0, 0, 0);
+
+		
+		if (rc.canBuildRobot(RobotType.SCOUT, robotDirection) && rc.readBroadcast(Channels.COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {			
+	    	rc.buildRobot(RobotType.SCOUT, robotDirection);
 	    	Communication.countMe(RobotType.SCOUT);
 	    	return;
-		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
-			rc.buildRobot(RobotType.SOLDIER, buildDirection);
-			Communication.countMe(RobotType.SOLDIER);
-			return;
 		}
+//		} else if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+//			rc.buildRobot(RobotType.SOLDIER, buildDirection);
+//			Communication.countMe(RobotType.SOLDIER);
+//			return;
+//		}
 		
 	}
 	
 	
-	
+	/**
+	 * Unit making strategy when in defending phase
+	 */	
 	static void defending() throws GameActionException {
-		// TODO: ADD THIS
+		
+		rc.setIndicatorLine(myLocation, myLocation.add(robotDirection), 0, 0, 0);
 
-//		if (rc.canBuildRobot(RobotType.TANK, buildDirection) && rc.readBroadcast(Channels.COUNT_TANK) < Constants.MAX_COUNT_TANK) {
-//	    	rc.buildRobot(RobotType.TANK, buildDirection);
-//	    	Communication.countMe(RobotType.TANK);
-//		}
-		if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
-				rc.buildRobot(RobotType.SOLDIER, buildDirection);
+		if (rc.canBuildRobot(RobotType.SOLDIER, robotDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
+				rc.buildRobot(RobotType.SOLDIER, robotDirection);
 				Communication.countMe(RobotType.SOLDIER);
 		}
 		
 	}
 	
+	/**
+	 * Unit making strategy when in attacking phase
+	 */	
 	static void attacking() throws GameActionException {
+		
+		rc.setIndicatorLine(myLocation, myLocation.add(robotDirection), 0, 0, 0);
+		
+		checkLumberjack();
 				
 		int maxSoldier = Constants.MAX_COUNT_SOLDIER;
 		int maxTank = Constants.MAX_COUNT_TANK;
@@ -515,32 +574,30 @@ public class Gardener {
 		int numSoldier = rc.readBroadcast(Channels.COUNT_SOLDIER);
 		int numTank = rc.readBroadcast(Channels.COUNT_TANK);
 		
-		float maxRatio = (float) (maxSoldier+1)/(maxTank+1);
-		float numRatio = (float) (numSoldier+1)/(numTank+1);
+		float maxRatio = (float) (maxSoldier)/(maxTank+1);
+		float numRatio = (float) (numSoldier)/(numTank+1);
 		
-		boolean canBuildSoldier = rc.canBuildRobot(RobotType.SOLDIER, buildDirection);
-		boolean canBuildTank = rc.canBuildRobot(RobotType.TANK, buildDirection);
+		boolean canBuildTank = rc.canBuildRobot(RobotType.TANK, robotDirection);
+		boolean canBuildSoldier = rc.canBuildRobot(RobotType.SOLDIER, robotDirection);
 		
-		if ( canBuildSoldier && numSoldier < maxSoldier && numRatio > maxRatio) {
-			rc.buildRobot(RobotType.SOLDIER, buildDirection);
+		System.out.println(numRatio + ">" + maxRatio);
+		
+		if ( canBuildSoldier && numSoldier < maxSoldier && numRatio < maxRatio) {
+			rc.buildRobot(RobotType.SOLDIER, robotDirection);
 			Communication.countMe(RobotType.SOLDIER);
 		} else if ( canBuildTank && numTank < maxTank) {
-	    	rc.buildRobot(RobotType.TANK, buildDirection);
+	    	rc.buildRobot(RobotType.TANK, robotDirection);
 	    	Communication.countMe(RobotType.TANK);
 		}
 		
 	}
 
-	static void building() throws GameActionException {
-		// TODO: ADD THIS
-		if (rc.canBuildRobot(RobotType.SOLDIER, buildDirection) && rc.readBroadcast(Channels.COUNT_SOLDIER) < Constants.MAX_COUNT_SOLDIER) {
-			rc.buildRobot(RobotType.SOLDIER, buildDirection);
-			Communication.countMe(RobotType.SOLDIER);
-		} else if (rc.canBuildRobot(RobotType.LUMBERJACK, buildDirection) && rc.readBroadcast(Channels.COUNT_LUMBERJACK) < Constants.MAX_COUNT_LUMBERJACK) {
-			rc.buildRobot(RobotType.LUMBERJACK, buildDirection);
-			Communication.countMe(RobotType.LUMBERJACK);
-		}
-		
+	/**
+	 * Unit making strategy when in economy phase
+	 */	
+	static void economy() throws GameActionException {
+
+		checkLumberjack();
 		
 	}
 	

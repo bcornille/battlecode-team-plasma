@@ -24,7 +24,8 @@ public interface Constants {
 	int MAX_COUNT_GROVE = 100;
 	int MAX_COUNT_TREE = 4;
 
-	float GROVE_SPACING = 6.0f * GameConstants.BULLET_TREE_RADIUS + 2.1f * RobotType.ARCHON.bodyRadius;
+	float GROVE_SPACING_V = 6.0f * GameConstants.BULLET_TREE_RADIUS + 1.9f * RobotType.ARCHON.bodyRadius;
+	float GROVE_SPACING_H = 6.0f * GameConstants.BULLET_TREE_RADIUS + 2.3f * RobotType.ARCHON.bodyRadius;
 
 	/**
 	 * Constants related to message related channels.
@@ -93,7 +94,8 @@ public interface Constants {
 	/**
 	 * Economy related constants.
 	 */
-	float MAX_BULLET_BANK = 1000.0f;
+	float MAX_BULLET_BANK = 1337.0f;
+	float ATTACK_BULLET_BANK = 300.0f;
 	
 
 	/**
