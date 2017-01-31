@@ -1,5 +1,7 @@
 package teamplasma;
 
+import java.awt.Robot;
+
 import battlecode.common.*;
 
 public class Shooting {
@@ -15,6 +17,18 @@ public class Shooting {
 		} else if (rc.canFireSingleShot() && willHitSingleShot(target) && canAffordSingleShot(target)) {
 			rc.fireSingleShot(rc.getLocation().directionTo(target.location));
 		}
+		
+		if (target.type == RobotType.ARCHON && target.health < RobotType.ARCHON.maxHealth*(0.1f)) {
+			System.out.println("Killed Enemy Archon");
+			if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == target.ID){
+				rc.broadcast(Channels.ENEMY_ARCHON1_START, -1);
+			} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == target.ID){
+				rc.broadcast(Channels.ENEMY_ARCHON2_START, -1);
+			} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == target.ID){
+				rc.broadcast(Channels.ENEMY_ARCHON3_START, -1);
+			}		
+		}
+		
 	}
 
 	static private boolean willHitPentadShot(RobotInfo target) throws GameActionException {

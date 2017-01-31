@@ -460,9 +460,9 @@ class CornerNode extends Node {
 		float stride = RobotPlayer.myType.strideRadius;
 		float body = RobotPlayer.myType.bodyRadius;
 		// int maxDepth = (int) (RobotPlayer.myType.sensorRadius / stride);
-		System.out.println("Depth: " + nodeDepth);
-		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
-		System.out.println("Test value: " + Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth);
+//		System.out.println("Depth: " + nodeDepth);
+//		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
+//		System.out.println("Test value: " + Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth);
 		if (!RobotPlayer.rc.canSenseAllOfCircle(nodeLocation, RobotPlayer.myType.bodyRadius)
 				|| Clock.getBytecodesLeft() < Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
@@ -513,9 +513,9 @@ class EdgeNode extends Node {
 		float body = RobotPlayer.myType.bodyRadius;
 		// int maxDepth = (int) ((RobotPlayer.myType.sensorRadius -
 		// RobotPlayer.myType.bodyRadius) / stride);
-		System.out.println("Depth: " + nodeDepth);
-		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
-		System.out.println("Test value: " + Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth);
+//		System.out.println("Depth: " + nodeDepth);
+//		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
+//		System.out.println("Test value: " + Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth);
 		if (!RobotPlayer.rc.canSenseAllOfCircle(nodeLocation, RobotPlayer.myType.bodyRadius)
 				|| Clock.getBytecodesLeft() < Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,

@@ -192,80 +192,93 @@ public class Communication {
 		rc.broadcastFloat(CHANNEL_GROVE_XCEN, xcen);
 		rc.broadcastFloat(CHANNEL_GROVE_YCEN, ycen);
 	}
+	
+	
 
 	static MapLocation getEnemyArchonLocation() throws GameActionException {
-//		for (int i = Channels.ENEMY_ARCHON1_START; i <= Channels.ENEMY_ARCHON_END; i += Channels.ENEMY_ARCHON_OFFSET) {
-//			System.out.println(rc.readBroadcast(i));
-//			System.out.println(rc.readBroadcastFloat(i + 1));
-//			System.out.println(rc.readBroadcastFloat(i + 2));
-//			System.out.println(rc.readBroadcast(i + 3));
-//		}
+				
+		System.out.println("Archon 1: " + rc.readBroadcast(Channels.ENEMY_ARCHON1_START) + 
+				" at (" + rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START+1) + 
+				"," + rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START+2) + ")");
+		
+		System.out.println("Archon 2: " + rc.readBroadcast(Channels.ENEMY_ARCHON2_START) + 
+				" at (" + rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START+1) + 
+				"," + rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START+2) + ")");
+		
+		System.out.println("Archon 3: " + rc.readBroadcast(Channels.ENEMY_ARCHON3_START) + 
+				" at (" + rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START+1) + 
+				"," + rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START+2) + ")");
+		
+
 		if (rc.readBroadcast(Channels.HELP_START) > rc.getRoundNum() - 2 && RobotPlayer.myType != RobotType.TANK) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.HELP_START + 1),
 					rc.readBroadcastFloat(Channels.HELP_START + 2));
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) != 0
+			
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) > 0
 				&& rc.readBroadcast(Channels.ENEMY_ARCHON1_START + 3) > rc.getRoundNum() - 2) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) != 0
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+			
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) > 0
 				&& rc.readBroadcast(Channels.ENEMY_ARCHON2_START + 3) > rc.getRoundNum() - 2) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) != 0
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+			
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) > 0
 				&& rc.readBroadcast(Channels.ENEMY_ARCHON3_START + 3) > rc.getRoundNum() - 2) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+			
 		} else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START) == 0
 				&& rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1) > 0) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+			
 		} else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START) == 0
 				&& rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1) > 0) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+			
 		} else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START) == 0
 				&& rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1) > 0) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) != 0
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+			
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) > 0
 				&& rc.readBroadcast(Channels.ENEMY_ARCHON1_START + 3) > rc
 						.readBroadcast(Channels.ENEMY_ARCHON2_START + 3)
 				&& rc.readBroadcast(Channels.ENEMY_ARCHON1_START + 3) > rc
 						.readBroadcast(Channels.ENEMY_ARCHON3_START + 3)) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) != 0 && rc
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
+			
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) > 0 && rc
 				.readBroadcast(Channels.ENEMY_ARCHON2_START + 3) > rc.readBroadcast(Channels.ENEMY_ARCHON3_START + 3)) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) != 0) {
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
+			
+		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) > 0) {
+			
 			return new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
-					rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
-		} // else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1) >
-			// 0) {
-			// return new
-			// MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START +
-			// 1),
-			// rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2));
-			// } else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START +
-			// 1) >
-			// 0) {
-			// return new
-			// MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START +
-			// 1),
-			// rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2));
-			// } else if (rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START +
-			// 1) >
-			// 0) {
-			// return new
-			// MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START +
-			// 1),
-			// rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
-			// }
-		return RobotPlayer.mapCenter;
+								   rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2));
+			
+		} 
+		
+		System.out.println("No more archons");
+		return rc.getLocation();
 	}
 
 	static void spotEnemyArchon(RobotInfo Archon) throws GameActionException {
+		
 		if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == Archon.ID) {
 			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, Archon.location.y);
@@ -284,11 +297,10 @@ public class Communication {
 		}
 
 		float maxArchonDist = rc.getRoundNum() * RobotType.ARCHON.strideRadius;
+		
 		float ArchonDist = Archon.location
 				.distanceTo(new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1),
 						rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2)));
-		System.out.println("Max Distance: " + maxArchonDist);
-		System.out.println("Archon 1 Distance: " + ArchonDist);
 		if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == 0 && ArchonDist < maxArchonDist) {
 			rc.broadcast(Channels.ENEMY_ARCHON1_START, Archon.ID);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
@@ -299,7 +311,6 @@ public class Communication {
 
 		ArchonDist = Archon.location.distanceTo(new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1),
 				rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2)));
-		System.out.println("Archon 1 Distance: " + ArchonDist);
 		if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == 0 && ArchonDist < maxArchonDist) {
 			rc.broadcast(Channels.ENEMY_ARCHON2_START, Archon.ID);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, Archon.location.x);
@@ -310,7 +321,6 @@ public class Communication {
 
 		ArchonDist = Archon.location.distanceTo(new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1),
 				rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2)));
-		System.out.println("Archon 1 Distance: " + ArchonDist);
 		if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == 0 && ArchonDist < maxArchonDist) {
 			rc.broadcast(Channels.ENEMY_ARCHON3_START, Archon.ID);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, Archon.location.x);
