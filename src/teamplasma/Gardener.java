@@ -87,15 +87,7 @@ public class Gardener {
 				// get strategy for turn
 				setStrategy();
 
-				// Check for obstructing trees
-				TreeInfo[] trees = rc.senseNearbyTrees(
-						RobotType.GARDENER.bodyRadius + 3.0f * GameConstants.BULLET_TREE_RADIUS, Team.NEUTRAL);
-				if (trees.length > 0) {
-					Communication.callForChop(trees[0]);
-				}
-
-				// Build units based on strategy (needs to happen before
-				// moveToGrove)
+				// Build units based on strategy
 				switch (myStrategy) {
 				case FIRST:
 					first();
@@ -113,6 +105,13 @@ public class Gardener {
 					economy();
 				default:
 					break;
+				}
+
+				// Check for obstructing trees
+				TreeInfo[] trees = rc.senseNearbyTrees(
+						RobotType.GARDENER.bodyRadius + 3.0f * GameConstants.BULLET_TREE_RADIUS, Team.NEUTRAL);
+				if (trees.length > 0) {
+					Communication.callForChop(trees[0]);
 				}
 
 				// Check grove status
@@ -285,18 +284,22 @@ public class Gardener {
 
 			onMap = true;
 			boolean open = true;
+			TreeInfo[] trees = null;
 
 			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
-				System.out.println("Hit onMap check.");
 				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
-				if (onMap)
-					open = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL).length == 0;
+				if (onMap) {
+					trees = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL);
+					open = trees.length == 0;
+				}
 			}
 			if (onMap && open) {
 				moveDirection = Movement.pathing(moveDirection, groveCenter);
 				moveDirection = Movement.tryMove(moveDirection, 60, 3);
 			} else if (!open) {
 				rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED + groveChannel, false);
+				if (trees != null)
+					Communication.callForChop(trees[0]);
 				assignedGrove = false;
 			} else if (!onMap) {
 				int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);

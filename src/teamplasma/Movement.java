@@ -355,7 +355,10 @@ abstract class Node implements Comparable<Node> {
 		case GARDENER:
 			return !RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius);
 		case LUMBERJACK:
-			break;
+			return RobotPlayer.rc.senseNearbyRobots(nodeLocation, RobotPlayer.myType.bodyRadius,
+					RobotPlayer.myTeam).length == 0
+					&& RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius,
+							RobotPlayer.myTeam).length == 0;
 		case SCOUT:
 			break;
 		case SOLDIER:
@@ -459,9 +462,9 @@ class CornerNode extends Node {
 		// int maxDepth = (int) (RobotPlayer.myType.sensorRadius / stride);
 		System.out.println("Depth: " + nodeDepth);
 		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
-		System.out.println("Test value: " + Clock.getBytecodeNum() / 15 * nodeDepth);
+		System.out.println("Test value: " + Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth);
 		if (!RobotPlayer.rc.canSenseAllOfCircle(nodeLocation, RobotPlayer.myType.bodyRadius)
-				|| Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 15 * nodeDepth) {
+				|| Clock.getBytecodesLeft() < Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
 					0);
 			return true;
@@ -512,9 +515,9 @@ class EdgeNode extends Node {
 		// RobotPlayer.myType.bodyRadius) / stride);
 		System.out.println("Depth: " + nodeDepth);
 		System.out.println("Bytecodes left: " + Clock.getBytecodesLeft());
-		System.out.println("Test value: " + Clock.getBytecodeNum() / 15 * nodeDepth);
+		System.out.println("Test value: " + Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth);
 		if (!RobotPlayer.rc.canSenseAllOfCircle(nodeLocation, RobotPlayer.myType.bodyRadius)
-				|| Clock.getBytecodesLeft() < Clock.getBytecodeNum() / 15 * nodeDepth) {
+				|| Clock.getBytecodesLeft() < Clock.getBytecodeNum() / Constants.PATH_PENALTY * nodeDepth) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
 					0);
 			return true;
