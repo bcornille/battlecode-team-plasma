@@ -608,6 +608,11 @@ public class Gardener {
 			rc.buildRobot(RobotType.SCOUT, robotDirection);
 			Communication.countMe(RobotType.SCOUT);
 			return;
+		} else if (rc.canBuildRobot(RobotType.SOLDIER, robotDirection)
+				&& rc.readBroadcast(Channels.COUNT_SOLDIER) < rc.readBroadcast(Channels.COUNT_GARDENER) ) {
+			rc.buildRobot(RobotType.SOLDIER, robotDirection);
+			Communication.countMe(RobotType.SOLDIER);
+			return;
 		}
 
 	}
