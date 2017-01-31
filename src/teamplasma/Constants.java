@@ -16,7 +16,7 @@ public interface Constants {
 	int MAX_COUNT_SOLDIER = 40;
 	int MAX_COUNT_TANK = 20;
 	int MAX_COUNT_SCOUT = 2;
- 	
+
 	/**
 	 * Gardening Constants
 	 */
@@ -51,8 +51,8 @@ public interface Constants {
 	 * Desired spacing of friendly units (eventually add all units)
 	 * 
 	 */
-	
-	float SPACING_ARCHON_ARCHON = 0.0f; 
+
+	float SPACING_ARCHON_ARCHON = 0.0f;
 	float SPACING_GARDENER_GARDENER = 0.0f;
 	float SPACING_LUMBERJACK_LUMBERJACK = 2.0f;
 	float SPACING_SCOUT_SCOUT = 3.0f;
@@ -74,9 +74,9 @@ public interface Constants {
 	float SPACING_SCOUT_SOLDIER = 0.0f;
 	float SPACING_SCOUT_TANK = 0.0f;
 	float SPACING_SOLDIER_TANK = 0.0f;
-	
-	float SPACING_GARDENER_ARCHON = SPACING_ARCHON_GARDENER; 
-	float SPACING_LUMBERJACK_ARCHON = SPACING_ARCHON_LUMBERJACK; 
+
+	float SPACING_GARDENER_ARCHON = SPACING_ARCHON_GARDENER;
+	float SPACING_LUMBERJACK_ARCHON = SPACING_ARCHON_LUMBERJACK;
 	float SPACING_LUMBERJACK_GARDENER = SPACING_GARDENER_LUMBERJACK;
 	float SPACING_SCOUT_ARCHON = SPACING_ARCHON_SCOUT;
 	float SPACING_SCOUT_GARDENER = SPACING_GARDENER_SCOUT;
@@ -97,8 +97,6 @@ public interface Constants {
 	float MAX_BULLET_BANK = 2000.0f;
 	float ATTACK_BULLET_BANK = 500.0f;
 
-	
-
 	/**
 	 * Miscellaneous definitions.
 	 */
@@ -109,6 +107,5 @@ public interface Constants {
 	 * Related to pathing
 	 */
 	int MAX_PATH_DEPTH = 100;
-
 
 }

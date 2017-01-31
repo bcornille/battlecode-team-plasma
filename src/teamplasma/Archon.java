@@ -70,14 +70,13 @@ public class Archon {
 				checkGroves();
 				// Attempt to build a gardener
 				tryHireGardener();
-				
-				
-       			// Check for threats
-       			RobotInfo[] robots = rc.senseNearbyRobots(RobotType.GARDENER.sensorRadius, RobotPlayer.enemyTeam );
-				if (robots.length>0) {
-       				System.out.println("omg enemies!");
-       				Communication.callForHelp(robots[0]);
-       			}
+
+				// Check for threats
+				RobotInfo[] robots = rc.senseNearbyRobots(RobotType.GARDENER.sensorRadius, RobotPlayer.enemyTeam);
+				if (robots.length > 0) {
+					System.out.println("omg enemies!");
+					Communication.callForHelp(robots[0]);
+				}
 
 				// Stay in box
 				myLocation = rc.getLocation();
@@ -115,18 +114,18 @@ public class Archon {
 		MapLocation[] enemyArchons = rc.getInitialArchonLocations(RobotPlayer.enemyTeam);
 		MapLocation[] myArchons = rc.getInitialArchonLocations(RobotPlayer.myTeam);
 		int numArchons = myArchons.length;
-		
+
 		rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, enemyArchons[0].x);
-        rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, enemyArchons[0].y);
-        if (enemyArchons.length > 1) {
-        	rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, enemyArchons[1].x);
-            rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, enemyArchons[1].y);
-        }
-        if (enemyArchons.length > 2) {
-        	rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, enemyArchons[2].x);
-            rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, enemyArchons[2].y);
-        }
-        
+		rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, enemyArchons[0].y);
+		if (enemyArchons.length > 1) {
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, enemyArchons[1].x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, enemyArchons[1].y);
+		}
+		if (enemyArchons.length > 2) {
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, enemyArchons[2].x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, enemyArchons[2].y);
+		}
+
 		// Initialize map variable with Leader location
 		float xmin = myLocation.x;
 		float xmax = myLocation.x;
@@ -226,109 +225,106 @@ public class Archon {
 		}
 
 		myLocation = rc.getLocation();
-		
+
 		System.out.println(" ");
 		System.out.println(archonNumber);
-		
+
 		// check if in another Archon's grove
-		if (archonNumber==2) {
+		if (archonNumber == 2) {
 			// 2rd Archon checks if in 1nd's grove
-			
+
 			float xmin = rc.readBroadcastFloat(Channels.GROVE1_XMIN);
 			float xmax = rc.readBroadcastFloat(Channels.GROVE1_XMAX);
 			float ymin = rc.readBroadcastFloat(Channels.GROVE1_YMIN);
 			float ymax = rc.readBroadcastFloat(Channels.GROVE1_YMAX);
-			
-			System.out.println("(" + xmin + "," + ymin + ")" );
-			System.out.println("(" + myLocation.x + "," + myLocation.y + ")" );
-			System.out.println("(" + xmax + "," + ymax + ")" );
+
+			System.out.println("(" + xmin + "," + ymin + ")");
+			System.out.println("(" + myLocation.x + "," + myLocation.y + ")");
+			System.out.println("(" + xmax + "," + ymax + ")");
 
 			boolean xcheck = (xmin <= myLocation.x && xmax >= myLocation.x);
 			boolean ycheck = (ymin <= myLocation.y && ymax >= myLocation.y);
-			
+
 			System.out.println(xcheck + ", " + ycheck);
 
-			if ( xcheck && ycheck ){
+			if (xcheck && ycheck) {
 				// in grove 1, don't make our own grove
-				Communication.setGroveEdge( archonNumber,xmin,xmax,ymin,ymax);
+				Communication.setGroveEdge(archonNumber, xmin, xmax, ymin, ymax);
 				archonNumber = 1;
 				groveChannels();
 				return;
 			}
-			
-		} else if (archonNumber==3) {
+
+		} else if (archonNumber == 3) {
 			// 3rd Archon checks if in 2nd's grove
-			
+
 			float xmin = rc.readBroadcastFloat(Channels.GROVE2_XMIN);
 			float xmax = rc.readBroadcastFloat(Channels.GROVE2_XMAX);
 			float ymin = rc.readBroadcastFloat(Channels.GROVE2_YMIN);
 			float ymax = rc.readBroadcastFloat(Channels.GROVE2_YMAX);
 
-			System.out.print("(" + xmin + "," + ymin + ")" );
-			System.out.print("(" + myLocation.x + "," + myLocation.y + ")" );
-			System.out.print("(" + xmax + "," + ymax + ")" );
+			System.out.print("(" + xmin + "," + ymin + ")");
+			System.out.print("(" + myLocation.x + "," + myLocation.y + ")");
+			System.out.print("(" + xmax + "," + ymax + ")");
 
-			
 			boolean xcheck = (xmin <= myLocation.x && xmax >= myLocation.x);
 			boolean ycheck = (ymin <= myLocation.y && ymax >= myLocation.y);
 
 			System.out.println(xcheck + ", " + ycheck);
-			
-			if ( xcheck && ycheck ){
+
+			if (xcheck && ycheck) {
 				// 3rd Archon checks if in 1nd's grove as well
-				
+
 				xmin = rc.readBroadcastFloat(Channels.GROVE1_XMIN);
 				xmax = rc.readBroadcastFloat(Channels.GROVE1_XMAX);
 				ymin = rc.readBroadcastFloat(Channels.GROVE1_YMIN);
 				ymax = rc.readBroadcastFloat(Channels.GROVE1_YMAX);
-				
-				System.out.println("(" + xmin + "," + ymin + ")" );
-				System.out.println("(" + myLocation.x + "," + myLocation.y + ")" );
-				System.out.println("(" + xmax + "," + ymax + ")" );
+
+				System.out.println("(" + xmin + "," + ymin + ")");
+				System.out.println("(" + myLocation.x + "," + myLocation.y + ")");
+				System.out.println("(" + xmax + "," + ymax + ")");
 
 				xcheck = (xmin <= myLocation.x && xmax >= myLocation.x);
 				ycheck = (ymin <= myLocation.y && ymax >= myLocation.y);
 
 				System.out.println(xcheck + ", " + ycheck);
-				
+
 				// Check if inside grove 1
-				if ( xcheck && ycheck ){
+				if (xcheck && ycheck) {
 					// in grove 1, don't make our own grove
-					Communication.setGroveEdge( archonNumber,xmin,xmax,ymin,ymax);
+					Communication.setGroveEdge(archonNumber, xmin, xmax, ymin, ymax);
 					archonNumber = 1;
 					groveChannels();
 					return;
 				} else {
 					// in grove 2, don't make our own grove
-					Communication.setGroveEdge( archonNumber,xmin,xmax,ymin,ymax);
+					Communication.setGroveEdge(archonNumber, xmin, xmax, ymin, ymax);
 					archonNumber = 2;
 					groveChannels();
 					return;
 				}
 			}
 		}
-		
+
 		// Not in another grove, so lets make our own
 		groveCenter = myLocation.add(buildDirection, RobotType.ARCHON.bodyRadius + RobotType.GARDENER.bodyRadius);
 
 		// setup first grove location
-		rc.broadcast(CHANNEL_GROVE_COUNT,rc.readBroadcast(CHANNEL_GROVE_COUNT)+1);
+		rc.broadcast(CHANNEL_GROVE_COUNT, rc.readBroadcast(CHANNEL_GROVE_COUNT) + 1);
 		rc.broadcastBoolean(CHANNEL_GROVE_LOCATIONS, true);
 		rc.broadcastBoolean(CHANNEL_GROVE_ASSIGNED, false);
 		rc.broadcastFloat(CHANNEL_GROVE_X, groveCenter.x);
 		rc.broadcastFloat(CHANNEL_GROVE_Y, groveCenter.y);
-		
+
 		// Save the grove information
-		Communication.setGroveEdge( archonNumber, 
-				groveCenter.x - RobotType.ARCHON.sensorRadius,
-				groveCenter.x + RobotType.ARCHON.sensorRadius, 
-				groveCenter.y - RobotType.ARCHON.sensorRadius,
-				groveCenter.y + RobotType.ARCHON.sensorRadius );
-		
+		Communication.setGroveEdge(archonNumber, groveCenter.x - RobotType.ARCHON.sensorRadius,
+				groveCenter.x + RobotType.ARCHON.sensorRadius, groveCenter.y - RobotType.ARCHON.sensorRadius,
+				groveCenter.y + RobotType.ARCHON.sensorRadius);
+
 	}
 
 	static void checkGroves() throws GameActionException {
-		
+
 		System.out.println(archonNumber);
 
 		float xmin = rc.readBroadcastFloat(CHANNEL_GROVE_XMIN);
@@ -341,8 +337,8 @@ public class Archon {
 
 				float groveX = rc.readBroadcastFloat(CHANNEL_GROVE_X + i);
 				float groveY = rc.readBroadcastFloat(CHANNEL_GROVE_Y + i);
-				
-				MapLocation tempGrove = new MapLocation(groveX,groveY);
+
+				MapLocation tempGrove = new MapLocation(groveX, groveY);
 				rc.setIndicatorDot(tempGrove, 0, 0, 0);
 
 				xmin = Math.min(xmin, groveX);
@@ -412,31 +408,31 @@ public class Archon {
 	 * @throws GameActionException
 	 */
 	static void bringOutYourDead() throws GameActionException {
-		
+
 		int currentRound = rc.getRoundNum();
-		
+
 		for (int channel = Channels.MIN_ROBOT; channel <= Channels.MAX_ROBOT; channel++) {
-			
+
 			int lastCheckIn = rc.readBroadcast(channel);
-			
+
 			if (currentRound - lastCheckIn > 2 && lastCheckIn != 0) {
 
 				rc.broadcast(channel, 0);
-				
+
 				// currently not needed. Changed how comms work
 				// Communication.zeroComms(channel);
-				
+
 				// Remove Robot from main count
 				int countChannel = Communication.getCountChannel(channel);
 				int numRobotsOfType = rc.readBroadcast(countChannel);
 				rc.broadcast(countChannel, --numRobotsOfType);
-				
+
 				// Remove Gardener from Archon count
 				if (countChannel == Channels.COUNT_GARDENER) {
 					int numMyGardeners = rc.readBroadcast(CHANNEL_GARDENER_COUNT);
 					rc.broadcast(CHANNEL_GARDENER_COUNT, --numMyGardeners);
 				}
-				
+
 			}
 		}
 	}
@@ -447,9 +443,10 @@ public class Archon {
 	 * @throws GameActionException
 	 */
 	static void tryHireGardener() throws GameActionException {
-		
-    	canBuild = ( (rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0) || canBuild );
-    	
+
+		canBuild = ((rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0)
+				|| canBuild);
+
 		int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
 		int numGardeners = rc.readBroadcast(CHANNEL_GARDENER_COUNT);
 		int totGardeners = rc.readBroadcast(Channels.COUNT_GARDENER);
@@ -459,10 +456,10 @@ public class Archon {
 		// Curve maxGardeners into the mid game
 		maxGardeners = (int) ((Constants.MAX_COUNT_GARDENER - numArchons) * (rc.getRoundNum() / 1000.0f) + numArchons);
 		maxGardeners = Math.min(maxGardeners, Constants.MAX_COUNT_GARDENER);
-		
+
 		System.out.println("Gardeners: " + numGardeners + "/" + maxGardeners);
-		
-		if ( totGardeners == 0 || ( numGardeners < maxGardeners && numGardeners < numGroves && canBuild) ) {
+
+		if (totGardeners == 0 || (numGardeners < maxGardeners && numGardeners < numGroves && canBuild)) {
 
 			int maxChecks = 360;
 			float radianOffset = Constants.TWO_PI / maxChecks;
@@ -475,7 +472,7 @@ public class Archon {
 					// Count the Gardener
 					rc.broadcast(Channels.COUNT_GARDENER, ++totGardeners);
 					rc.broadcast(CHANNEL_GARDENER_COUNT, ++numGardeners);
-					
+
 					// Locate the Gardener
 					float gDist = RobotType.ARCHON.bodyRadius + RobotType.GARDENER.bodyRadius
 							+ GameConstants.GENERAL_SPAWN_OFFSET;
@@ -491,30 +488,30 @@ public class Archon {
 							break;
 						}
 					}
-					
+
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Gets the correct channels for all of the gardener/grove management. 
-	 * Definitely not the best way to do this stuff, but fuck it. We are 
-	 * almost out of time. 
+	 * Gets the correct channels for all of the gardener/grove management.
+	 * Definitely not the best way to do this stuff, but fuck it. We are almost
+	 * out of time.
 	 */
 	static void groveChannels() {
 
 		switch (archonNumber) {
 		case 1:
-			
-			CHANNEL_GARDENER_COUNT= Channels.GARDENER1_COUNT;
+
+			CHANNEL_GARDENER_COUNT = Channels.GARDENER1_COUNT;
 			CHANNEL_GROVE_COUNT = Channels.GROVE1_COUNT;
-			
+
 			CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
 			CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
 			CHANNEL_GROVE_X = Channels.GROVE1_X;
 			CHANNEL_GROVE_Y = Channels.GROVE1_Y;
-			
+
 			CHANNEL_GROVE_XMIN = Channels.GROVE1_XMIN;
 			CHANNEL_GROVE_XMAX = Channels.GROVE1_XMAX;
 			CHANNEL_GROVE_YMIN = Channels.GROVE1_YMIN;
@@ -522,15 +519,15 @@ public class Archon {
 
 			break;
 		case 2:
-			
-			CHANNEL_GARDENER_COUNT= Channels.GARDENER2_COUNT;
+
+			CHANNEL_GARDENER_COUNT = Channels.GARDENER2_COUNT;
 			CHANNEL_GROVE_COUNT = Channels.GROVE2_COUNT;
-			
+
 			CHANNEL_GROVE_LOCATIONS = Channels.GROVE2_LOCATIONS;
 			CHANNEL_GROVE_ASSIGNED = Channels.GROVE2_ASSIGNED;
 			CHANNEL_GROVE_X = Channels.GROVE2_X;
 			CHANNEL_GROVE_Y = Channels.GROVE2_Y;
-			
+
 			CHANNEL_GROVE_XMIN = Channels.GROVE2_XMIN;
 			CHANNEL_GROVE_XMAX = Channels.GROVE2_XMAX;
 			CHANNEL_GROVE_YMIN = Channels.GROVE2_YMIN;
@@ -538,31 +535,31 @@ public class Archon {
 
 			break;
 		case 3:
-			
-			CHANNEL_GARDENER_COUNT= Channels.GARDENER3_COUNT;
+
+			CHANNEL_GARDENER_COUNT = Channels.GARDENER3_COUNT;
 			CHANNEL_GROVE_COUNT = Channels.GROVE3_COUNT;
-			
+
 			CHANNEL_GROVE_LOCATIONS = Channels.GROVE3_LOCATIONS;
 			CHANNEL_GROVE_ASSIGNED = Channels.GROVE3_ASSIGNED;
 			CHANNEL_GROVE_X = Channels.GROVE3_X;
 			CHANNEL_GROVE_Y = Channels.GROVE3_Y;
-			
+
 			CHANNEL_GROVE_XMIN = Channels.GROVE3_XMIN;
 			CHANNEL_GROVE_XMAX = Channels.GROVE3_XMAX;
 			CHANNEL_GROVE_YMIN = Channels.GROVE3_YMIN;
 			CHANNEL_GROVE_YMAX = Channels.GROVE3_YMAX;
-			
+
 			break;
 		default:
-			
-			CHANNEL_GARDENER_COUNT= Channels.GARDENER1_COUNT;
+
+			CHANNEL_GARDENER_COUNT = Channels.GARDENER1_COUNT;
 			CHANNEL_GROVE_COUNT = Channels.GROVE1_COUNT;
-			
+
 			CHANNEL_GROVE_LOCATIONS = Channels.GROVE1_LOCATIONS;
 			CHANNEL_GROVE_ASSIGNED = Channels.GROVE1_ASSIGNED;
 			CHANNEL_GROVE_X = Channels.GROVE1_X;
 			CHANNEL_GROVE_Y = Channels.GROVE1_Y;
-			
+
 			CHANNEL_GROVE_XMIN = Channels.GROVE1_XMIN;
 			CHANNEL_GROVE_XMAX = Channels.GROVE1_XMAX;
 			CHANNEL_GROVE_YMIN = Channels.GROVE1_YMIN;

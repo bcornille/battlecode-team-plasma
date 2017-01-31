@@ -3,7 +3,6 @@ package teamplasma;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import java.util.Arrays;
 
 public class Movement {
 
@@ -362,7 +361,8 @@ abstract class Node implements Comparable<Node> {
 		case SOLDIER:
 			return !RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius);
 		case TANK:
-			return RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius, RobotPlayer.myTeam).length == 0;
+			return RobotPlayer.rc.senseNearbyTrees(nodeLocation, RobotPlayer.myType.bodyRadius,
+					RobotPlayer.myTeam).length == 0;
 		default:
 			break;
 		}
@@ -465,7 +465,8 @@ class CornerNode extends Node {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
 					0);
 			return true;
-		} else if (!isOpen()//RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, RobotPlayer.myType.bodyRadius)
+		} else if (!isOpen()// RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation,
+							// RobotPlayer.myType.bodyRadius)
 				|| !RobotPlayer.rc.onTheMap(nodeLocation, body)) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0,
 					0);
@@ -517,7 +518,8 @@ class EdgeNode extends Node {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 0, 255,
 					0);
 			return true;
-		} else if (!isOpen()//RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation, body)
+		} else if (!isOpen()// RobotPlayer.rc.isCircleOccupiedExceptByThisRobot(nodeLocation,
+							// body)
 				|| !RobotPlayer.rc.onTheMap(nodeLocation, body)) {
 			RobotPlayer.rc.setIndicatorLine(nodeLocation.add(fromDirection.opposite(), stride), nodeLocation, 255, 0,
 					0);
@@ -554,5 +556,3 @@ class EdgeNode extends Node {
 		}
 	}
 }
-
-

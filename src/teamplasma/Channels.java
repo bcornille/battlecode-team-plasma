@@ -1,7 +1,5 @@
 package teamplasma;
 
-import battlecode.common.*;
-
 public interface Channels {
 
 	/**
@@ -95,64 +93,59 @@ public interface Channels {
 	/**
 	 * ENEMY_ARCHONi_XXX
 	 * 
-	 * offset = 0 : Archon ID
-	 * offset = 1 : Archon x location
-	 * offset = 2 : Archon y location
-	 * offset = 3 : Archon last seen
+	 * offset = 0 : Archon ID offset = 1 : Archon x location offset = 2 : Archon
+	 * y location offset = 3 : Archon last seen
 	 */
 	int ENEMY_ARCHON_OFFSET = 4;
 	int ENEMY_ARCHON1_START = 5000;
 	int ENEMY_ARCHON2_START = ENEMY_ARCHON1_START + ENEMY_ARCHON_OFFSET;
 	int ENEMY_ARCHON3_START = ENEMY_ARCHON2_START + ENEMY_ARCHON_OFFSET;
 	int ENEMY_ARCHON_END = ENEMY_ARCHON3_START + ENEMY_ARCHON_OFFSET - 1;
-	
+
 	/**
 	 * HELP_XXX
 	 */
 	int HELP_START = ENEMY_ARCHON_END + 1;
 	int HELP_END = HELP_START + 2;
-	
 
-	
 	/**
 	 * UNIT_TREEi_XXX
 	 * 
-	 * offset = 0 : TREE ID
-	 * offset = 1 : TREE x location
-	 * offset = 2 : TREE y location
+	 * offset = 0 : TREE ID offset = 1 : TREE x location offset = 2 : TREE y
+	 * location
 	 */
 	int UNIT_TREE_OFFSET = 3;
 	int UNIT_TREE_START = 6000;
 	int UNIT_TREE_STOP = UNIT_TREE_START + UNIT_TREE_OFFSET - 1;
-	
+
 	/**
 	 * CHOP_XXX
 	 */
 	int CHOP_START = UNIT_TREE_STOP + 1;
 	int CHOP_END = CHOP_START + 2;
-	
-	
+
 	/**
 	 * GARDENER_XXX
 	 * 
 	 * Sets the channels for keeping track of the gardeners
 	 **/
-	
+
 	int GARDENER_START = 8000;
-	
+
 	int GARDENER_ID = GARDENER_START;
 	int GARDENER_NUMBER = GARDENER_START + Constants.MAX_COUNT_GARDENER;
 	int GARDENER_PARENT = GARDENER_START + 2 * Constants.MAX_COUNT_GARDENER;
 	int GARDENER_GROVE = GARDENER_START + 3 * Constants.MAX_COUNT_GARDENER;
-	
+
 	/**
 	 * ARCHON1_XXX
 	 * 
-	 * Sets the channels for keeping track of the gardeners and groves for Archon #1
+	 * Sets the channels for keeping track of the gardeners and groves for
+	 * Archon #1
 	 **/
 
 	int ARCHON1_START = 8500;
-	
+
 	int GARDENER1_COUNT = ARCHON1_START;
 	int GROVE1_COUNT = ARCHON1_START + 1;
 
@@ -166,11 +159,12 @@ public interface Channels {
 	/**
 	 * ARCHON2_XXX
 	 * 
-	 * Sets the channels for keeping track of the gardeners and groves for Archon #2
+	 * Sets the channels for keeping track of the gardeners and groves for
+	 * Archon #2
 	 **/
 
 	int ARCHON2_START = 9000;
-	
+
 	int GARDENER2_COUNT = ARCHON2_START;
 	int GROVE2_COUNT = ARCHON2_START + 1;
 
@@ -180,15 +174,16 @@ public interface Channels {
 	int GROVE2_ASSIGNED = GROVE2_START + Constants.MAX_COUNT_GROVE;
 	int GROVE2_X = GROVE2_START + 2 * Constants.MAX_COUNT_GROVE;
 	int GROVE2_Y = GROVE2_START + 3 * Constants.MAX_COUNT_GROVE;
-	
+
 	/**
 	 * ARCHON3_XXX
 	 * 
-	 * Sets the channels for keeping track of the gardeners and groves for Archon #3
+	 * Sets the channels for keeping track of the gardeners and groves for
+	 * Archon #3
 	 **/
 
 	int ARCHON3_START = 9500;
-	
+
 	int GARDENER3_COUNT = ARCHON3_START;
 	int GROVE3_COUNT = ARCHON3_START + 1;
 
@@ -200,5 +195,3 @@ public interface Channels {
 	int GROVE3_Y = GROVE3_START + 3 * Constants.MAX_COUNT_GROVE;
 
 }
-
-
