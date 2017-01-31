@@ -18,7 +18,7 @@ public class Shooting {
 			rc.fireSingleShot(rc.getLocation().directionTo(target.location));
 		}
 		
-		if (target.type == RobotType.ARCHON && target.health < RobotType.ARCHON.maxHealth*(0.1f)) {
+		if (target.type == RobotType.ARCHON && target.health < RobotType.ARCHON.maxHealth*(0.05f)) {
 			System.out.println("Killed Enemy Archon");
 			if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == target.ID){
 				rc.broadcast(Channels.ENEMY_ARCHON1_START, -1);
