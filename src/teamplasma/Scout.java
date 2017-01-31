@@ -72,6 +72,8 @@ public class Scout {
      		switch(bot.getType()){
 			case ARCHON:
 				// ignore for now
+				System.out.println("Enemy Archon  spotted: " + bot.location);
+    			Communication.spotEnemyArchon(bot);
 				break;
 			case GARDENER:
 				harassClose(bot);

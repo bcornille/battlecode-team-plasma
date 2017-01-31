@@ -94,8 +94,9 @@ public interface Constants {
 	/**
 	 * Economy related constants.
 	 */
-	float MAX_BULLET_BANK = 1337.0f;
+	float MAX_BULLET_BANK = 2000.0f;
 	float ATTACK_BULLET_BANK = 300.0f;
+
 	
 
 	/**
