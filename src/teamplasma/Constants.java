@@ -106,6 +106,6 @@ public interface Constants {
 	/**
 	 * Related to pathing
 	 */
-	int MAX_PATH_DEPTH = 100;
+	int PATH_PENALTY = 15;
 
 }

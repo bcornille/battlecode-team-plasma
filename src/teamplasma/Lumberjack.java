@@ -1,5 +1,10 @@
 package teamplasma;
 
+import static java.util.Comparator.*;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
 import battlecode.common.*;
 
 public class Lumberjack {
@@ -15,6 +20,13 @@ public class Lumberjack {
 
 	static Target hasTarget = Target.none;
 	static int myTarget;
+	static MapLocation targetLocation;
+
+	/**
+	 * Comparator for sorting TreeInfo arrays by ContaintedRobotType (VERY
+	 * EXPENSIVE)
+	 */
+	static Comparator<TreeInfo> compareRobots = comparing(TreeInfo::getContainedRobot, nullsLast(reverseOrder()));
 
 	/**
 	 * Main control method for RobotType Lumberjack
@@ -37,15 +49,25 @@ public class Lumberjack {
 				System.out.println(hasTarget);
 
 				switch (hasTarget) {
-				case tree:
-
-					tryChop();
-					break;
 
 				case robot:
 
+					moveDirection = Movement.pathing(moveDirection, targetLocation);
+					// Adjust movement direction to dodge bullets
+					moveDirection = Movement.dodge(moveDirection);
+					// Move
+					moveDirection = Movement.tryMove(moveDirection, 30, 6);
+
 					trySwipe();
 
+					// break;
+
+				case tree:
+
+					if (tryChop())
+						break;
+
+					moveDirection = Movement.pathing(moveDirection, targetLocation);
 					// Adjust movement direction to dodge bullets
 					moveDirection = Movement.dodge(moveDirection);
 					// Move
@@ -56,6 +78,7 @@ public class Lumberjack {
 
 					getTarget();
 
+					moveDirection = Movement.pathing(moveDirection, targetLocation);
 					// Adjust movement direction to dodge bullets
 					moveDirection = Movement.dodge(moveDirection);
 					// Move
@@ -106,27 +129,41 @@ public class Lumberjack {
 
 		// Collect info on potential nearby targets
 		RobotInfo[] robots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, RobotPlayer.enemyTeam);
-		TreeInfo[] neutralTrees = rc.senseNearbyTrees(
-				RobotType.LUMBERJACK.bodyRadius + GameConstants.INTERACTION_DIST_FROM_EDGE, Team.NEUTRAL);
+		// TreeInfo[] neutralTrees =
+		// rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.INTERACTION_DIST_FROM_EDGE,
+		// Team.NEUTRAL);
 		TreeInfo[] enemyTrees = rc.senseNearbyTrees(
 				RobotType.LUMBERJACK.bodyRadius + GameConstants.INTERACTION_DIST_FROM_EDGE, RobotPlayer.enemyTeam);
 
 		// Select target from nearby targets
-		if (neutralTrees.length > 0) {
+		// if ( neutralTrees.length > 0 ) {
+		// hasTarget = Target.tree;
+		// myTarget = neutralTrees[0].ID;
+		// } else
+		System.out.println(rc.readBroadcast(Channels.CHOP_START));
+		if (rc.readBroadcast(Channels.CHOP_START) > rc.getRoundNum() - 2) {
 			hasTarget = Target.tree;
-			myTarget = neutralTrees[0].ID;
+			targetLocation = new MapLocation(rc.readBroadcastFloat(Channels.CHOP_START + 1),
+					rc.readBroadcastFloat(Channels.CHOP_START + 2));
+			if (rc.canSenseLocation(targetLocation)) {
+				myTarget = rc.senseTreeAtLocation(targetLocation).ID;
+			}
 		} else if (enemyTrees.length > 0) {
 			hasTarget = Target.tree;
 			myTarget = enemyTrees[0].ID;
+			targetLocation = enemyTrees[0].location;
 		} else if (robots.length > 0) {
 			hasTarget = Target.robot;
 			myTarget = robots[0].ID;
+			targetLocation = robots[0].location;
 		} else {
 
 			// No close targets, so search for targets within sight radius
 			robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
-			neutralTrees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
+			TreeInfo[] neutralTrees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
 			enemyTrees = rc.senseNearbyTrees(-1, RobotPlayer.enemyTeam);
+
+			Arrays.sort(neutralTrees, compareRobots);
 
 			myLocation = rc.getLocation();
 
@@ -135,14 +172,23 @@ public class Lumberjack {
 				MapLocation treeLocation = neutralTrees[0].getLocation();
 				Direction toTree = myLocation.directionTo(treeLocation);
 				moveDirection = Movement.tryMove(toTree);
+				hasTarget = Target.tree;
+				myTarget = neutralTrees[0].ID;
+				targetLocation = neutralTrees[0].location;
 			} else if (robots.length > 0) {
 				MapLocation enemyLocation = robots[0].getLocation();
 				Direction toEnemy = myLocation.directionTo(enemyLocation);
 				moveDirection = Movement.tryMove(toEnemy);
+				hasTarget = Target.robot;
+				myTarget = robots[0].ID;
+				targetLocation = robots[0].location;
 			} else if (enemyTrees.length > 0) {
 				MapLocation treeLocation = enemyTrees[0].getLocation();
 				Direction toTree = myLocation.directionTo(treeLocation);
 				moveDirection = Movement.tryMove(toTree);
+				hasTarget = Target.tree;
+				myTarget = enemyTrees[0].ID;
+				targetLocation = enemyTrees[0].location;
 			} else {
 				// No nearby targets
 			}
@@ -186,16 +232,27 @@ public class Lumberjack {
 		}
 	}
 
-	static void tryChop() throws GameActionException {
+	static boolean tryChop() throws GameActionException {
+
+		TreeInfo[] neutralTrees = rc.senseNearbyTrees(
+				RobotType.LUMBERJACK.bodyRadius + GameConstants.INTERACTION_DIST_FROM_EDGE, Team.NEUTRAL);
+		Arrays.sort(neutralTrees, compareRobots);
 
 		if (rc.canChop(myTarget)) {
 			// moveDirection =
 			// myLocation.directionTo(rc.senseTree(myTarget).location);
 			rc.chop(myTarget);
+			return true;
+		} else if (neutralTrees.length > 0) {
+			if (rc.canChop(neutralTrees[0].ID)) {
+				rc.chop(neutralTrees[0].ID);
+				return true;
+			}
 		} else {
 			hasTarget = Target.none;
 			myTarget = 0;
 		}
+		return false;
 	}
 
 }
