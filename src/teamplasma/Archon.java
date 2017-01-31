@@ -444,8 +444,7 @@ public class Archon {
 	 */
 	static void tryHireGardener() throws GameActionException {
 
-		canBuild = ((rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) && (rc.readBroadcast(Channels.COUNT_SCOUT) > 0)
-				|| canBuild);
+		canBuild = ((rc.readBroadcast(Channels.COUNT_SOLDIER) > 0) || canBuild);
 
 		int numArchons = rc.readBroadcast(Channels.COUNT_ARCHON);
 		int numGardeners = rc.readBroadcast(CHANNEL_GARDENER_COUNT);
@@ -454,7 +453,7 @@ public class Archon {
 		int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);
 
 		// Curve maxGardeners into the mid game
-		maxGardeners = (int) ((Constants.MAX_COUNT_GARDENER - numArchons) * (rc.getRoundNum() / 1000.0f) + numArchons);
+		maxGardeners = (int) ((Constants.MAX_COUNT_GARDENER - numArchons) * (rc.getRoundNum() / 2500.0f) + numArchons);
 		maxGardeners = Math.min(maxGardeners, Constants.MAX_COUNT_GARDENER);
 
 		System.out.println("Gardeners: " + numGardeners + "/" + maxGardeners);

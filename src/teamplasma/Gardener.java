@@ -436,7 +436,7 @@ public class Gardener {
 		int numTrees = trees.length;
 
 		boolean check1 = numTrees > 0;
-		boolean check2 = lumberjackCount < 2;
+		boolean check2 = lumberjackCount < 3;
 		boolean check3 = numLumberjacks < maxLumberjacks;
 		boolean check4 = numLumberjacks < 2 * numGardeners;
 

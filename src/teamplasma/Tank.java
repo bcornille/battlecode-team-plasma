@@ -20,8 +20,7 @@ public class Tank {
 				// See if there are any nearby enemy robots
 				RobotInfo[] robots = rc.senseNearbyRobots(-1, RobotPlayer.enemyTeam);
 				if (robots.length > 0) {
-					// Move toward target
-					// RobotPlayer.myDirection =
+					System.out.println("attacking target");
 					// Movement.attackTarget(robots[0]);
 					RobotPlayer.myDirection = Movement.pathing(RobotPlayer.myDirection, robots[0].location);
 					// Move
@@ -30,8 +29,13 @@ public class Tank {
 					// turn...
 					Shooting.shoot(robots[0]);
 				} else {
-					RobotPlayer.myDirection = Movement.pathing(RobotPlayer.myDirection,
-							Communication.getEnemyArchonLocation());
+					System.out.println("searching for target");
+					MapLocation goal = Communication.getEnemyArchonLocation();
+					if (goal != rc.getLocation()){					
+						RobotPlayer.myDirection = Movement.pathing(RobotPlayer.myDirection,goal);
+					} else { 
+						RobotPlayer.myDirection = Movement.checkFriendlySpacing(RobotPlayer.myDirection);
+					}
 					// Move
 					RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
 				}
