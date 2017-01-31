@@ -32,8 +32,6 @@ public class Tank {
 				} else {
 					RobotPlayer.myDirection = Movement.pathing(RobotPlayer.myDirection,
 							Communication.getEnemyArchonLocation());
-					// Adjust movement direction to dodge bullets
-					RobotPlayer.myDirection = Movement.dodge(RobotPlayer.myDirection);
 					// Move
 					RobotPlayer.myDirection = Movement.tryMove(RobotPlayer.myDirection);
 				}
