@@ -94,6 +94,27 @@ public class Gardener {
 					Communication.callForChop(trees[0]);
 				}
 
+				// Build units based on strategy (needs to happen before
+				// moveToGrove)
+				switch (myStrategy) {
+				case FIRST:
+					first();
+					break;
+				case MOVING:
+					moving();
+					break;
+				case DEFENDING:
+					defending();
+					break;
+				case ATTACKING:
+					attacking();
+					break;
+				case ECONOMY:
+					economy();
+				default:
+					break;
+				}
+
 				// Check grove status
 				if (assignedGrove) {
 					// Grove is assigned
@@ -134,26 +155,6 @@ public class Gardener {
 				} else {
 					// We need a home!
 					findGrove();
-				}
-
-				// Build units based on strategy
-				switch (myStrategy) {
-				case FIRST:
-					first();
-					break;
-				case MOVING:
-					moving();
-					break;
-				case DEFENDING:
-					defending();
-					break;
-				case ATTACKING:
-					attacking();
-					break;
-				case ECONOMY:
-					economy();
-				default:
-					break;
 				}
 
 				// End Turn
@@ -286,6 +287,7 @@ public class Gardener {
 			boolean open = true;
 
 			if (rc.getLocation().distanceTo(groveCenter) < rc.getType().sensorRadius - rc.getType().bodyRadius) {
+				System.out.println("Hit onMap check.");
 				onMap = rc.onTheMap(groveCenter, rc.getType().bodyRadius);
 				if (onMap)
 					open = rc.senseNearbyTrees(groveCenter, rc.getType().bodyRadius, Team.NEUTRAL).length == 0;
