@@ -8,19 +8,11 @@ public class Shooting {
 	
 	static void shoot(RobotInfo target) throws GameActionException {
 		
-		System.out.println("Can Fire Pentad? " + rc.canFirePentadShot());
-		System.out.println("Can Fire Triad? " + rc.canFireTriadShot());
-		System.out.println("Can Fire Single? " + rc.canFireSingleShot());
-
-		
 		if (rc.canFirePentadShot() && willHitPentadShot(target) && canAffordPentadShot(target)) {
-			System.out.println("Fire Pentad");
 			rc.firePentadShot(rc.getLocation().directionTo(target.location));
 		} else if (rc.canFireTriadShot() && willHitTriadShot(target) && canAffordTriadShot(target)) {
-			System.out.println("Fire Triad");
 			rc.fireTriadShot(rc.getLocation().directionTo(target.location));
 		} else if (rc.canFireSingleShot() && willHitSingleShot(target) && canAffordSingleShot(target)) {
-			System.out.println("Fire Single");
 			rc.fireSingleShot(rc.getLocation().directionTo(target.location));
 		}
 	}
@@ -65,10 +57,14 @@ public class Shooting {
 	}
 	
 	static private boolean checkFF(Direction directionToTarget, float distanceToTarget) throws GameActionException {
-		MapLocation point1 = rc.getLocation().add(directionToTarget, (1/4)*distanceToTarget);
-		MapLocation point2 = rc.getLocation().add(directionToTarget, (3/4)*distanceToTarget);
-		RobotInfo[] friends1 = rc.senseNearbyRobots(point1, (1/4)*distanceToTarget, rc.getTeam());
-		RobotInfo[] friends2 = rc.senseNearbyRobots(point2, (1/4)*distanceToTarget, rc.getTeam());
+		MapLocation point1 = rc.getLocation().add(directionToTarget, (3.0f/4.0f)*distanceToTarget);
+		MapLocation point2 = rc.getLocation().add(directionToTarget, (1.0f/4.0f)*distanceToTarget);
+		RobotInfo[] friends1 = rc.senseNearbyRobots(point1, (1.0f/4.0f)*distanceToTarget, rc.getTeam());
+		RobotInfo[] friends2 = rc.senseNearbyRobots(point2, (1.0f/4.0f)*distanceToTarget, rc.getTeam());
+		
+		rc.setIndicatorDot(point1, 250, 0, 0);
+		rc.setIndicatorDot(point2, 250, 0, 0);
+		
 		if(friends1.length==0 && friends2.length==0 ){
 			System.out.println("No Friends In Way");
 			return true;
@@ -79,10 +75,14 @@ public class Shooting {
 	}
 	
 	static private boolean checkTF(Direction directionToTarget, float distanceToTarget) throws GameActionException {
-		MapLocation point1 = rc.getLocation().add(directionToTarget, (3/4)*distanceToTarget);
-		MapLocation point2 = rc.getLocation().add(directionToTarget, (1/4)*distanceToTarget);
-		TreeInfo[] trees1 = rc.senseNearbyTrees(point1, (1/4)*distanceToTarget, rc.getTeam());
-		TreeInfo[] trees2 = rc.senseNearbyTrees(point2, (1/4)*distanceToTarget, rc.getTeam());
+		MapLocation point1 = rc.getLocation().add(directionToTarget, (3.0f/4.0f)*distanceToTarget);
+		MapLocation point2 = rc.getLocation().add(directionToTarget, (1.0f/4.0f)*distanceToTarget);
+		TreeInfo[] trees1 = rc.senseNearbyTrees(point1, (1.0f/4.0f)*distanceToTarget, Team.NEUTRAL);
+		TreeInfo[] trees2 = rc.senseNearbyTrees(point2, (1.0f/4.0f)*distanceToTarget, Team.NEUTRAL);
+		
+		rc.setIndicatorDot(point1, 250, 0, 0);
+		rc.setIndicatorDot(point2, 250, 0, 0);
+		
 		if(trees1.length==0 && trees2.length==0 ){
 			System.out.println("No Trees In Way");
 			return true;
@@ -98,7 +98,7 @@ public class Shooting {
 		
 		switch(target.getType()){
 		case ARCHON:
-			singleShotLimit = Constants.ATTACK_BULLET_BANK;
+			singleShotLimit = Constants.ATTACK_BULLET_BANK/2;
 			break;
 		case GARDENER:
 			singleShotLimit = GameConstants.SINGLE_SHOT_COST;

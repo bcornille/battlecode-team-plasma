@@ -24,7 +24,7 @@ public interface Constants {
 	int MAX_COUNT_GROVE = 100;
 	int MAX_COUNT_TREE = 4;
 
-	float GROVE_SPACING_V = 6.0f * GameConstants.BULLET_TREE_RADIUS + 1.9f * RobotType.ARCHON.bodyRadius;
+	float GROVE_SPACING_V = 6.0f * GameConstants.BULLET_TREE_RADIUS + 1.3f * RobotType.ARCHON.bodyRadius;
 	float GROVE_SPACING_H = 6.0f * GameConstants.BULLET_TREE_RADIUS + 2.3f * RobotType.ARCHON.bodyRadius;
 
 	/**

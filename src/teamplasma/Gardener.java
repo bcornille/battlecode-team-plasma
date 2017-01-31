@@ -199,6 +199,8 @@ public class Gardener {
 		} else {
 
 		}
+		
+		buildDirection = buildDirection.opposite();
 
 		robotDirection = buildDirection.opposite();
 
