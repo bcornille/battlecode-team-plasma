@@ -198,13 +198,13 @@ public class Communication {
 	}
 
 	static MapLocation getEnemyArchonLocation() throws GameActionException {
-		for (int i = Channels.ENEMY_ARCHON1_START; i <= Channels.ENEMY_ARCHON_END; i += Channels.ENEMY_ARCHON_OFFSET) {
-			System.out.println(rc.readBroadcast(i));
-			System.out.println(rc.readBroadcastFloat(i + 1));
-			System.out.println(rc.readBroadcastFloat(i + 2));
-			System.out.println(rc.readBroadcast(i + 3));
-		}
-		if (rc.readBroadcast(Channels.HELP_START) > rc.getRoundNum() - 2) {
+//		for (int i = Channels.ENEMY_ARCHON1_START; i <= Channels.ENEMY_ARCHON_END; i += Channels.ENEMY_ARCHON_OFFSET) {
+//			System.out.println(rc.readBroadcast(i));
+//			System.out.println(rc.readBroadcastFloat(i + 1));
+//			System.out.println(rc.readBroadcastFloat(i + 2));
+//			System.out.println(rc.readBroadcast(i + 3));
+//		}
+		if (rc.readBroadcast(Channels.HELP_START) > rc.getRoundNum() - 2 && RobotPlayer.myType != RobotType.TANK) {
 			return new MapLocation(rc.readBroadcastFloat(Channels.HELP_START + 1),
 					rc.readBroadcastFloat(Channels.HELP_START + 2));
 		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) != 0
