@@ -199,12 +199,12 @@ public class Communication {
 	}
 
 	static MapLocation getEnemyArchonLocation() throws GameActionException {
-//		for (int i = Channels.ENEMY_ARCHON1_START; i <= Channels.ENEMY_ARCHON_END; i += Channels.ENEMY_ARCHON_OFFSET) {
-//			System.out.println(rc.readBroadcast(i));
-//			System.out.println(rc.readBroadcastFloat(i + 1));
-//			System.out.println(rc.readBroadcastFloat(i + 2));
-//			System.out.println(rc.readBroadcast(i + 3));
-//		}
+		for (int i = Channels.ENEMY_ARCHON1_START; i <= Channels.ENEMY_ARCHON_END; i += Channels.ENEMY_ARCHON_OFFSET) {
+			System.out.println(rc.readBroadcast(i));
+			System.out.println(rc.readBroadcastFloat(i + 1));
+			System.out.println(rc.readBroadcastFloat(i + 2));
+			System.out.println(rc.readBroadcast(i + 3));
+		}
 		if (rc.readBroadcast(Channels.HELP_START) > rc.getRoundNum() - 2) {
 			return new MapLocation(rc.readBroadcastFloat(Channels.HELP_START + 1),
 					rc.readBroadcastFloat(Channels.HELP_START + 2));
@@ -269,33 +269,56 @@ public class Communication {
 	}
 
 	static void spotEnemyArchon(RobotInfo Archon) throws GameActionException {
-		if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == 0) {
-			rc.broadcast(Channels.ENEMY_ARCHON1_START, Archon.ID);
+		if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == Archon.ID) {
 			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, Archon.location.y);
 			rc.broadcast(Channels.ENEMY_ARCHON1_START + 3, rc.getRoundNum());
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == Archon.ID) {
-			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
-			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, Archon.location.y);
-			rc.broadcast(Channels.ENEMY_ARCHON1_START + 3, rc.getRoundNum());
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == 0) {
-			rc.broadcast(Channels.ENEMY_ARCHON2_START, Archon.ID);
-			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, Archon.location.x);
-			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, Archon.location.y);
-			rc.broadcast(Channels.ENEMY_ARCHON2_START + 3, rc.getRoundNum());
+			return;
 		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == Archon.ID) {
 			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, Archon.location.x);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, Archon.location.y);
 			rc.broadcast(Channels.ENEMY_ARCHON2_START + 3, rc.getRoundNum());
-		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == 0) {
-			rc.broadcast(Channels.ENEMY_ARCHON3_START, Archon.ID);
-			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, Archon.location.x);
-			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, Archon.location.y);
-			rc.broadcast(Channels.ENEMY_ARCHON3_START + 3, rc.getRoundNum());
+			return;
 		} else if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == Archon.ID) {
 			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, Archon.location.x);
 			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, Archon.location.y);
 			rc.broadcast(Channels.ENEMY_ARCHON3_START + 3, rc.getRoundNum());
+			return;
+		}
+		
+		float maxArchonDist = rc.getRoundNum() * RobotType.ARCHON.strideRadius;
+		float ArchonDist = Archon.location.distanceTo(new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 1), 
+				rc.readBroadcastFloat(Channels.ENEMY_ARCHON1_START + 2)));
+		System.out.println("Max Distance: " + maxArchonDist);
+		System.out.println("Archon 1 Distance: " + ArchonDist);
+		if (rc.readBroadcast(Channels.ENEMY_ARCHON1_START) == 0 && ArchonDist < maxArchonDist) {
+			rc.broadcast(Channels.ENEMY_ARCHON1_START, Archon.ID);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON1_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON1_START + 3, rc.getRoundNum());
+			return;
+		}
+		
+		ArchonDist = Archon.location.distanceTo(new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 1), 
+				rc.readBroadcastFloat(Channels.ENEMY_ARCHON2_START + 2)));
+		System.out.println("Archon 1 Distance: " + ArchonDist);
+		if (rc.readBroadcast(Channels.ENEMY_ARCHON2_START) == 0 && ArchonDist < maxArchonDist) {
+			rc.broadcast(Channels.ENEMY_ARCHON2_START, Archon.ID);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON2_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON2_START + 3, rc.getRoundNum());
+			return;
+		}
+		
+		ArchonDist = Archon.location.distanceTo(new MapLocation(rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 1), 
+				rc.readBroadcastFloat(Channels.ENEMY_ARCHON3_START + 2)));
+		System.out.println("Archon 1 Distance: " + ArchonDist);
+		if (rc.readBroadcast(Channels.ENEMY_ARCHON3_START) == 0 && ArchonDist < maxArchonDist) {
+			rc.broadcast(Channels.ENEMY_ARCHON3_START, Archon.ID);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 1, Archon.location.x);
+			rc.broadcastFloat(Channels.ENEMY_ARCHON3_START + 2, Archon.location.y);
+			rc.broadcast(Channels.ENEMY_ARCHON3_START + 3, rc.getRoundNum());
+			return;
 		}
 		return;
 	}
