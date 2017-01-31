@@ -515,7 +515,7 @@ public class Gardener {
 					return;
 				}
 			}
-		} else if (numScout > 0 && numSoldier > 1) {
+		} else if (numScout > 0 && numSoldier > 0) {
 			amFirst = false;
 			return;
 		} else {
