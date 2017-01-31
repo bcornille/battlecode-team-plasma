@@ -3,9 +3,6 @@ package teamplasma;
 import java.util.Arrays;
 import java.util.Comparator;
 
-// import java.util.Arrays;
-// import java.util.Comparator;
-
 import battlecode.common.*;
 
 public class Gardener {
