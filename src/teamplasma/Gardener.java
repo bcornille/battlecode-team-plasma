@@ -8,7 +8,7 @@ import java.util.Comparator;
 
 import battlecode.common.*;
 
-public class Gardener implements Constants {
+public class Gardener {
 	
 	/*---------------------------*
 	 * GARDENER GLOBAL VARIABLES *
@@ -598,6 +598,12 @@ public class Gardener implements Constants {
 	static void economy() throws GameActionException {
 
 		checkLumberjack();
+		
+		if (rc.canBuildRobot(RobotType.SCOUT, robotDirection) && rc.readBroadcast(Channels.COUNT_SCOUT) < Constants.MAX_COUNT_SCOUT) {			
+	    	rc.buildRobot(RobotType.SCOUT, robotDirection);
+	    	Communication.countMe(RobotType.SCOUT);
+	    	return;
+		}
 		
 	}
 	

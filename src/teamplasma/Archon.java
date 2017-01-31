@@ -341,6 +341,9 @@ public class Archon {
 
 				float groveX = rc.readBroadcastFloat(CHANNEL_GROVE_X + i);
 				float groveY = rc.readBroadcastFloat(CHANNEL_GROVE_Y + i);
+				
+				MapLocation tempGrove = new MapLocation(groveX,groveY);
+				rc.setIndicatorDot(tempGrove, 0, 0, 0);
 
 				xmin = Math.min(xmin, groveX);
 				xmax = Math.max(xmax, groveX);
@@ -356,22 +359,22 @@ public class Archon {
 
 				switch (archonNumber) {
 				case 1:
-					rc.setIndicatorLine(grovePt1, grovePt2, 100, 100, 0);
-					rc.setIndicatorLine(grovePt1, grovePt3, 100, 100, 0);
-					rc.setIndicatorLine(grovePt4, grovePt2, 100, 100, 0);
-					rc.setIndicatorLine(grovePt4, grovePt3, 100, 100, 0);
+					rc.setIndicatorLine(grovePt1, grovePt2, 200, 100, 100);
+					rc.setIndicatorLine(grovePt1, grovePt3, 200, 100, 100);
+					rc.setIndicatorLine(grovePt4, grovePt2, 200, 100, 100);
+					rc.setIndicatorLine(grovePt4, grovePt3, 200, 100, 100);
 					break;
 				case 2:
-					rc.setIndicatorLine(grovePt1, grovePt2, 100, 0, 100);
-					rc.setIndicatorLine(grovePt1, grovePt3, 100, 0, 100);
-					rc.setIndicatorLine(grovePt4, grovePt2, 100, 0, 100);
-					rc.setIndicatorLine(grovePt4, grovePt3, 100, 0, 100);
+					rc.setIndicatorLine(grovePt1, grovePt2, 100, 200, 100);
+					rc.setIndicatorLine(grovePt1, grovePt3, 100, 200, 100);
+					rc.setIndicatorLine(grovePt4, grovePt2, 100, 200, 100);
+					rc.setIndicatorLine(grovePt4, grovePt3, 100, 200, 100);
 					break;
 				case 3:
-					rc.setIndicatorLine(grovePt1, grovePt2, 0, 100, 100);
-					rc.setIndicatorLine(grovePt1, grovePt3, 0, 100, 100);
-					rc.setIndicatorLine(grovePt4, grovePt2, 0, 100, 100);
-					rc.setIndicatorLine(grovePt4, grovePt3, 0, 100, 100);
+					rc.setIndicatorLine(grovePt1, grovePt2, 100, 100, 200);
+					rc.setIndicatorLine(grovePt1, grovePt3, 100, 100, 200);
+					rc.setIndicatorLine(grovePt4, grovePt2, 100, 100, 200);
+					rc.setIndicatorLine(grovePt4, grovePt3, 100, 100, 200);
 					break;
 
 				}
@@ -453,7 +456,11 @@ public class Archon {
 		int maxGardeners = Constants.MAX_COUNT_GARDENER;
 		int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);
 
-		maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons-1) * rc.getRoundNum() / rc.getRoundLimit() + numArchons+1);
+		// Curve maxGardeners into the mid game
+		maxGardeners = (int) ((Constants.MAX_COUNT_GARDENER - numArchons) * (rc.getRoundNum() / 1000.0f) + numArchons);
+		maxGardeners = Math.min(maxGardeners, Constants.MAX_COUNT_GARDENER);
+		
+		System.out.println("Gardeners: " + numGardeners + "/" + maxGardeners);
 		
 		if ( totGardeners == 0 || ( numGardeners < maxGardeners && numGardeners < numGroves && canBuild) ) {
 
