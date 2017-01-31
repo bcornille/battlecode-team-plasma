@@ -453,7 +453,7 @@ public class Archon {
 		int maxGardeners = Constants.MAX_COUNT_GARDENER;
 		int numGroves = rc.readBroadcast(CHANNEL_GROVE_COUNT);
 
-//		maxGardeners = Math.round((maxGardeners - numArchons) * rc.getRoundNum() / rc.getRoundLimit() + numArchons);
+		maxGardeners = Math.round((Constants.MAX_COUNT_GARDENER - numArchons-1) * rc.getRoundNum() / rc.getRoundLimit() + numArchons+1);
 		
 		if ( totGardeners == 0 || ( numGardeners < maxGardeners && numGardeners < numGroves && canBuild) ) {
 
